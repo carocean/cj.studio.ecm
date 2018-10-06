@@ -1,5 +1,5 @@
 #org.springsource.ide.eclipse.gradle.core.preferences.GradleProjectPreferences
-#Sat Oct 06 22:12:12 CST 2018
-build.family.org.gradle.tooling.model.eclipse.HierarchicalEclipseProject=;cj.studio.ecm.corelib;cj.studio.ecm.net;cj.ultimate;
+#Sat Oct 06 22:27:02 CST 2018
+build.family.org.gradle.tooling.model.eclipse.HierarchicalEclipseProject=;cj.studio.ecm.corelib;cj.studio.ecm.jee;cj.studio.ecm.net;cj.ultimate;
 org.springsource.ide.eclipse.gradle.linkedresources=
 org.springsource.ide.eclipse.gradle.rootprojectloc=

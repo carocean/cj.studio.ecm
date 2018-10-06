@@ -1,0 +1,3 @@
+对传统web container的支持，合乎servlet2.1规范
+但仍选择抛弃jsp，而采用jsoup处理
+本架构参考springmvc功能，但只对请求地址调度到相应的处理类上，给开发者提供jsoup上下文。

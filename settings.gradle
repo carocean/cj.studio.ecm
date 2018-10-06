@@ -1,2 +1,2 @@
 
-include "cj.ultimate", "cj.studio.ecm.corelib", "cj.studio.ecm.net"
+include "cj.ultimate", "cj.studio.ecm.corelib", "cj.studio.ecm.net","cj.studio.ecm.jee"
