@@ -1,0 +1,44 @@
+IserviceSite site=getCJSite();
+IserviceMethodInitialFactory factory=site.getService("cj.serviceMethodInitialFactory");
+IServiceMethodInitializer smi=factory.createServiceMethodInitializer();
+smi.init(serviceDefId,bind,argTypes,args);
+Object returnService=smi.invoke(service,args);
+	//ServiceMethod sm=smi.getServiceMethod();
+	//Object returnservice=sm.invokeMethod(service,args);
+	//smi.initReturnService(returnservice);
+方法实例工厂
+
+原理：初始化器包含ServiceMethod列表及服务定义ID，在使用时可通过sm在工厂中搜索初始化器，如果是方法内，则通过织入参数获取到对应的初始化器
+结构：
+考虑：是否能将初始化工厂派生于实例工厂？因为它要调用抽象工厂的初始化服务方法，而它的获取服务方法仅仅调用超类的方法。这个工厂不注册到容器，只挂到容器的服务链路上,
+	而且此工厂在解析元数据前即被创建,而且工厂创建的服务也不注册到实例工厂里
+
+
+在容器初始化时加入：
+IserviceMethodInitialFactory factory=new serviceMethodInitialFactory();
+addService(factory);
+
+在元数据被解析时织入器本身的代码，但非织入代码。该方法为工厂加入服务方法初始化器
+//在遍历到方法后
+factory.builtServiceMethodInitializer(serviceMethod);
+
+在实例工厂初始化方法中加入：
+IserviceMethodInitialFactory factory=site.getService("cj.serviceMethodInitialFactory");
+factory.init(registry,ServiceIntanoceFactory);
+
+在方法代码中织入的代码：
+作用：为每个方法获取初始化器，并初始化，在元数据被解析时织入，在方法调用时执行
+IserviceMethodInitialFactory factory=site.getService("cj.serviceMethodInitialFactory");
+IServiceMethodInitializer smi=factory.getServiceMethodInitializer(serviceDefId,bind,desc);
+//方法原生的代码段
+if(smi!=null)
+	smi.initReturnService(args,result);
+
+
+在实例工厂发现的引用方法的属性中加入:
+IserviceMethodInitialFactory factory=site.getService("cj.serviceMethodInitialFactory");
+IServiceMethodInitializer smi=factory.getServiceMethodInitializer(serviceMethod);
+if(smi!=null)
+	retrunService=smi.invoke(service);
+
+//这样就达到了非静态与静态方法调用的统一

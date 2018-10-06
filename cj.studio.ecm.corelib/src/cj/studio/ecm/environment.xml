@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+	<global>
+		<!-- 通过CjSystem.current.environment.language -->
+		<locale-code>zh_CN</locale-code>
+		<global-repository>cj/studio/ecm/global</global-repository>
+		<chip-repository>cj/properties</chip-repository>
+	</global>
+	<logging>
+	<!-- 如果demand=true则强制该系统（一个进程内）所有芯片采用系统日志配置，意思是：如果芯片中配有同样记录，则其级别以系统配置的为准，芯片中存在但系统中不存在的，仍在芯片中发生作用 -->
+		<system-config demand="false">cj/studio/ecm/log_config.xml</system-config>
+		<chip-config>cj/properties/log_config.xml</chip-config>
+	</logging>
+</environment>

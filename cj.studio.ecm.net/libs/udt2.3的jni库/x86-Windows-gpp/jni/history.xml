@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="4.7.1 -m32 -shared -shared-libgcc -mthreads -fexceptions -Wl,--enable-auto-import -Wl,--kill-at -Wl,--add-stdcall-alias -Wl,--image-base,0x10000000 -shared -lstdc++ -lws2_32 -shared-libgcc">
+      <target file="barchart-udt-core-2.3.0-SNAPSHOT.dll" lastModified="13e9c8e0165">
+         <source file="..\..\..\..\obj\x86-Windows-gpp\JNICCC.o" lastModified="13e9c8d7be4"/>
+         <source file="..\..\..\..\obj\x86-Windows-gpp\JNICCCFactory.o" lastModified="13e9c8d8036"/>
+         <source file="..\..\..\..\obj\x86-Windows-gpp\JNIHelpers.o" lastModified="13e9c8d8559"/>
+         <source file="..\..\..\..\obj\x86-Windows-gpp\api.o" lastModified="13e9c8d9263"/>
+         <source file="..\..\..\..\obj\x86-Windows-gpp\buffer.o" lastModified="13e9c8d97a7"/>
+         <source file="..\..\..\..\obj\x86-Windows-gpp\cache.o" lastModified="13e9c8d9cd0"/>
+         <source file="..\..\..\..\obj\x86-Windows-gpp\ccc.o" lastModified="13e9c8da212"/>
+         <source file="..\..\..\..\obj\x86-Windows-gpp\channel.o" lastModified="13e9c8da6d2"/>
+         <source file="..\..\..\..\obj\x86-Windows-gpp\com_barchart_udt_CCC.o" lastModified="13e9c8dab92"/>
+         <source file="..\..\..\..\obj\x86-Windows-gpp\com_barchart_udt_SocketUDT.o" lastModified="13e9c8db2b8"/>
+         <source file="..\..\..\..\obj\x86-Windows-gpp\common.o" lastModified="13e9c8db7bf"/>
+         <source file="..\..\..\..\obj\x86-Windows-gpp\core.o" lastModified="13e9c8dc21e"/>
+         <source file="..\..\..\..\obj\x86-Windows-gpp\epoll.o" lastModified="13e9c8dca09"/>
+         <source file="..\..\..\..\obj\x86-Windows-gpp\list.o" lastModified="13e9c8dd899"/>
+         <source file="..\..\..\..\obj\x86-Windows-gpp\md5.o" lastModified="13e9c8dd9ff"/>
+         <source file="..\..\..\..\obj\x86-Windows-gpp\packet.o" lastModified="13e9c8dde86"/>
+         <source file="..\..\..\..\obj\x86-Windows-gpp\queue.o" lastModified="13e9c8de657"/>
+         <source file="..\..\..\..\obj\x86-Windows-gpp\window.o" lastModified="13e9c8deb7d"/>
+      </target>
+   </processor>
+</history>

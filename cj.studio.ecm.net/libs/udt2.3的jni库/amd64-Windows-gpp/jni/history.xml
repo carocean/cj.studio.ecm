@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="4.7.1 -m64 -shared -shared-libgcc -mthreads -fexceptions -Wl,--enable-auto-import -Wl,--kill-at -Wl,--add-stdcall-alias -Wl,--image-base,0x10000000 -shared -lstdc++ -lws2_32 -shared-libgcc">
+      <target file="barchart-udt-core-2.3.0-SNAPSHOT.dll" lastModified="13e9c8aad17">
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\JNICCC.o" lastModified="13e9c8a3b34"/>
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\JNICCCFactory.o" lastModified="13e9c8a3f7d"/>
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\JNIHelpers.o" lastModified="13e9c8a43d6"/>
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\api.o" lastModified="13e9c8a50b2"/>
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\buffer.o" lastModified="13e9c8a55e0"/>
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\cache.o" lastModified="13e9c8a5ab6"/>
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\ccc.o" lastModified="13e9c8a5fcf"/>
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\channel.o" lastModified="13e9c8a6470"/>
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\com_barchart_udt_CCC.o" lastModified="13e9c8a6a2b"/>
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\com_barchart_udt_SocketUDT.o" lastModified="13e9c8a7238"/>
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\common.o" lastModified="13e9c8a77e2"/>
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\core.o" lastModified="13e9c8a8194"/>
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\epoll.o" lastModified="13e9c8a8820"/>
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\list.o" lastModified="13e9c8a8d5f"/>
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\md5.o" lastModified="13e9c8a8ea5"/>
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\packet.o" lastModified="13e9c8a9314"/>
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\queue.o" lastModified="13e9c8a9ab5"/>
+         <source file="..\..\..\..\obj\amd64-Windows-gpp\window.o" lastModified="13e9c8a9fcc"/>
+      </target>
+   </processor>
+</history>

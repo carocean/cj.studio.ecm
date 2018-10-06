@@ -1,0 +1,53 @@
+//常规用法：http://leon-wood.iteye.com/blog/1708644
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+	apply plugin: 'maven'
+	version = '1.0'
+    sourceSets { 
+	 main { 
+	 	java{
+	 		srcDir "$projectDir/src"
+	 	}
+	 	resources{
+		 	srcDir "$projectDir/src"
+		 }
+	 } 
+ 	}
+   	sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    repositories {
+       mavenCentral()
+       flatDir(dirs: file("../global/lib")) 
+    }
+
+    dependencies {
+        testCompile 'junit:junit:4.8.2'
+    }
+    
+    jar {
+        manifest.attributes provider: 'cj crops'
+    }
+   
+	tasks.withType(JavaCompile) {  
+        options.encoding = "UTF-8"  
+    }  
+	
+    uploadArchives {
+	    repositories {
+	       flatDir {
+	           dirs file('../release')
+	       }
+    	}
+
+	}
+}
+task studio_ecm(){
+	doLast {
+			println 'studio ecm 环境发布完毕!'
+		}
+}
+studio_ecm.dependsOn ':cj.ultimate:release'
+studio_ecm.dependsOn ':cj.studio.ecm.corelib:release'
+studio_ecm.dependsOn ':cj.studio.ecm.net:release'
+

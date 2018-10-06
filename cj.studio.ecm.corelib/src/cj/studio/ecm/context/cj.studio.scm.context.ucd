@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" size="469,1083" id="cj.studio.ecm.context" metadata="uml2-1.0" initialized="true" tag="1000" key="32303037303533312D3130303020636A2E73747564696F2E73636D2E636F72656C69622F41646D696E6973747261746F72">
+  <children xsi:type="editmodel:InterfaceEditModel" targetConnections="//@children.1/@sourceConnections.0" name="INode" location="189,50" size="95,99" id="cj.studio.ecm.context/INode" runTimeClassModel="getName(),setName(Ljava.lang.String;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="72,36">
+      <children xsi:type="editmodel:MethodEditModel" name="getName" id="cj.studio.ecm.context/INode#getName()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setName" id="cj.studio.ecm.context/INode#setName(Ljava.lang.String;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:InterfaceEditModel" targetConnections="//@children.4/@sourceConnections.0" name="IElement" location="312,199" size="137,117" id="cj.studio.ecm.context/IElement" runTimeClassModel="addNode(Lcj.studio.scm.context.INode;),getNode(Ljava.lang.String;),enumNodeNames()">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="114,54">
+      <children xsi:type="editmodel:MethodEditModel" name="enumNodeNames" id="cj.studio.ecm.context/IElement#enumNodeNames()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getNode" id="cj.studio.ecm.context/IElement#getNode(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="addNode" id="cj.studio.ecm.context/IElement#addNode(Lcj.studio.ecm.context.INode;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.5/@sourceConnections.0 //@children.2/@sourceConnections.0" autoLocated="true" id="cj.studio.ecm.context/INode&lt;-cj.studio.ecm.context/IElement" source="//@children.1" target="//@children.0" targetEnd="//@children.1/@sourceConnections.0/@children.1" sourceEnd="//@children.1/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="68,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="47,99" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.3/@sourceConnections.1" name="Node" location="180,199" size="102,157" id="cj.studio.ecm.context/Node" runTimeClassModel="getName(),Node(Ljava.lang.String;),Node(),setName(Ljava.lang.String;),name,toString()">
+    <children xsi:type="editmodel:CompartmentEditModel" size="79,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="name" id="cj.studio.ecm.context/Node#name"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="72,90">
+      <children xsi:type="editmodel:MethodEditModel" name="Node" id="cj.studio.ecm.context/Node#Node()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="Node" id="cj.studio.ecm.context/Node#Node(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getName" id="cj.studio.ecm.context/Node#getName()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setName" id="cj.studio.ecm.context/Node#setName(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="toString" id="cj.studio.ecm.context/Node#toString()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="cj.studio.ecm.context/INode&lt;-cj.studio.ecm.context/Node" source="//@children.2" target="//@children.1/@sourceConnections.0" targetEnd="//@children.2/@sourceConnections.0/@children.1" sourceEnd="//@children.2/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="51,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="95,90"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="Property" location="106,406" size="101,157" id="cj.studio.ecm.context/Property" runTimeClassModel="getValue(),Property(),value,setValue(Lcj.studio.scm.context.INode;),Property(Ljava.lang.String;Lcj.studio.scm.context.INode;),toString()">
+    <children xsi:type="editmodel:CompartmentEditModel" size="78,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="value" id="cj.studio.ecm.context/Property#value"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="72,90">
+      <children xsi:type="editmodel:MethodEditModel" name="Property" id="cj.studio.ecm.context/Property#Property()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="Property" id="cj.studio.ecm.context/Property#Property(Ljava.lang.String;Lcj.studio.ecm.context.INode;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getValue" id="cj.studio.ecm.context/Property#getValue()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setValue" id="cj.studio.ecm.context/Property#setValue(Lcj.studio.ecm.context.INode;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="toString" id="cj.studio.ecm.context/Property#toString()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="cj.studio.ecm.context/IProperty&lt;-cj.studio.ecm.context/Property" source="//@children.3" target="//@children.5" targetEnd="//@children.3/@sourceConnections.0/@children.1" sourceEnd="//@children.3/@sourceConnections.0/@children.0" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="21,0" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="77,99"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.4/@sourceConnections.1" autoLocated="true" id="cj.studio.ecm.context/Node&lt;-cj.studio.ecm.context/Property" source="//@children.3" target="//@children.2" targetEnd="//@children.3/@sourceConnections.1/@children.1" sourceEnd="//@children.3/@sourceConnections.1/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="50,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="51,157" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="ClassType" location="237,406" size="137,157" id="cj.studio.ecm.context/ClassType" runTimeClassModel="ClassType(),ClassType(Ljava.lang.String;),addNode(Lcj.studio.scm.context.INode;),toString(),getNode(Ljava.lang.String;),enumNodeNames()">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="114,108">
+      <children xsi:type="editmodel:MethodEditModel" name="ClassType" id="cj.studio.ecm.context/ClassType#ClassType(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="ClassType" id="cj.studio.ecm.context/ClassType#ClassType()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="addNode" id="cj.studio.ecm.context/ClassType#addNode(Lcj.studio.ecm.context.INode;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="enumNodeNames" id="cj.studio.ecm.context/ClassType#enumNodeNames()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getNode" id="cj.studio.ecm.context/ClassType#getNode(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="toString" id="cj.studio.ecm.context/ClassType#toString()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="cj.studio.ecm.context/IElement&lt;-cj.studio.ecm.context/ClassType" source="//@children.4" target="//@children.1" targetEnd="//@children.4/@sourceConnections.0/@children.1" sourceEnd="//@children.4/@sourceConnections.0/@children.0" connectionRouterKind="Manual" anchorType="ChopBox">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="94,0" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="49,117"/>
+      <bendpoints location="110,566" secondRelativeDimension="30,286" firstRelativeDimension="-17,-24"/>
+      <bendpoints location="110,323" secondRelativeDimension="18,43" firstRelativeDimension="-40,-266"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="cj.studio.ecm.context/Node&lt;-cj.studio.ecm.context/ClassType" source="//@children.4" target="//@children.3/@sourceConnections.1" targetEnd="//@children.4/@sourceConnections.1/@children.1" sourceEnd="//@children.4/@sourceConnections.1/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="68,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="14,139"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:InterfaceEditModel" targetConnections="//@children.3/@sourceConnections.0" name="IProperty" location="50,199" size="100,99" id="cj.studio.ecm.context/IProperty" runTimeClassModel="getValue(),setValue(Lcj.studio.scm.context.INode;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="72,36">
+      <children xsi:type="editmodel:MethodEditModel" name="getValue" id="cj.studio.ecm.context/IProperty#getValue()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setValue" id="cj.studio.ecm.context/IProperty#setValue(Lcj.studio.ecm.context.INode;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="cj.studio.ecm.context/INode&lt;-cj.studio.ecm.context/IProperty" source="//@children.5" target="//@children.1/@sourceConnections.0" targetEnd="//@children.5/@sourceConnections.0/@children.1" sourceEnd="//@children.5/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="50,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="4,99"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="ModuleSite" location="50,780" size="146,283" id="cj.studio.ecm.context/ModuleSite" runTimeClassModel="dispose(),getServices(Ljava.lang.Class;),getService(Ljava.lang.String;Z),ModuleSite(Lcj.studio.scm.AssemblyContext;Lcj.studio.scm.IServiceContainer;),getEntryPoint(),addService(Ljava.lang.Class;Ljava.lang.Object;),getSite(),removeService(Ljava.lang.String;),getService(Ljava.lang.String;),refresh(),entryPoint,addService(Ljava.lang.String;Ljava.lang.Object;),removeService(Ljava.lang.Class;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="123,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="entryPoint" id="cj.studio.ecm.context/ModuleSite#entryPoint"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="116,216">
+      <children xsi:type="editmodel:MethodEditModel" name="ModuleSite" id="cj.studio.ecm.context/ModuleSite#ModuleSite(Lcj.studio.scm.AssemblyContext;Lcj.studio.scm.IServiceContainer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="addService" id="cj.studio.ecm.context/ModuleSite#addService(Ljava.lang.String;Ljava.lang.Object;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="createServiceSite" id="cj.studio.ecm.context/ModuleSite#createServiceSite()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="dispose" id="cj.studio.ecm.context/ModuleSite#dispose()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getEntryPoint" id="cj.studio.ecm.context/ModuleSite#getEntryPoint()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getService" id="cj.studio.ecm.context/ModuleSite#getService(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getService" id="cj.studio.ecm.context/ModuleSite#getService(Ljava.lang.String;Z)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="init" id="cj.studio.ecm.context/ModuleSite#init(Lcj.studio.scm.AssemblyContext;Lcj.studio.scm.IServiceContainer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getSite" id="cj.studio.ecm.context/ModuleSite#getSite()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="refresh" id="cj.studio.ecm.context/ModuleSite#refresh()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="removeService" id="cj.studio.ecm.context/ModuleSite#removeService(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="finalize" id="cj.studio.ecm.context/ModuleSite#finalize()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="cj.studio.ecm.context/IModuleContext&lt;-cj.studio.ecm.context/ModuleSite" source="//@children.6" target="//@children.7" targetEnd="//@children.6/@sourceConnections.0/@children.1" sourceEnd="//@children.6/@sourceConnections.0/@children.0" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="73,0" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="71,117"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:InterfaceEditModel" targetConnections="//@children.6/@sourceConnections.0" name="IModuleContext" location="52,613" size="142,117" id="cj.studio.ecm.context/IModuleContext" runTimeClassModel="refresh(),getEntryPoint(),getSite()">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="93,54">
+      <children xsi:type="editmodel:MethodEditModel" name="getEntryPoint" id="cj.studio.ecm.context/IModuleContext#getEntryPoint()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getSite" id="cj.studio.ecm.context/IModuleContext#getSite()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="refresh" id="cj.studio.ecm.context/IModuleContext#refresh()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <diagramOptions xsi:type="options:ClassDiagramOptions" properties="wireOptions=1;Product=eUML2" autoName="false"/>
+  <boardSetting snapToGeometry="true" gridEnabled="true" gridSpacing="15,15" gridOrigin="0,0" rulerUnit="pixel" gridVisibility="false">
+    <leftRuler/>
+    <topRuler/>
+  </boardSetting>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" showPopupBars="true" showConnectionHandles="true" attributeSorter="Natural" methodSorter="Natural" showClassStereotype="true" showPackageStereotype="true" showDependencyStereotype="true" showInterfaceStereotype="true" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+</editmodel:ClassDiagramEditModel>

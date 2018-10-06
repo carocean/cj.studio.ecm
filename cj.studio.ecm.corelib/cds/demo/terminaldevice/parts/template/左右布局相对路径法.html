@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+</head>
+
+<body>
+父容器设为相对布局
+第一个子元素设为绝对，则其top和left必然相对于父是0位置,，padding-left为第一个子元素的宽度
+第二个子元素设为相对，则正好是两列了（第二个子元素对于父也是绝对的，其left肯定也是0，但Padding-left使其看似靠右，如果第二个子元素必然是相对，不然会重叠)
+如果想用此方法使树形，可在此嵌套父容器，由于左补进，会使子缩进对树装
+<div style="position:relative;word-wrap:break-word;padding-left:40px;">
+  <div style="position:absolute;left:0;word-wrap:break-word;"><a href="#"><img src="images/headphoto.gif"/></a></div>
+  <div style="word-wrap:break-word; position:relative;top:-3px;"><a href="#">张三</a>:所谓唇亡齿寒，其实就是肛瘘屎出。
+    <div><span> 13:39</span> </div>
+  </div>
+  <div style="position:relative;word-wrap:break-word;padding-left:40px;">
+    <div style="position:absolute;left:0;word-wrap:break-word;"><a href="#"><img src="images/headphoto.gif"/></a></div>
+    <div style="word-wrap:break-word; position:relative;top:-3px;"><a href="#">王五</a>对<a href="#">张三</a>说：所谓唇亡齿寒，其实就是肛瘘屎出。
+      <div><span> 13:39</span> </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="4.2.1 -dynamic -bundle -shared-libgcc -m64 -Wl,-arch,x86_64 -fPIC -fexceptions -dynamic -bundle -lstdc++ -shared-libgcc">
+      <target file="libbarchart-udt-core-2.3.0-SNAPSHOT.jnilib" lastModified="13e9c83ee20">
+         <source file="../../../../obj/x86_64-MacOSX-gpp/JNICCC.o" lastModified="13e9c838c78"/>
+         <source file="../../../../obj/x86_64-MacOSX-gpp/JNICCCFactory.o" lastModified="13e9c839060"/>
+         <source file="../../../../obj/x86_64-MacOSX-gpp/JNIHelpers.o" lastModified="13e9c839448"/>
+         <source file="../../../../obj/x86_64-MacOSX-gpp/api.o" lastModified="13e9c839c18"/>
+         <source file="../../../../obj/x86_64-MacOSX-gpp/buffer.o" lastModified="13e9c83a000"/>
+         <source file="../../../../obj/x86_64-MacOSX-gpp/cache.o" lastModified="13e9c83a000"/>
+         <source file="../../../../obj/x86_64-MacOSX-gpp/ccc.o" lastModified="13e9c83a3e8"/>
+         <source file="../../../../obj/x86_64-MacOSX-gpp/channel.o" lastModified="13e9c83a7d0"/>
+         <source file="../../../../obj/x86_64-MacOSX-gpp/com_barchart_udt_CCC.o" lastModified="13e9c83a7d0"/>
+         <source file="../../../../obj/x86_64-MacOSX-gpp/com_barchart_udt_SocketUDT.o" lastModified="13e9c83abb8"/>
+         <source file="../../../../obj/x86_64-MacOSX-gpp/common.o" lastModified="13e9c83afa0"/>
+         <source file="../../../../obj/x86_64-MacOSX-gpp/core.o" lastModified="13e9c83b388"/>
+         <source file="../../../../obj/x86_64-MacOSX-gpp/epoll.o" lastModified="13e9c83b770"/>
+         <source file="../../../../obj/x86_64-MacOSX-gpp/list.o" lastModified="13e9c83bb58"/>
+         <source file="../../../../obj/x86_64-MacOSX-gpp/md5.o" lastModified="13e9c83bb58"/>
+         <source file="../../../../obj/x86_64-MacOSX-gpp/packet.o" lastModified="13e9c83bf40"/>
+         <source file="../../../../obj/x86_64-MacOSX-gpp/queue.o" lastModified="13e9c83c328"/>
+         <source file="../../../../obj/x86_64-MacOSX-gpp/window.o" lastModified="13e9c83c328"/>
+      </target>
+   </processor>
+</history>

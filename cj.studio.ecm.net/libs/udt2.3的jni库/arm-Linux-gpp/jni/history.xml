@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="4.6 -shared -shared-libgcc -fPIC -fexceptions -shared -lstdc++ -shared-libgcc">
+      <target file="libbarchart-udt-core-2.3.0-SNAPSHOT.so" lastModified="13e9a3dea08">
+         <source file="../../../../obj/arm-Linux-gpp/JNICCC.o" lastModified="13e9a254d40"/>
+         <source file="../../../../obj/arm-Linux-gpp/JNICCCFactory.o" lastModified="13e9a256c80"/>
+         <source file="../../../../obj/arm-Linux-gpp/JNIHelpers.o" lastModified="13e9a258fa8"/>
+         <source file="../../../../obj/arm-Linux-gpp/api.o" lastModified="13e9a3ba400"/>
+         <source file="../../../../obj/arm-Linux-gpp/buffer.o" lastModified="13e9a3bd6c8"/>
+         <source file="../../../../obj/arm-Linux-gpp/cache.o" lastModified="13e9a3bf608"/>
+         <source file="../../../../obj/arm-Linux-gpp/ccc.o" lastModified="13e9a3c1d18"/>
+         <source file="../../../../obj/arm-Linux-gpp/channel.o" lastModified="13e9a26ef38"/>
+         <source file="../../../../obj/arm-Linux-gpp/com_barchart_udt_CCC.o" lastModified="13e9a270e78"/>
+         <source file="../../../../obj/arm-Linux-gpp/com_barchart_udt_SocketUDT.o" lastModified="13e9a275c98"/>
+         <source file="../../../../obj/arm-Linux-gpp/common.o" lastModified="13e9a3c4428"/>
+         <source file="../../../../obj/arm-Linux-gpp/core.o" lastModified="13e9a3cd4b0"/>
+         <source file="../../../../obj/arm-Linux-gpp/epoll.o" lastModified="13e9a3d22d0"/>
+         <source file="../../../../obj/arm-Linux-gpp/list.o" lastModified="13e9a3d51b0"/>
+         <source file="../../../../obj/arm-Linux-gpp/md5.o" lastModified="13c359bb370"/>
+         <source file="../../../../obj/arm-Linux-gpp/packet.o" lastModified="13e9a28b458"/>
+         <source file="../../../../obj/arm-Linux-gpp/queue.o" lastModified="13e9a3daf70"/>
+         <source file="../../../../obj/arm-Linux-gpp/window.o" lastModified="13e9a3dda68"/>
+      </target>
+   </processor>
+</history>
