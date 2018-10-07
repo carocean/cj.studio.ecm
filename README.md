@@ -285,11 +285,12 @@ T1—>增加100—>tom
 
 	1.插件体系的连接实现
 	图中是lns.com的平台网站的内部结构，每个圆角矩形实际上是一个程序集，程序集是是ecm的基本程序单元，中间的大距形是主程序集，它用于连接了各个插件。在图中可以看程序集被插件化，并有层级之别，在portal插件之下又扩展了几个插件。插件与插件之间以非接触的流事象将请求链路连接起来。
-![Image text]https://github.com/carocean/cj.studio.ecm.git/blob/master/document/img/1.png)
+	
+![Image text]https://github.com/carocean/cj.studio.ecm/blob/master/document/img/1.png)
 
 下图说是插件连接的结构及流向。
 
-![Image text]https://github.com/carocean/cj.studio.ecm.git/blob/master/document/img/2.png)
+![Image text]https://github.com/carocean/cj.studio.ecm/blob/master/document/img/2.png)
 
 
 	
@@ -297,7 +298,7 @@ T1—>增加100—>tom
 
 
 2.分布式体系的连接实现
-![Image text]https://github.com/carocean/cj.studio.ecm.git/blob/master/document/img/3.png)
+![Image text]https://github.com/carocean/cj.studio.ecm/blob/master/document/img/3.png)
 图中是两个netsite之间的连接，它们通过输入与输出端子彼此以与接触的net方式相连
-![Image text]https://github.com/carocean/cj.studio.ecm.git/blob/master/document/img/4.png)	
+![Image text]https://github.com/carocean/cj.studio.ecm/blob/master/document/img/4.png)	
 上图是一个非接触事象StationGraph的内部连接结构分析图。
