@@ -1,3 +1,4 @@
+# ecm&net
 
 关键词 keywords：j2ee,java,nodejs,osgi,jsp,struts,spring,spring mvc,mongodb,radis,zookeeper,netty,mina,jetty,tomcat,weblogic,websphere,orm,cloud,nashron,jdk
 
@@ -12,8 +13,388 @@
 
 示例和第三方开发的开放源码托管到 github, codeproject, sourceforge，oschina, csdn，基本每日更新。
 
+## 使用注解声明服务
 
-web开发使用js作为服务的示例：
+	package your.crop.examples.chip2.anno;
+	
+	import java.util.List;
+	import java.util.Map;
+	
+	import cj.studio.ecm.IServiceAfter;
+	import cj.studio.ecm.IServiceSite;
+	import cj.studio.ecm.ServiceCollection;
+	import cj.studio.ecm.annotation.CjBridge;
+	import cj.studio.ecm.annotation.CjJoinpoint;
+	import cj.studio.ecm.annotation.CjMethod;
+	import cj.studio.ecm.annotation.CjMethodArg;
+	import cj.studio.ecm.annotation.CjPropertyValue;
+	import cj.studio.ecm.annotation.CjService;
+	import cj.studio.ecm.annotation.CjServiceInvertInjection;
+	import cj.studio.ecm.annotation.CjServiceRef;
+	import cj.studio.ecm.annotation.CjServiceSite;
+	import cj.studio.ecm.bridge.UseBridgeMode;
+	//aop by bridge
+	@CjBridge(aspects = "myAspect1+$.cj.jss.test.JssMyAspect")
+	@CjService(name = "myAnnoService", constructor = "newMyAnnotation")
+	public class MyAnnoService implements IServiceAfter, IAnnoService {
+		@CjServiceRef(refByType = AnnoObject.class)
+		ServiceCollection objs;
+		@CjServiceInvertInjection()
+		@CjServiceRef(refByType = AnnoObject.class)
+		AnnoObject obj;
+		private int mmm;
+		private String contrustText;
+		@CjServiceRef(refByName = "myAnnoService", useBridge = UseBridgeMode.forbidden)
+		static MyAnnoService the;
+		@CjJoinpoint(aspects="myAspect3")
+		@CjServiceRef(refByName = "myAnnoService",useBridge=UseBridgeMode.auto)
+		static IAnnoService the2;
+		@CjServiceSite
+		IServiceSite site;
+		
+		@CjServiceRef(refByMethod="createMyService")
+		AnnoObject byMethod;
+		
+		@CjServiceRef(refByMethod="createStaticMyService")
+		AnnoObject byMethod2;
+		
+		@CjServiceRef(refByMethod="factory",useBridge=UseBridgeMode.forbidden)
+		MyAnnoService byMethod3;
+		
+		@CjPropertyValue(parser = "cj.jsonMap", value = "{'age1':'333','myObject':'$.annoObject'}")
+		private Map map;
+	
+		@CjPropertyValue(parser = "cj.jsonList", value = "['333','$.annoObject']")
+		private List List;
+		@CjServiceRef(refByName="otherMultitonService")
+		OtherMultitonService multition;
+		@CjMethod(alias = "newMyAnnotationMMM")
+		public MyAnnoService(@CjMethodArg(value = "44") int mmm) {
+			this.mmm = mmm;
+		}
+	
+		@CjMethod(alias = "newMyAnnotation")
+		public MyAnnoService(@CjMethodArg(value = "这是构造注入的TTTT的值") String tttt) {
+			contrustText = tttt;
+			System.out.println("这是构造输出：" + tttt);
+		}
+	
+		@CjMethod(alias = "factory")
+		public static MyAnnoService get() {
+			return the;
+		}
+	
+		@CjMethod(alias = "createMyService", returnDefinitionId = "annoObject")
+		public AnnoObject createMyService(@CjMethodArg(value = "ddfddfas") String text,
+				@CjMethodArg(ref = "annoObject") Object service) {
+			System.out.println("这是方法参数注入的对象：" + service);
+			System.out.println("这是方法参数注入的值：" + text);
+			AnnoObject o = new AnnoObject();
+			return o;
+		}
+	
+		@CjMethod(alias = "createStaticMyService", returnDefinitionType = ".")
+		public static AnnoObject createStaticMyService(@CjMethodArg(value="tttt")String text) {
+			AnnoObject o = new AnnoObject();
+			return o;
+		}
+	
+		@Override
+		public void onAfter(IServiceSite site) {
+			// TODO Auto-generated method stub
+			System.out.println(site);
+			the2.toString();
+			multition.setMmm("xxx");
+			System.out.println("----多例："+multition);
+			Object o=site.getService("otherMultitonService");
+			System.out.println("----多例："+o);
+			Object o2=site.getService("otherMultitonService");
+			System.out.println("----多例："+o2);
+			System.out.println("----运行时服务："+site.getService("runtime"));
+		}
+	
+	}
+## 使用json声明服务
+
+	1.java文件MyJsonService.java
+	
+	package your.crop.examples.chip2.json;
+	
+	import java.util.List;
+	import java.util.Map;
+	
+	import cj.studio.ecm.IServiceSite;
+	import cj.studio.ecm.adapter.IActuator;
+	import cj.studio.ecm.adapter.IAdaptable;
+	
+	public class MyJsonService implements IJsonService {
+		private Object byBridge;
+		private Object deptment;
+		IServiceSite site;
+		List list;
+		Map map;
+		Object iocByMyValueParser;
+		Object byMethod2;
+		Object byMethod1;
+		public MyJsonService() {
+			// TODO Auto-generated constructor stub
+		}
+		public MyJsonService(int t,IMyJsonBridge b) {
+			System.out.println("----这是json service构造:"+t+"  "+b);
+		}
+		public void test() {
+			IAdaptable a = (IAdaptable) deptment;
+			IActuator act = a.getAdapter(IActuator.class);
+			Object result = act.exeCommand("getUserId", "我吊");
+			System.out.println("deptment.getUserId.." + result);
+			System.out.println("----"+byBridge+" 这是演示json服务调用桥服务");
+			Object obj=newService();
+			System.out.println(obj);
+		}
+	
+		public static IMyJsonBridge newService() {
+			return new MyJsonBridge();
+		}
+	
+		/* (non-Javadoc)
+		 * @see your.crop.examples.chip2.json.IJsonService#newService(java.lang.String)
+		 */
+		@Override
+		public Object newService(String tt) {
+			return new MyJsonBridge();
+		}
+	
+	}
+	MyJsonService.json文件放在同一目录下：
+	//默认:isExoteric=false
+	{
+		"description": "本服务用于XXX，作者",
+		"serviceId": "myJsonService",
+		"class": "",
+		"scope": "singleon",
+		"constructor":"newJsonService",
+		"bridge": {
+			"aspects": "",
+			"isValid": "false"
+		},
+		"properties": [
+			{
+				"name": "deptment",
+				"refByName": "deptment"
+			},
+			{
+				"name": "byBridge",
+				"refByName": "myJsonBridge",
+				"refByBridge": {
+					"useBridge": "auto",
+					"joinpoint": {
+						"aspects": "+myAspect3"
+					}
+				},
+				"invertInjection":"true"
+			},
+			{
+				"name":"list",
+				"parser":"cj.jsonList",
+				"value":["333","$.myAnnoService"]
+			},
+			{
+				"name":"map",
+				"parser":"cj.jsonMap",
+				"value":{"age1":"333","myObject":"$.myAnnoService"}
+			},
+			{
+				"name":"iocByMyValueParser",
+				"parser":"my.objectParser",
+				"value":"new your.crop.examples.chip2.xml.ShowCreateObjectByValueParser();"
+			},
+			{
+				"name":"site",
+				"serviceSite":"true"
+			},{
+				"name":"byMethod2",
+				"refByMethod":"newService2"
+			},{
+				"name":"byMethod1",
+				"refByMethod":"newService"
+			}
+		],
+		"methods": [
+			{
+	    		"alias":"newJsonService",
+	    		"bind":"",
+	    		"argTypes":"int,your.crop.examples.chip2.json.IMyJsonBridge",
+	    		"args":[
+	                {
+	                    "value":"6666"
+	               	},
+	                {
+	                	"ref":"myJsonBridge"
+	               	}
+	           	]
+	    	},{
+	    		"alias":"newService",
+	    		"bind":"newService",
+	    		"argTypes":"",
+	    		"args":[
+	           	],
+	           	"result":{
+	           		"byDefinitionId":"",
+	           		"byDefinitionType":""
+	           	}
+	    	},{
+	    		"alias":"newService2",
+	    		"bind":"newService",
+	    		"argTypes":"java.lang.String",
+	    		"args":[
+	    			{"value":"kiviv"}
+	           	],
+	           	"result":{
+	           		"byDefinitionId":"myJsonBridge",
+	           		"byDefinitionType":""
+	           	}
+	    	},{
+	    		"alias":"newService",
+	    		"bind":"newService",
+	    		"argTypes":"",
+	    		"result":{
+	           		"byDefinitionId":"",
+	           		"byDefinitionType":""
+	           	},
+	    		"args":[
+	           	]
+	    	}
+		]
+	}
+	
+## 使用xml声明服务
+
+1.MyXmlService.java
+
+	package your.crop.examples.chip2.xml;
+	
+	import java.util.List;
+	import java.util.Map;
+	
+	import cj.studio.ecm.IServiceAfter;
+	import cj.studio.ecm.IServiceSite;
+	import your.crop.examples.chip2.anno.InvertInjectionAnnoService;
+	import your.crop.examples.chip2.json.IJsonService;
+	import your.crop.examples.chip2.json.ITest;
+	import your.crop.examples.chip2.json.MyJsonService;
+	
+	public class MyXmlService implements IServiceAfter,ITest/*在服务容器初始化后触发*/, IXmlService{
+		private String name;
+		private Map map;
+		Listlist;
+		ITest service;
+		IJsonService service2;
+		IJsonService service3;
+		InvertInjectionAnnoService invertInjectionAnnoService;
+		Object	iocByMyValueParser;
+		IServiceSite site;
+		public MyXmlService() {
+			// TODO Auto-generated constructor stub
+		}
+		public MyXmlService(int v) {
+			System.out.println(this+" 这是构造注入："+v);
+		}
+		@Override
+		public void onAfter(IServiceSite arg0) {
+			System.out.println("MyXmlService .... 服务容器执行后被触发");
+		}
+		public void test1(String n) {
+			System.out.println("MyXmlService ....演示不必实现ITest接口，只在myaspect1中切入接口即可执行myxmlService.test方法："+n);
+		}
+		/* (non-Javadoc)
+		 * @see your.crop.examples.chip2.xml.IXmlService#getIocByMyValueParser()
+		 */
+		@Override
+		public Object getIocByMyValueParser() {
+			return iocByMyValueParser;
+		}
+		/* (non-Javadoc)
+		 * @see your.crop.examples.chip2.xml.IXmlService#getService()
+		 */
+		@Override
+		public ITest getService() {
+			return service;
+		}
+		/* (non-Javadoc)
+		 * @see your.crop.examples.chip2.xml.IXmlService#getMap()
+		 */
+		@Override
+		public Map getMap() {
+			return map;
+		}
+		/* (non-Javadoc)
+		 * @see your.crop.examples.chip2.xml.IXmlService#getName()
+		 */
+		@Override
+		public String getName() {
+			return name;
+		}
+		/* (non-Javadoc)
+		 * @see your.crop.examples.chip2.xml.IXmlService#getList()
+		 */
+		@Override
+		public List getList() {
+			return list;
+		}
+		/**
+		 * 只能通过属性引用到它时，参数是声明的参数，当直接调用时，参数是调用时指定的参数，但返回的服务的处理是一致的
+		 * @param tt
+		 * @param mm
+		 * @param obj
+		 * @return
+		 */
+		public static Object newService(String tt,String mm,MyJsonService obj) {
+			return new MyJsonService();
+		}
+		//演示非静态方法，静态非静态都一样的
+		/* (non-Javadoc)
+		 * @see your.crop.examples.chip2.xml.IXmlService#newService()
+		 */
+		@Override
+		public IJsonService newService() {
+			return new MyJsonService();
+		}
+	}
+	
+	2.MyXmlService.xml
+	
+	
+	
+	
+		
+		
+		
+		
+		
+			
+			fuck you
+		
+		
+			
+			
+		
+		
+			
+			new your.crop.examples.chip2.xml.ShowCreateObjectByValueParser();
+		
+		
+			
+			
+			{"age1":"333","myObject":"$.myAnnoService"}
+		
+		
+			
+			
+			["333","$.myAnnoService"]	
+	 
+
+
+## web开发使用js作为服务的示例：
 
 	/*
 	 * 说明：
@@ -206,7 +587,118 @@ web开发使用js作为服务的示例：
 	}
 
 
-面向连接编程思想
+## net 通讯开发工具包
+
+摘要：
+   net工具包支持非触接连接基础包，它提供了Graph基类，并提供了WebsiteGraph这种支持web应用的graph。它还提供了通讯能力，实现有：
+- 以netty为基础的nio，支持协议有：udt/tcp/http 
+- 直接以java nio为基础的rio，支持同步和异步，协议有：rio-udt/rio-tcp/rio-http 
+正文： 
+- Graph基类，它是非接触连接的基础类，实现了流式处理 涉及的类有：GraphCreate,IPin,ISink,IPlug等 Graph使用GraphCreate组装一个图，一个图有输入端子和输出端子，这两类端子在Graph外是可见的；还有一种内部端子，在Graph之外不可见。 流的方向性：
+graph.in('input')->graph.sinks->graph.out('output') 
+每个sink对流的处理接口是： 
+public void flow(frame,circuit,plug){ //TODO } 
+其中frame是请求侦，circuit代表一个正在执行的当前回路，即当前执行序。
+plug是将sink插入到pin上时产生的插头，插头具有调度能力，可以主动回馈、跳跃、分支或顺行。插头还有伺服能力，能通过plug.site()获取芯片中的服务和所在graph的相关内容。 
+- WebsiteGraph，它实现了全部的web应用协议，放弃了jsp这种拉圾,对于页面代码再也不用编译。对于页面的逻辑实现，开发者可以用java类开发，也可按jss(是js文件)来开发，也可混合使用。 因此，该组件实现了可以按nodejs语法来写页面。 在使用时，开发者可需从WebsiteGraph派生你的graph，而后声明为cj服务即可。 我们看一个websiteGraph的上下文配置，拿平台的website实现作为案例，其下是其根程序集的上下文：
+
+
+	{
+		entryPoint: {
+			activators: [{
+				name: "服务操作系统启动器",
+				class: "cj.lns.chip.sos.website.ServiceOSActivator",
+				parameters: {}
+			}]
+		},
+		assemblyInfo: {
+			assemblyTitle: "serviceos",
+			assemblyResource: "site=/site;http.root=$(site)/framework;http.jss=$(site)/jss/http;ws.jss=$(site)/jss/ws;resource=/resources",
+			assemblyDescription: "服务操作系统",
+			assemblyConfiguration: "",
+			assemblyCompany: "开发者：cj;研发机构：lns平台部",
+			assemblyProduct: "cj.lns.chip.sos.website",
+			assemblyCopyright: "Copyright 2011",
+			assemblyTrademark: "",
+			assemblyCulture: "",
+			guid: "serviceos",
+			assemblyVersion: "1.0.0.0",
+			assemblyFileVersion: "1.0.0.0",
+			readme: "/readme.txt",
+			assemblyIcon: "plugin-noicon-default.icon"
+		},
+		global: {
+			default: "zh_CN",
+			desc: "如果系统环境要求各芯片采用的语言本芯片没有，则芯片可采用默认语言"
+		},
+		serviceContainer: {
+			name: "netContainer",
+			switchFilter: "off",
+			jss: [{
+				module: "portlets",
+				package: "site.framework.portlets",
+				runtimeHome: "/work/",
+				unzip: "true",
+				searchMode: "link",
+				extName: ".jss.js"
+			}],
+			scans: [{
+				package: "cj.lns.chip.sos.website",
+				extName: ".class|.json|.xml",
+				exoterical: "true"
+			}, {
+				package: "cj.lns.common.sos.website.moduleable",
+				extName: ".class|.json|.xml",
+				exoterical: "true"
+			}]
+	
+		}
+	}
+
+	我们看到，serviceContainer.jss一项声明了jss服务模块。
+	assemblyInfo.assemblyResource指明了web资源位置，其中的ws代表的是http5的websocket的支持
+	
+- nio net 所有nio基于NettyServer和NettyClient类 比如tcp协议，以下是为代码，在使用时根据实际的api来实现：
+
+	TcpNettyServer server=new TcpNettyServer();
+	server.start('localhost','8080');
+	server.buildNetGraph().netoutput().plug('testsink',new ISink(){
+		function flow(frame,circuit,plug){
+			print(frame);
+		}
+	})
+	TcpNettyClient client=new TcpNettyClient();
+	client.connect('localhost','8080',new ICallback(){
+		void build(g){
+		//构建sink链
+		}
+	})
+	//发送请求
+	client.buildNetGraph().netinput().flow(frame,circuit);
+- rio net 所有rio基于BaseClientRIO,BaseServerRIO 比如tcp协议，以下是为代码，在使用时根据实际的api来实现：
+
+	rio net的输入输出端子是电缆线，多通道，其客户端支持连接池，即向同一远程目标可以建立多个连接，默认是1个
+	TcpCjNetServer server=new TcpCjNetServer();
+	server.start('localhost','8080');
+	server.buildNetGraph().netoutput().plug('testsink',new ISink(){
+		function flow(frame,circuit,plug){
+			print(frame);
+		}
+	})
+	TcpCjNetClient client=new TcpCjNetClient();
+	client.connect('localhost','8080',new ICallback(){
+		void build(g){
+		//构建sink链
+		}
+	})
+	//发送请求，默认是异步发送，如果要同步返回，可使用：
+	//frame.head(NetConstans.FRAME_HEADKEY_CIRCUIT_SYNC,'true');
+	//frame.head(NetConstans.FRAME_HEADKEY_CIRCUIT_SYNC_TIMEOUT,'3600');//同步超时时间
+	//frame.head(NetConstans.FRAME_HEADKEY_CIRCUIT_SYNC_TIMEOUT,'3600');//同步超时时间
+	//frame.head(NetConstans.FRAME_HEADKEY_CIRCUIT_ASYNC_TIMEOUT,'1200');//同步等待超时后异步通知超时时间,使用此功能需要在回路中设置回馈点来接收
+	client.buildNetGraph().netinput().flow(frame,circuit);
+
+# 面向连接编程思想
 
 
  关键词：
