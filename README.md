@@ -2,6 +2,14 @@
 
 关键词 keywords：j2ee,java,nodejs,osgi,jsp,struts,spring,spring mvc,mongodb,radis,zookeeper,netty,mina,jetty,tomcat,weblogic,websphere,orm,cloud,nashron,jdk
 
+##ecm 面向连接电子模型开发工具包
+
+一、作为服务容器，对服务定义的支持： 1.支持注解方式 2.支持xml方式 3.支持json方式 4.支持以上混合定义方式 5.支持反向注入 6.支持属性值、方法参数值注入，即便是注入代码段也可 7.支持任意类方法注入（spring仅支持工厂方法，无聊） 8.支持面向方面编程，切面拦截，功能强大，结构简单，甚至支持使用jss服务拦截java方法。简单活用 9.支持按类型搜索服务 10.支持按外部类的类别搜索服务 11.支持适配器对象。适配器对象可转换为任意类型，从而实现了服务的弱类型机制。
+
+二、作为osgi容器，它以程序集（逻辑上叫芯片）作为支点，支持： 1.程序集的加载、启动、停止、卸载。 2.程序集之间的类型依赖及扩展 3.程序集之间的服务实例的强依赖 4.支持外部服务、外部类型，可在程序集外部获取到这些外部组件
+
+三、作为nodejs容器，它拥有类似于nodejs的语法结构，在cj studio产品中均称之为jss服务，它具有： 1.exports导出外部函数（仿nodejs） 2.imports导入程序集及模块环境（能得到服务容器） 3.head对象，每个jss服务以该头对象声明服务 4.支持jss服务与java服务混用 5.支持多线程的jss服务 6.支持以jss开发web程序
+
 	面向连接编程是一个完整的工具体系,从web的mvc到持久层，从开发工具到分布式部署，从本地工具到远程服务容器，一套完整的开发和部署体系，从而可以使用户摆脱那种拼拼补补的开发现状和运维状况。
 	
 面向连接的工具体系的优势在于，在架构层面，比spring更简单易用，比osgi更省事，比nodejs在服务器端的开发更规范，而且与java共生。它支持搭建像神经网络这样的大型分布式运维环境
@@ -11,7 +19,16 @@
 	其中的ecm开发工具包兼有spring、osgi、nodejs的功能。支持面向模块开发与部署，热插拔。 	
 	其中的net开发工具包,支持web的开发，并且可以完全使用js开发web应用，它的语法更接近于流行的nodejs，其它功能包含有基于netty的nio也包含有自行开发的nio框架rio,rio叫响应式nio框架，它即有nio的优势，又有同步等待响应的能力。
 
-示例和第三方开发的开放源码托管到 github, codeproject, sourceforge，oschina, csdn，基本每日更新。
+##面向模块开发
+
+	IAssambly assambly=Assambly.load("/home/cj/test/helloworld.jar");
+	assambly.start();
+	
+	IWorkbin bin=assambly.workbin();
+	IDepartment dept=bin.part('deptment');
+	System.out.println(dept.getName());
+	
+	assambly.close();
 
 ## 使用注解声明服务
 
