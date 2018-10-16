@@ -2,7 +2,7 @@
 
 关键词 keywords：j2ee,java,nodejs,osgi,jsp,struts,spring,spring mvc,mongodb,radis,zookeeper,netty,mina,jetty,tomcat,weblogic,websphere,orm,cloud,nashron,jdk
 
-##ecm 面向连接电子模型开发工具包
+## ecm 面向连接电子模型开发工具包
 
 一、作为服务容器，对服务定义的支持： 1.支持注解方式 2.支持xml方式 3.支持json方式 4.支持以上混合定义方式 5.支持反向注入 6.支持属性值、方法参数值注入，即便是注入代码段也可 7.支持任意类方法注入（spring仅支持工厂方法，无聊） 8.支持面向方面编程，切面拦截，功能强大，结构简单，甚至支持使用jss服务拦截java方法。简单活用 9.支持按类型搜索服务 10.支持按外部类的类别搜索服务 11.支持适配器对象。适配器对象可转换为任意类型，从而实现了服务的弱类型机制。
 
@@ -19,7 +19,7 @@
 	其中的ecm开发工具包兼有spring、osgi、nodejs的功能。支持面向模块开发与部署，热插拔。 	
 	其中的net开发工具包,支持web的开发，并且可以完全使用js开发web应用，它的语法更接近于流行的nodejs，其它功能包含有基于netty的nio也包含有自行开发的nio框架rio,rio叫响应式nio框架，它即有nio的优势，又有同步等待响应的能力。
 
-##面向模块开发
+## 面向模块开发
 
 	IAssambly assambly=Assambly.load("/home/cj/test/helloworld.jar");
 	assambly.start();
