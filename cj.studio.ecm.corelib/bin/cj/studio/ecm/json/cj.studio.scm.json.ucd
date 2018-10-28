@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" size="301,343" id="cj.studio.scm.json" metadata="uml2-1.0" initialized="true" tag="1000" key="32303037303533312D3130303020636A2E73747564696F2E73636D2E636F72656C69622F41646D696E6973747261746F72">
+  <children xsi:type="editmodel:ClassEditModel" name="JsonObjectDeserializer" location="62,62" size="188,67" id="cj.studio.scm.json/JsonObjectDeserializer" runTimeClassModel="deserialize(Lcj.ultimate.gson2.com.google.gson.JsonElement;Ljava.lang.reflect.Type;Lcj.ultimate.gson2.com.google.gson.JsonDeserializationContext;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="82,18">
+      <children xsi:type="editmodel:MethodEditModel" name="deserialize" id="cj.studio.scm.json/JsonObjectDeserializer#deserialize(Lcj.ultimate.gson2.com.google.gson.JsonElement;Ljava.lang.reflect.Type;Lcj.ultimate.gson2.com.google.gson.JsonDeserializationContext;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="JsonReflector" location="153,220" size="128,103" id="cj.studio.scm.json/JsonReflector" runTimeClassModel="JsonReflector(Ljava.io.InputStream;),JsonReflector(Ljava.lang.String;),getContext()">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="97,54">
+      <children xsi:type="editmodel:MethodEditModel" name="JsonReflector" id="cj.studio.scm.json/JsonReflector#JsonReflector(Ljava.io.InputStream;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getContext" id="cj.studio.scm.json/JsonReflector#getContext()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="JsonReflector" id="cj.studio.scm.json/JsonReflector#JsonReflector(Ljava.lang.String;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <diagramOptions xsi:type="options:ClassDiagramOptions" properties="wireOptions=1;Product=eUML2" autoName="false"/>
+  <boardSetting snapToGeometry="true" gridSpacing="15,15" gridOrigin="0,0" rulerUnit="pixel">
+    <leftRuler/>
+    <topRuler/>
+  </boardSetting>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" showPopupBars="true" showConnectionHandles="true" attributeSorter="Natural" methodSorter="Natural" showClassStereotype="true" showPackageStereotype="true" showDependencyStereotype="true" showInterfaceStereotype="true" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+</editmodel:ClassDiagramEditModel>

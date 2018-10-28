@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" name="cj.studio.scm.servicedef" size="941,754" id="." metadata="uml2-1.0" initialized="true" tag="1000" key="32303037303533312D3130303020636A2E73747564696F2E65636D2E636F72656C69622F41646D696E6973747261746F72">
+  <children xsi:type="editmodel:PackageEditModel" name="cj.studio.ecm.mirror" location="209,557" size="162,60" id="cj.studio.ecm.mirror">
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" autoLocated="true" id="cj.studio.ecm.mirror-Soyatec::Import->cj.studio.ecm.flow" source="//@children.0" target="//@children.2" targetEnd="//@children.0/@sourceConnections.0/@children.2" label="//@children.0/@sourceConnections.0/@children.0" sourceEnd="//@children.0/@sourceConnections.0/@children.1" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:WireLabelEditModel" name="«Import»" size="41,14" anchorKind="MiddlePart"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="151,60" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="9,0"/>
+    </sourceConnections>
+  </children>
+  <children xsi:type="editmodel:PackageEditModel" name="cj.studio.ecm.servicedef" location="491,554" size="188,60" id="cj.studio.ecm.servicedef"/>
+  <children xsi:type="editmodel:PackageEditModel" targetConnections="//@children.0/@sourceConnections.0" name="cj.studio.ecm.flow" location="351,674" size="150,60" id="cj.studio.ecm.flow"/>
+  <children xsi:type="editmodel:PackageEditModel" name="cj.studio.ecm.context" location="646,404" size="170,60" id="cj.studio.ecm.context"/>
+  <children xsi:type="editmodel:PackageEditModel" name="cj.studio.ecm.json" location="575,147" size="149,60" id="cj.studio.ecm.json"/>
+  <children xsi:type="editmodel:PackageEditModel" name="cj.studio.ecm.annotation" location="116,152" size="191,60" id="cj.studio.ecm.annotation"/>
+  <children xsi:type="editmodel:PackageEditModel" name="cj.studio.ecm.proxy" location="50,410" size="159,60" id="cj.studio.ecm.proxy"/>
+  <children xsi:type="editmodel:PackageEditModel" name="cj.studio.ecm" location="347,343" size="119,60" id="cj.studio.ecm"/>
+  <diagramOptions xsi:type="options:ClassDiagramOptions" interactive="false" properties="open=cj.studio.scm.servicedef;wireOptions=4;Product=eUML2;displayOptions=1"/>
+  <boardSetting snapToGeometry="true" gridEnabled="true" gridSpacing="15,15" gridOrigin="0,0" rulerUnit="pixel" gridVisibility="false">
+    <leftRuler/>
+    <topRuler/>
+  </boardSetting>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" showPopupBars="true" showConnectionHandles="true" attributeSorter="Natural" methodSorter="Natural" showClassStereotype="true" showPackageStereotype="true" showDependencyStereotype="true" showInterfaceStereotype="true" innerClassSorter="Natural" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3"/>
+</editmodel:ClassDiagramEditModel>

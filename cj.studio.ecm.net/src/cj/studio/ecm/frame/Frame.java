@@ -638,7 +638,7 @@ public class Frame implements IPrinter, IDisposable {
 	}
 
 	/**
-	 * 请求的文件名，不含路径，含扩展名
+	 * 请求的文件名，不含路径，但含扩展名，如：/dir1/dir2.exe，其name为dir2.exe
 	 * 
 	 * <pre>
 	 * 注意：如果文件名中不包含.号，视为目录，当是目录时返回的文件名为空串

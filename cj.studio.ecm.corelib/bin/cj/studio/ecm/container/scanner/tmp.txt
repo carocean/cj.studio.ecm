@@ -1,0 +1,171 @@
+package cj.studio.ecm.container.scanner;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import cj.studio.ecm.ICombinServiceDefinitionStrategy;
+import cj.studio.ecm.IServiceDefinition;
+import cj.studio.ecm.IServiceDefinitionRegistry;
+import cj.studio.ecm.IServiceMetaData;
+import cj.studio.ecm.container.registry.AnnotationServiceDefinition;
+import cj.studio.ecm.container.registry.FieldWrapper;
+import cj.studio.ecm.container.registry.PropertyDescriber;
+import cj.studio.ecm.container.registry.ServiceDescriber;
+import cj.studio.ecm.container.registry.ServiceMethod;
+import cj.studio.ecm.container.registry.ServiceProperty;
+import cj.studio.ecm.container.registry.TypeDescriber;
+import cj.ultimate.collection.ICollection;
+
+public class CombinServiceDefinitionStrategy implements
+		ICombinServiceDefinitionStrategy {
+
+	// 何为相等？只要类型名一致即相等。
+	// 因为：注解生成的类型为所注解的类本身，而JSON/XML要么是修饰的类型，如果为空解析定义时已用JSON文件路径名作为其类名了
+	// 合并器仅用于将不同的解析器所解析的连续的服务定义和元数据合并在一起，它不是用来合并所有相同类型的服务定义的。
+	// 结构：同一类型可能存在三种定义，anno,json,xml，这三种服务除了scope,serviceId不合并之外，其它的描述器均合并，但如果其serviceId相同，则只注册为一个服务定义，而默认优先使用xml/json的scope，如果xml/json的scope不同且都不为空，则服务定义失败
+	// 支持不同serviceId的目的，是为了让用户为一个服务定义多种原型
+
+	@Override
+	public void combinServiceDefinition(IServiceDefinition[] defArr,
+			IServiceMetaData[] mdArr, IServiceDefinitionRegistry registry) {
+		for (int i = 0; i < defArr.length; i++) {
+			IServiceDefinition def = defArr[i];
+			IServiceMetaData md = mdArr[i];
+			if (def == null)
+				continue;
+			String serviceName = def.getServiceDescriber().getServiceId();
+			String className = def.getServiceDescriber().getClassName();
+			// 待合并的集合
+
+			ICollection<String> col = registry.enumServiceDefinitionNames();
+			boolean hasCombine=false;
+			for (String name : col) {
+				IServiceDefinition registedDef = registry
+						.getServiceDefinition(name);
+				IServiceMetaData registedmd = registry.getMetaData(registedDef);
+				// 懒合并算法：找出要合并的不注册它，而是将新的DEF和META合并到注册表中注册的对象上，即变量registedDef上，
+				if (className.equals(registedDef.getServiceDescriber()
+						.getClassName())
+						&& !def.getClass().equals(registedDef.getClass())) {
+					this.combin(registry, registedDef, registedmd, def, md);
+					hasCombine=true;
+					continue;
+				}
+			}
+			//另外要创建混合服务定义类型，否则将JSON注解合并到XML定义下，或其它的服务定义下虽然程序不会有错，但有岐义
+			if (!hasCombine) {
+				registry.registerServiceDefinition(serviceName, def);
+				registry.assignMetaData(def, mdArr[i]);
+			}
+		}
+
+	}
+
+	// 懒合并算法：将from的定义和元数据合并到to上
+	protected void combin(IServiceDefinitionRegistry registry,
+			IServiceDefinition toDef, IServiceMetaData toMd,
+			IServiceDefinition fromDef, IServiceMetaData fromMd) {
+		System.out.println("合并" + toDef.getServiceDescriber().getClassName());
+		int form = toDef.getServiceDescribeForm()
+				| fromDef.getServiceDescribeForm();
+		toDef.setServiceDescribeForm((byte) form);
+		this.combinServiceDefDescriber(registry, toDef,
+				toDef.getServiceDescriber(),
+				(toDef instanceof AnnotationServiceDefinition),
+				toDef.getExtraDescribers(), fromDef.getServiceDescriber(),
+				(fromDef instanceof AnnotationServiceDefinition),
+				fromDef.getExtraDescribers());
+		this.combinDefProperties(toDef.getProperties(), fromDef.getProperties());
+		this.combinDefMethods(toDef.getMethods(), fromDef.getMethods());
+		this.combinMeta(toDef, toMd, fromMd);
+	}
+
+	private void combinMeta(IServiceDefinition toDef, IServiceMetaData toMd,
+			IServiceMetaData fromMd) {
+		if (!toMd.getServiceTypeMeta().equals(fromMd.getServiceTypeMeta()))
+			throw new RuntimeException("元数据不匹配");
+		for (ServiceProperty sp : toDef.getProperties()) {
+			FieldWrapper fwFrom = fromMd.getServicePropMeta(sp);
+			if (fwFrom == null)
+				continue;
+			FieldWrapper fwTo = toMd.getServicePropMeta(sp);
+			if (fwTo == null) {
+				toMd.addServicePropMeta(sp, fwFrom.getField());
+			}
+		}
+	}
+
+	private void combinDefMethods(List<ServiceMethod> methods,
+			List<ServiceMethod> methods2) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void combinDefProperties(List<ServiceProperty> toProps,
+			List<ServiceProperty> fromProps) {
+		List<ServiceProperty> complementSpList = new ArrayList<ServiceProperty>();
+		for (ServiceProperty spTo : toProps) {
+			for (ServiceProperty spFrom : fromProps) {
+				if (spTo.getPropName().equals(spFrom.getPropName())) {// 相等表示要合并其描述器
+					int form = spFrom.getPropDescribeForm()
+							| spTo.getPropDescribeForm();
+					spTo.setPropDescribeForm((byte) form);
+					List<PropertyDescriber> pdList = new ArrayList<PropertyDescriber>();
+					for (PropertyDescriber pdTo : spTo.getPropertyDescribers()) {
+						for (PropertyDescriber pdFrom : spFrom
+								.getPropertyDescribers()) {
+							if (pdTo.getClass().equals(pdFrom.getClass())) {
+								continue;
+							}
+							// 补集
+							pdList.add(pdFrom);
+						}
+					}
+					spTo.getPropertyDescribers().addAll(pdList);
+					continue;
+				}
+				// 补集
+				complementSpList.add(spFrom);
+			}
+		}
+		toProps.addAll(complementSpList);
+	}
+
+	private void combinServiceDefDescriber(IServiceDefinitionRegistry registry,
+			IServiceDefinition def, ServiceDescriber toSd,
+			boolean isAnnotationDefTo, List<TypeDescriber> toExtra,
+			ServiceDescriber fromSd, boolean isAnnotationDefFrom,
+			List<TypeDescriber> fromExtra) {
+		if (toSd.getScope() != fromSd.getScope()) {
+			if (!isAnnotationDefTo && !isAnnotationDefFrom) {
+				throw new RuntimeException("非注解定义的服务的scope不能重复定义");
+			}
+		}
+		String serviceIdTo = toSd.getServiceId();
+		String serviceIdFrom = fromSd.getServiceId();
+		if (!serviceIdTo.equals(serviceIdFrom)) {
+			if (!isAnnotationDefTo && !isAnnotationDefFrom) {
+				throw new RuntimeException("非注解定义的服务的服务ID不能重复定义");
+			}
+		}
+		// 在注册表中去掉已注册的定义，然后用新的ID重新注册
+		registry.removeServiceDefinition(toSd.getServiceId());
+		registry.registerServiceDefinition(fromSd.getServiceId(), def);
+		// 以外部配置的条件为准
+		toSd.setScope(fromSd.getScope());
+		toSd.setDescription(fromSd.getDescription());
+		toSd.setServiceId(fromSd.getServiceId());
+
+		List<TypeDescriber> list = new ArrayList<TypeDescriber>();
+		for (TypeDescriber tdTo : toExtra) {
+			for (TypeDescriber tdFrom : fromExtra) {
+				if (tdTo.getClass().equals(tdFrom.getClass()))
+					continue;
+				list.add(tdFrom);
+			}
+		}
+		if (!list.isEmpty())
+			toExtra.addAll(list);
+	}
+
+}

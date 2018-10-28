@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<logging>
+	<!-- log的调用通过CjSystem.out.error();.info();.debug();将根据国际化代码输出文本 -->
+	<log outter="console" level="info" /><!-- level[fatal0,error1,warn2,info3,debug4,trace5]-->
+	<log outter="file" level="debug" />
+	<outter name="console" class="cj.studio.ecm.logging.ConsoleOutter">
+	</outter>
+	<outter name="file" class="cj.studio.ecm.logging.FileOutter">
+		<prop name="type" value="autocreatepath"></prop><!-- 指定日志文件designatedspot，要有path属性 ,自动在应用根下的logs目录autocreatepath-->
+		<prop name="path" value="app"></prop>
+	</outter>
+</logging>

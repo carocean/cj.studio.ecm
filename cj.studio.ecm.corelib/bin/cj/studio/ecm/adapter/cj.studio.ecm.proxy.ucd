@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" size="536,705" id="cj.studio.ecm.proxy" metadata="uml2-1.0" initialized="true" scrolledY="159" tag="1000" key="32303037303533312D3130303020636A2E73747564696F2E65636D2E636F72656C69622F41646D696E6973747261746F72">
+  <children xsi:type="editmodel:ClassEditModel" name="AdaptableObject" location="50,474" size="185,211" id="cj.studio.ecm.proxy/AdaptableObject" runTimeClassModel="getClosureAdaptableObject(Ljava.lang.Object;),AdaptableObject(),getClosureAdaptableObject(Lcj.studio.ecm.proxy.IAdaptiveInterrupter;),getAdaptableObject(Ljava.lang.Object;),getAdaptableObject(Ljava.lang.Class;Lcj.studio.ecm.proxy.IAdaptiveInterrupter;),isAdaptableObject(Ljava.lang.Object;),getClosureAdaptableObject(Ljava.lang.Object;Lcj.studio.ecm.proxy.IAdaptiveInterrupter;),getAdaptableObject(Ljava.lang.Object;Lcj.studio.ecm.proxy.IAdaptiveInterrupter;),getAdaptableObject(Ljava.lang.Class;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="162,162">
+      <children xsi:type="editmodel:MethodEditModel" name="AdaptableObject" id="cj.studio.ecm.proxy/AdaptableObject#AdaptableObject()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getAdaptableObject" id="cj.studio.ecm.proxy/AdaptableObject#getAdaptableObject(Ljava.lang.Object;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getClosureAdaptableObject" id="cj.studio.ecm.proxy/AdaptableObject#getClosureAdaptableObject(Ljava.lang.Object;Lcj.studio.ecm.proxy.IAdaptiveInterrupter;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getClosureAdaptableObject" id="cj.studio.ecm.proxy/AdaptableObject#getClosureAdaptableObject(Ljava.lang.Object;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getAdaptableObject" id="cj.studio.ecm.proxy/AdaptableObject#getAdaptableObject(Ljava.lang.Class;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="isAdaptableObject" id="cj.studio.ecm.proxy/AdaptableObject#isAdaptableObject(Ljava.lang.Object;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getAdaptableObject" id="cj.studio.ecm.proxy/AdaptableObject#getAdaptableObject(Ljava.lang.Object;Lcj.studio.ecm.proxy.IAdaptiveInterrupter;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getAdaptableObject" id="cj.studio.ecm.proxy/AdaptableObject#getAdaptableObject(Ljava.lang.Class;Ljava.lang.Object;Lcj.studio.ecm.proxy.IAdaptiveInterrupter;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getClosureAdaptableObject" id="cj.studio.ecm.proxy/AdaptableObject#getClosureAdaptableObject(Lcj.studio.ecm.proxy.IAdaptiveInterrupter;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:InterfaceEditModel" name="IActuator" location="330,345" size="118,81" id="cj.studio.ecm.proxy/IActuator" runTimeClassModel="exeCommand(Ljava.lang.String;[Ljava.lang.Object;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="95,18">
+      <children xsi:type="editmodel:MethodEditModel" name="exeCommand" id="cj.studio.ecm.proxy/IActuator#exeCommand(Ljava.lang.String;[Ljava.lang.Object;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:InterfaceEditModel" name="IAdaptable" location="141,50" size="111,81" id="cj.studio.ecm.proxy/IAdaptable" runTimeClassModel="getAdapter(Ljava.lang.Class;),getActuator(Ljava.lang.Class;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="87,18">
+      <children xsi:type="editmodel:MethodEditModel" name="getActuator" id="cj.studio.ecm.proxy/IAdaptable#getActuator(Ljava.lang.Class;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="MirroringResult" location="50,217" size="145,99" id="cj.studio.ecm.mirror/MirroringResult" runTimeClassModel="MirroringResult(Lcj.studio.ecm.prototype.IResponse;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="122,36">
+      <children xsi:type="editmodel:MethodEditModel" name="MirroringResult" id="cj.studio.ecm.mirror/MirroringResult#MirroringResult(Lcj.studio.ecm.prototype.IResponse;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getPrototypeObject" id="cj.studio.ecm.mirror/MirroringResult#getPrototypeObject()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:InterfaceEditModel" name="IAdaptiveInterrupter" location="330,90" size="169,99" id="cj.studio.ecm.proxy/IAdaptiveInterrupter" runTimeClassModel="invoke(Ljava.lang.Object;Ljava.lang.reflect.Method;[Ljava.lang.Object;),initialize(Ljava.lang.Object;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="67,36">
+      <children xsi:type="editmodel:MethodEditModel" name="initialize" id="cj.studio.ecm.proxy/IAdaptiveInterrupter#initialize(Ljava.lang.Object;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="invoke" id="cj.studio.ecm.proxy/IAdaptiveInterrupter#invoke(Ljava.lang.Object;Ljava.lang.reflect.Method;[Ljava.lang.Object;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <diagramOptions xsi:type="options:ClassDiagramOptions" properties="wireOptions=1;Product=eUML2" autoName="false"/>
+  <boardSetting snapToGeometry="true" gridEnabled="true" gridSpacing="15,15" gridOrigin="0,0" rulerUnit="pixel" gridVisibility="false">
+    <leftRuler/>
+    <topRuler/>
+  </boardSetting>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" showPopupBars="true" showConnectionHandles="true" attributeSorter="Natural" methodSorter="Natural" showClassStereotype="true" showPackageStereotype="true" showDependencyStereotype="true" showInterfaceStereotype="true" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+</editmodel:ClassDiagramEditModel>
