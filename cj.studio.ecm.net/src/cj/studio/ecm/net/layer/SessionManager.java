@@ -80,16 +80,6 @@ public class SessionManager implements ISessionManager {
 		return sessions.containsKey(sessionId);
 	}
 
-	@Override
-	public void removeSelectId(String netSourceName, String localAddress,
-			String selid) {
-		for (String key : sessions.keySet()) {
-			ISession s = sessions.get(key);
-			if (netSourceName.equals(s.info().getNetSourceName())) {
-				s.remove(selid);
-			}
-		}
-	}
 
 	@Override
 	public ISession get(String sessionId) {

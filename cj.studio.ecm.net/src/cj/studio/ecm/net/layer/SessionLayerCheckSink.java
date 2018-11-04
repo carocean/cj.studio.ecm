@@ -35,13 +35,6 @@ public class SessionLayerCheckSink implements ISink {
 	public void flow(Frame frame,Circuit circuit, IPlug plug) throws CircuitException {
 		if (frame.protocol().equals("NET/1.1")) {
 			if ("disconnect".equals(frame.command())) {
-				String netSourceName = (String) circuit
-						.attribute("select-name");
-				String selid = (String) circuit.attribute("select-id");
-				String localAddress = (String) circuit
-						.attribute("local-address");
-				sessionManager.removeSelectId(netSourceName, localAddress,
-						selid);
 			}
 			return;
 		}
@@ -88,10 +81,8 @@ public class SessionLayerCheckSink implements ISink {
 					(String) circuit.attribute("remote-address"),
 					(String) circuit.attribute("local-address"));
 			session = sessionManager.genSession(info);
-			session.add((String)circuit.attribute("select-id"));
 			long expire = sessionManager.expire((String) circuit
 					.attribute("select-simple"));
-			CookieHelper.appendCookie(circuit, "CJTOKEN", session.id(), expire);
 //			logger.info(getClass(),"客户端cookie失效，因此产生新session");
 		} else {
 			session = sessionManager.get(cjtoken);
@@ -102,10 +93,9 @@ public class SessionLayerCheckSink implements ISink {
 						(String) circuit.attribute("remote-address"),
 						(String) circuit.attribute("local-address"));
 				session = sessionManager.genSession(info);
-				session.add((String)circuit.attribute("select-id"));
 				long expire = sessionManager.expire((String) circuit
 						.attribute("select-simple"));
-				CookieHelper.appendCookie(circuit, "CJTOKEN", session.id(),
+				CookieHelper.appendCookie(circuit, "CJTOKEN", session.sid(),
 						expire);// 覆盖客户端令牌
 //				logger.info(getClass(),"服务器端会话过期，因此产生新session");
 			}
@@ -124,8 +114,6 @@ public class SessionLayerCheckSink implements ISink {
 			HttpFrame f = (HttpFrame) frame;
 			f.setSession(session);
 		} else {
-			if (!session.exists(sid))
-				session.add(sid);
 			circuit.attribute("session", session);
 		}
 	}
