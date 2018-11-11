@@ -1,0 +1,35 @@
+sourceSets { 
+	 main { 
+	 	java{
+	 		srcDir "$projectDir/src"
+	 	}
+	 	resources{
+		 	srcDir "$projectDir/src"
+		 }
+	 } 
+ 	}
+ 		sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+ 	tasks.withType(JavaCompile) {  
+        options.encoding = "UTF-8"  
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    } 
+ repositories { 
+	 flatDir(dirs: "$projectDir/global/lib") 
+ } 
+ 
+dependencies {
+	compile project(':cj.ultimate')
+	compile project(':cj.studio.ecm.corelib')
+	compile fileTree(dir: '../global/lib', includes: ['*.jar'])
+	compile fileTree(dir: 'libs', includes: ['*.jar'])
+    runtime fileTree(dir: 'libs', includes: ['*.jar'])
+    
+}
+
+task release(type: Copy) {
+     dependsOn "build"
+     from 'build/libs/'
+     into '../examples'
+     include '**/*.jar'
+}

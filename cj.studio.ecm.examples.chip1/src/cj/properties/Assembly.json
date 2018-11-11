@@ -1,0 +1,45 @@
+//assemblyResource配置web资源结构，在程序集的jar中site是是站点的根，在配置源码工程结构时site必须在资源目录下，资源目录可起任何名字，它在打包时并不会生成了jar中，因此上site指定的名字才是真正的资源根。
+//jss.searchMode=link,inner,both,分别代表资源：链接外部资源、jar内、两者都是，默认是二者都是，当二者都是时，会先找外部，再找包内，如果出现重名，则包外有效包内无效。
+//switchfilter用于在jss中拦截java服务，由于要匹配服务请求id，因此损耗性能，switchfilter=on为启用，switchfilter=off为关闭
+//jss 配置中的runtimeHome属性：它用于指定jss运行时的搜索根目录，不指定则采用系统默认，在：/work/modulename下
+{
+	entryPoint : {
+		isStartNet:'true',		
+		activators : []
+	},
+	assemblyInfo : {
+		assemblyTitle : "chip1",
+		assemblyResource:"site=/site;http.root=$(site)/web;http.jss=$(site)/jss/http;ws.jss=$(site)/jss/ws",
+		assemblyDescription : "cj工作室出品，lns平台制造",
+		assemblyConfiguration : "",
+		assemblyCompany : "cj工作室",
+		assemblyProduct : "cj.studio.ecm.examples.chip1",
+		assemblyCopyright : "Copyright   2011",
+		assemblyTrademark : "",
+		assemblyCulture : "",
+		guid : "3AD05D29-80AE-440B-AC52-C9D9150F9797",
+		assemblyVersion : "1.0.0.0",
+		assemblyFileVersion : "1.0.0.0"
+	},
+	global:{
+		default:"zh_CN",
+		desc:"如果系统环境要求各芯片采用的语言本芯片没有，则芯片可采用默认语言"
+		},
+	serviceContainer : {
+		name : "netContainer",
+		switchFilter:"off",
+		jss:[{
+			module:"services1",
+			package:"cj.studio.ecm.examples.chip1.jss",
+			unzip:"true",
+			searchMode:"link",
+			extName:".jss.js"
+		}],
+		scans : [{
+					package : "cj.studio.ecm.examples.chip1",
+					extName : ".class|.json|.xml",
+					exoterical:"true"
+				}]
+
+	}
+}

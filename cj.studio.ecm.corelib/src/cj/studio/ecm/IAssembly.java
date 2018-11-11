@@ -52,6 +52,15 @@ public interface IAssembly {
 	 */
 	void parent(Assembly assembly);
 	/**
+	 * 为程序集提供服务
+	 * <pre>
+	 * - 所提供的服务将作为程序集的运行时服务被使用
+	 * - 此种机制是种懒加载模式，它能在程序集启动时才去获取这些服务
+	 * </pre>
+	 * @param parent
+	 */
+	void parent(IServiceProvider parent);
+	/**
 	 * 依赖程序集，并刷新依赖的程序集和本程序集
 	 * <pre>
 	 * 被依的程序集必须声明为开放类型才可在子程序集中使用。
@@ -71,7 +80,7 @@ public interface IAssembly {
 	 * </pre>
 	 * @param assembly
 	 */
-	void dependency(Assembly assembly);
+	void dependency(IAssembly assembly);
 	//由于依赖后类型会加载到本地资源中，可以用返射ClassLoader基类和JarClassLoader取出资源的集合，并从中仅移除依赖的资源，解除依赖可留待之后在此添加
 	void undependency(Assembly assembly);
 	void load(ClassLoader parent);

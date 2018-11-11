@@ -154,12 +154,8 @@ class JssModule implements IJssModule {
 			log.info(String.format("模块%s的searchMode=inner，虽然配置为解压，但外部jss无效。",
 					name));
 		File f = new File(linkHome);
-		if (f.exists()) {
-			// boolean s = FileHelper.deleteDir(f);
-			// log.info(String.format("清除jss模块目录%s.\r\n\t位置：%s。", s ? "成功" :
-			// "失败",
-			// f));
-			f.mkdir();
+		if (!f.exists()) {
+			f.mkdirs();
 		}
 		try {
 			UnzipUtil.unzip(resource.getResourcefile(), pack,

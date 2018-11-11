@@ -8,8 +8,10 @@ import cj.ultimate.IDisposable;
  * @author Administrator
  *
  */
-public interface IServiceContainer extends IServiceProvider, IServiceDefinitionRegistry,IDisposable {
+public interface IServiceContainer extends IServiceSite, IServiceDefinitionRegistry,IDisposable {
 	IServiceInstanceFactory getServiceInstanceFactory(FactoryType type);
 	void registerServiceInstanceFactory(IServiceInstanceFactory factory);
+	void parent(IServiceProvider parent);
+	
 }
 

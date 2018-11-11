@@ -19,7 +19,6 @@ import cj.studio.ecm.IServiceDefinitionRegistry;
 import cj.studio.ecm.IServiceInstanceFactory;
 import cj.studio.ecm.IServiceMetaData;
 import cj.studio.ecm.IServiceNameGenerator;
-import cj.studio.ecm.IServiceProvider;
 import cj.studio.ecm.IServiceSetter;
 import cj.studio.ecm.IServiceSite;
 import cj.studio.ecm.Scope;
@@ -46,6 +45,7 @@ import cj.studio.ecm.container.describer.ServicePropertyValueDescriber;
 import cj.studio.ecm.container.describer.ServiceRefDescriber;
 import cj.studio.ecm.container.describer.ServiceSiteDescriber;
 import cj.studio.ecm.container.describer.UncertainObject;
+import cj.studio.ecm.context.IModuleContext;
 import cj.studio.ecm.parser.IValueParser;
 import cj.studio.ecm.parser.IValueParserFactory;
 import cj.studio.ecm.weaving.ICanWeavingMethod;
@@ -53,8 +53,7 @@ import cj.ultimate.collection.ICollection;
 import cj.ultimate.util.PrimitiveType;
 import cj.ultimate.util.StringUtil;
 
-public abstract class ServiceInstanceFactory
-		implements IServiceInstanceFactory {
+public abstract class ServiceInstanceFactory implements IServiceInstanceFactory {
 	private IServiceDefinitionRegistry registry;
 	private IServiceNameGenerator nameGenerator;
 	// 或许是java弱引用WeakHashMap
@@ -62,27 +61,20 @@ public abstract class ServiceInstanceFactory
 	// 创建服务实例所对应的服务定义模板,它与服务集合对应，用于追宿实例的定义性质
 	// 实例也可以没有定义
 	private Map<String, String> instIdAndDefIdMap;
-	protected IServiceProvider parent;
 
 	public ServiceInstanceFactory() {
 
 	}
 
 	@Override
-	public void initialize(IServiceDefinitionRegistry registry,
-			IServiceNameGenerator serviceNameGenerator) {
+	public void initialize(IModuleContext context, IServiceNameGenerator serviceNameGenerator) {
 		if (getType() == null)
 			throw new RuntimeException("实例工厂没有指定区间");
-		this.registry = registry;
+		this.registry = context.getRegistry();
 		this.nameGenerator = serviceNameGenerator;
 		this.services = this.createServiceInstanceMap();
 		this.instIdAndDefIdMap = new HashMap<String, String>();
 
-	}
-
-	@Override
-	public void parent(IServiceProvider parentSite) {
-		this.parent = parentSite;
 	}
 
 	@Override
@@ -118,7 +110,7 @@ public abstract class ServiceInstanceFactory
 	protected abstract Map<String, Object> createServiceInstanceMap();
 
 	protected IServiceInstanceFactory findInstanceFactory(FactoryType type) {
-		IServiceContainer container = registry.getOwner();
+		IServiceContainer container = registry.getContainer();
 		return container.getServiceInstanceFactory(type);
 	}
 
@@ -129,89 +121,70 @@ public abstract class ServiceInstanceFactory
 	 * @param meta
 	 * @param service
 	 */
-	protected void onAfterServiceCreated(IServiceDefinition def,
-			IServiceMetaData meta, String serviceInstName, Object service) {
+	protected void onAfterServiceCreated(IServiceDefinition def, IServiceMetaData meta, String serviceInstName,
+			Object service) {
 	}
 
 	@Override
 	public Object getService(String serviceId) {
 		IServiceDefinition def = registry.getServiceDefinition(serviceId);
 		if (def == null) {
-			if (parent != null) {
-				return parent.getService(serviceId);
-			}
 			return null;
 		}
-		if (!def.getServiceDescriber().getScope().name()
-				.equals(this.getType().name())) {
-			if (parent != null) {
-				return parent.getService(serviceId);
-			}
+		if (!def.getServiceDescriber().getScope().name().equals(this.getType().name())) {
 			return null;
 		}
-		// if(services.containsKey(name))
-		// return services.get(name);
 		IServiceMetaData meta = registry.getMetaData(def);
 		if ((def == null) || (meta == null)) {
-			if (parent != null) {
-				return parent.getService(serviceId);
-			}
 			return null;
 		}
-		if (services.containsKey(serviceId))
+		if (services.containsKey(serviceId)) {
 			return services.get(serviceId);
-		else {
-			Object service = this.createNewService(def, meta);
-			Object[] arr = (Object[]) service;
-			service = arr[0];
-			boolean isServiceInited = (boolean) arr[1];
-			// 因为在服务方法执行之后服务已被初始化了
-			if (isServiceInited) {
-				String name = nameGenerator.generateServiceName(def, registry);
-				getServiceInstances().put(name, service);
-			} else {
-				if (service != null) {
-					try {
-						String name = nameGenerator.generateServiceName(def,
-								registry);
-						this.initialService(name, service, def, meta);
-						this.onAfterServiceCreated(def, meta, name, service);
-						services.put(name, service);
-					} catch (Exception e) {
-						throw new RuntimeException(e);
-					}
+		}
+		Object service = this.createNewService(def, meta);
+		Object[] arr = (Object[]) service;
+		service = arr[0];
+		boolean isServiceInited = (boolean) arr[1];
+		// 因为在服务方法执行之后服务已被初始化了
+		if (isServiceInited) {
+			String name = nameGenerator.generateServiceName(def, registry);
+			getServiceInstances().put(name, service);
+		} else {
+			if (service != null) {
+				try {
+					String name = nameGenerator.generateServiceName(def, registry);
+					this.initialService(name, service, def, meta);
+					this.onAfterServiceCreated(def, meta, name, service);
+					services.put(name, service);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
 				}
 			}
-			return service;
 		}
+		return service;
 	}
 
-	protected void initialService(String serviceName, Object service,
-			IServiceDefinition def, IServiceMetaData meta)
-			throws IllegalArgumentException, IllegalAccessException,
-			SecurityException, NoSuchMethodException,
+	protected void initialService(String serviceName, Object service, IServiceDefinition def, IServiceMetaData meta)
+			throws IllegalArgumentException, IllegalAccessException, SecurityException, NoSuchMethodException,
 			InvocationTargetException {
-		IServiceContainer container = this.registry.getOwner();
+		IServiceSite container = this.registry.getOwner();
 		List<ServiceProperty> list = def.getProperties();
 		for (ServiceProperty p : list) {
 			FieldWrapper fw = meta.getServicePropMeta(p);
 			if (fw == null)
-				throw new RuntimeException(String.format("缺少属性%s",
-						meta.getServiceTypeMeta().getName() + "."
-								+ p.getPropName()));
+				throw new RuntimeException(
+						String.format("缺少属性%s", meta.getServiceTypeMeta().getName() + "." + p.getPropName()));
 			Field f = fw.getField();
 			ServiceRefDescriber ref = null;
 			ServiceInvertInjectionDescriber siid = null;
 			ServiceSiteDescriber site = null;
 			ServicePropertyValueDescriber value = null;
-			Iterator<PropertyDescriber> it = p.getPropertyDescribers()
-					.iterator();
+			Iterator<PropertyDescriber> it = p.getPropertyDescribers().iterator();
 			while (it.hasNext()) {
 				PropertyDescriber pd = it.next();
 				if (pd instanceof ServiceRefDescriber) {
 					ref = (ServiceRefDescriber) pd;
-					if (StringUtil.isEmpty(ref.getRefByName())
-							&& StringUtil.isEmpty(ref.getRefByType()))
+					if (StringUtil.isEmpty(ref.getRefByName()) && StringUtil.isEmpty(ref.getRefByType()))
 						ref.setRefByType(fw.getField().getType().getName());
 				} else if (pd instanceof ServiceInvertInjectionDescriber) {
 					siid = (ServiceInvertInjectionDescriber) pd;
@@ -222,70 +195,56 @@ public abstract class ServiceInstanceFactory
 				}
 			}
 			if (ref != null && value != null)
-				throw new RuntimeException(
-						String.format("属性%s的value和ref不能同时使用", p.getPropName()));
+				throw new RuntimeException(String.format("属性%s的value和ref不能同时使用", p.getPropName()));
 			if (siid != null && ref == null)
-				throw new RuntimeException(String
-						.format("属性%s的返向注入必须与ref属性描述器一起使用", p.getPropName()));
+				throw new RuntimeException(String.format("属性%s的返向注入必须与ref属性描述器一起使用", p.getPropName()));
 			if (site != null && (ref != null || value != null || siid != null))
-				throw new RuntimeException(String
-						.format("属性%s的服务站点注入不能与其它属性描述器一起使用", p.getPropName()));
+				throw new RuntimeException(String.format("属性%s的服务站点注入不能与其它属性描述器一起使用", p.getPropName()));
 			Object refService = null;
 			if (ref != null)
-				refService = this.initialServiceRef(service, def, ref, fw,
-						container);
+				refService = this.initialServiceRef(service, def, ref, fw, container);
 			if ((siid != null) && (refService != null))
-				this.initialServiceIID(service, serviceName, siid, f,
-						refService, container);
+				this.initialServiceIID(service, serviceName, siid, f, refService, container);
 			if (value != null)
-				this.initializeServicePropValue(service, def, value, fw,
-						container);
+				this.initializeServicePropValue(service, def, value, fw, container);
 			if ((site != null)) {
 				this.initialServiceSite(service, site, f, container);
 			}
 		}
 		String constructor = def.getServiceDescriber().getConstructor();
-		if (!StringUtil.isEmpty(constructor)
-				&& def.getServiceDescriber().getScope() == Scope.singleon) {
+		if (!StringUtil.isEmpty(constructor) && def.getServiceDescriber().getScope() == Scope.singleon) {
 			List<ServiceMethod> methods = def.getMethods();
 			for (ServiceMethod sm : methods) {
-				if ("<init>".equals(sm.getBind())
-						&& constructor.equals(sm.getBind())) {
+				if ("<init>".equals(sm.getBind()) && constructor.equals(sm.getBind())) {
 					initalizeServiceMethod(service, def, sm);
 				}
 			}
 		}
 	}
 
-	private void initalizeServiceMethod(Object service, IServiceDefinition def,
-			ServiceMethod sm) {
+	private void initalizeServiceMethod(Object service, IServiceDefinition def, ServiceMethod sm) {
 		IServiceMethodInstanceFactory factory = (IServiceMethodInstanceFactory) getContainer()
 				.getServiceInstanceFactory(FactoryType.method);
 		if (factory == null)
 			throw new RuntimeException("容器中缺少服务方法实例工厂");
-		IServiceMethodInitializer smi = factory.getServiceMethodInitializer(def,
-				sm);
+		IServiceMethodInitializer smi = factory.getServiceMethodInitializer(def, sm);
 		if (smi == null)
-			throw new RuntimeException(String.format("方法%s.%s缺少服务初始化器",
-					def.getServiceDescriber().getServiceId(), sm.getAlias()));
+			throw new RuntimeException(
+					String.format("方法%s.%s缺少服务初始化器", def.getServiceDescriber().getServiceId(), sm.getAlias()));
 		smi.invoke(service, MethodMode.self);
 	}
 
-	private void initializeServicePropValue(Object service,
-			IServiceDefinition def, ServicePropertyValueDescriber value,
-			FieldWrapper fw, IServiceContainer container) {
+	private void initializeServicePropValue(Object service, IServiceDefinition def, ServicePropertyValueDescriber value,
+			FieldWrapper fw, IServiceSite container) {
 		IValueParserFactory factory = (IValueParserFactory) container
 				.getService("$." + IValueParserFactory.class.getName());
 		if (StringUtil.isEmpty(value.getParser()))
 			value.setParser("cj.basic");
 		IValueParser parser = factory.getValueParser(value.getParser());
 		if (parser == null)
-			throw new RuntimeException(
-					String.format("属性%s没有指定的解析器", fw.getField().getName()));
-		String propFullName = fw.getField().getDeclaringClass().getName() + "."
-				+ fw.getField().getName();
-		Object realValue = parser.parse(propFullName, value.getValue(),
-				fw.getField().getType(), container);
+			throw new RuntimeException(String.format("属性%s没有指定的解析器", fw.getField().getName()));
+		String propFullName = fw.getField().getDeclaringClass().getName() + "." + fw.getField().getName();
+		Object realValue = parser.parse(propFullName, value.getValue(), fw.getField().getType(), container);
 		Field f = fw.getField();
 		f.setAccessible(true);
 		try {
@@ -303,8 +262,7 @@ public abstract class ServiceInstanceFactory
 		}
 	}
 
-	private Object initialServiceSite(Object service,
-			ServiceSiteDescriber siteDef, Field f, IServiceContainer container)
+	private Object initialServiceSite(Object service, ServiceSiteDescriber siteDef, Field f, IServiceSite container)
 			throws IllegalArgumentException, IllegalAccessException {
 		// Object serviceSite = container.getService("serviceSite");
 		Object serviceSite = container.getService(IServiceSite.class.getName());
@@ -320,10 +278,8 @@ public abstract class ServiceInstanceFactory
 	}
 
 	// 返回引用注解字段所引用的服务的实例
-	private Object initialServiceRef(Object service, IServiceDefinition def,
-			ServiceRefDescriber ref, FieldWrapper fw,
-			IServiceContainer container)
-			throws IllegalArgumentException, IllegalAccessException {
+	private Object initialServiceRef(Object service, IServiceDefinition def, ServiceRefDescriber ref, FieldWrapper fw,
+			IServiceSite container) throws IllegalArgumentException, IllegalAccessException {
 		Field f = fw.getField();
 		String serviceId = ref.getRefByName();// id为空则以类型查找
 		Class<?> serviceClazz = fw.getRefType();
@@ -342,16 +298,14 @@ public abstract class ServiceInstanceFactory
 			// 通过ID和方法引用优先于类型引用
 			if ((refservice == null) && !StringUtil.isEmpty(methodAlias)) {
 				// IServiceMetaData meta = registry.getMetaData(def);
-				refservice = this.initRefServiceMethod(def, serviceId, service,
-						methodAlias, container);
+				refservice = this.initRefServiceMethod(def, serviceId, service, methodAlias, container);
 			} else if (serviceClazz != UncertainObject.class) {// 没有ID也没有方法引用，而使用refType
 				// 如果指定了引用的服务类型，则在现有的实例工厂的集合中搜索,注意，按类型查找不会强制引用对象的初始化，只是在现有的服务中查找，因此在其它服务未加载完之前，可能导致符合类型查找不全。
 				// 因此是个bugger，应在服务容器加载完毕，对服务进行合并操作时为它赋值
 				ServiceCollection<?> col = container.getServices(serviceClazz);
 				refservice = col;
 				if (col.isEmpty())
-					refservice = container
-							.getService("$." + serviceClazz.getName());
+					refservice = container.getService("$." + serviceClazz.getName());
 			} else {// 即没ID也无指定方法和类型
 				// 则按字段名作为要引用的服务名（服务名与字节名必须相同）
 				// 按字段的当前类型来取
@@ -382,8 +336,7 @@ public abstract class ServiceInstanceFactory
 				Object realService = pt.unWrapper();// 因为对方是桥，为了不代理多层，在真实对象上再生成桥，这样实际上引用的服务像是多实例的，但其真实代理（如果是单例模式）则是唯一的。
 				IBridgeable b = null;
 				if (realService instanceof IAdaptable) {
-					b = ((IAdaptable) realService)
-							.getAdapter(IBridgeable.class);
+					b = ((IAdaptable) realService).getAdapter(IBridgeable.class);
 				} else {
 					b = a.getAdapter(IBridgeable.class);//
 				}
@@ -464,9 +417,8 @@ public abstract class ServiceInstanceFactory
 			Class<?> colType = f.getType();
 			if (!ICollection.class.isAssignableFrom(colType)) {
 				if (col.size() > 1) {
-					throw new EcmException(
-							"使用serviceRef的byType注解，所修饰的属性如果超过1个元素，则必须是ICollection或其派生类。"
-									+ serviceClazz + "." + f.getName());
+					throw new EcmException("使用serviceRef的byType注解，所修饰的属性如果超过1个元素，则必须是ICollection或其派生类。" + serviceClazz
+							+ "." + f.getName());
 				} else {
 					refservice = col.get(0);
 				}
@@ -483,8 +435,8 @@ public abstract class ServiceInstanceFactory
 		return refservice;
 	}
 
-	protected ServiceMethod getRefMethod(Class<?> propOnServiceType,
-			IServiceDefinition methodOnSD, String methodAlias) {
+	protected ServiceMethod getRefMethod(Class<?> propOnServiceType, IServiceDefinition methodOnSD,
+			String methodAlias) {
 		ServiceMethod sm = null;
 		for (ServiceMethod s : methodOnSD.getMethods()) {
 			if (methodAlias.equals(s.getAlias())) {
@@ -502,10 +454,8 @@ public abstract class ServiceInstanceFactory
 					String serviceId = rmd.getByDefinitionId();
 					String type = rmd.getByDefinitionType();
 					// 如果都为空则返回类型必须是当前服务类型,然而当前服务的属性通过当前服务的方法的返回值注入，其返回值类型不能为当前服务类型，否则陷入死循环
-					if (StringUtil.isEmpty(serviceId)
-							&& StringUtil.isEmpty(type)) {
-						serviceId = methodOnSD.getServiceDescriber()
-								.getServiceId();
+					if (StringUtil.isEmpty(serviceId) && StringUtil.isEmpty(type)) {
+						serviceId = methodOnSD.getServiceDescriber().getServiceId();
 					}
 					// －－－－－－－开始注释掉returnType
 					// Class<?> returnType = null;
@@ -561,9 +511,8 @@ public abstract class ServiceInstanceFactory
 		return null;
 	}
 
-	private Object initRefServiceMethod(IServiceDefinition def,
-			String serviceId, Object propOnService, String methodAlias,
-			IServiceContainer container) {
+	private Object initRefServiceMethod(IServiceDefinition def, String serviceId, Object propOnService,
+			String methodAlias, IServiceSite container) {
 		IServiceMethodInstanceFactory factory = (IServiceMethodInstanceFactory) getContainer()
 				.getServiceInstanceFactory(FactoryType.method);
 		if (factory == null)
@@ -573,8 +522,7 @@ public abstract class ServiceInstanceFactory
 		ServiceMethod sm = null;
 		Class<?> propOnServiceType = propOnService.getClass();
 		// id为空或者引用的ID为服务自身表示引用当前服务内的方法
-		if (StringUtil.isEmpty(serviceId) || (def.getServiceDescriber()
-				.getServiceId().equals(serviceId))) {
+		if (StringUtil.isEmpty(serviceId) || (def.getServiceDescriber().getServiceId().equals(serviceId))) {
 			methodOnSD = def;
 			sm = getRefMethod(propOnServiceType, methodOnSD, methodAlias);
 			serviceId = def.getServiceDescriber().getServiceId();
@@ -582,13 +530,11 @@ public abstract class ServiceInstanceFactory
 		} else {
 			methodOnSD = this.getRegistry().getServiceDefinition(serviceId);
 			sm = getRefMethod(propOnServiceType, methodOnSD, methodAlias);
-			if (!"<init>".equals(sm.getBind())
-					&& !StringUtil.isEmpty(sm.getBind())) {
+			if (!"<init>".equals(sm.getBind()) && !StringUtil.isEmpty(sm.getBind())) {
 				service = container.getService(serviceId);
 				if (service == null) {
 					throw new EcmException(String.format("当前服务%s调用服务%s.%s方法失败。",
-							def.getServiceDescriber().getServiceId(), serviceId,
-							methodAlias));
+							def.getServiceDescriber().getServiceId(), serviceId, methodAlias));
 				}
 			}
 		}
@@ -596,33 +542,27 @@ public abstract class ServiceInstanceFactory
 		if (methodOnSD == null || sm == null)
 			return null;
 		Object returnService = null;
-		IServiceMethodInitializer smi = factory
-				.getServiceMethodInitializer(methodOnSD, sm);
+		IServiceMethodInitializer smi = factory.getServiceMethodInitializer(methodOnSD, sm);
 		if (smi == null)
-			throw new EcmException(String.format("方法%s.%s缺少服务初始化器",
-					methodOnSD.getServiceDescriber().getServiceId(),
-					sm.getAlias()));
-		try{
-		returnService = smi.invoke(service, MethodMode.ref);
-		}catch(Exception e){
-			CJSystem.current().environment().logging().error(getClass(),String.format("方法:%s.%s, 原因：%s",
-					methodOnSD.getServiceDescriber().getServiceId(),
-					sm.getAlias(),e));
+			throw new EcmException(
+					String.format("方法%s.%s缺少服务初始化器", methodOnSD.getServiceDescriber().getServiceId(), sm.getAlias()));
+		try {
+			returnService = smi.invoke(service, MethodMode.ref);
+		} catch (Exception e) {
+			CJSystem.current().environment().logging().error(getClass(), String.format("方法:%s.%s, 原因：%s",
+					methodOnSD.getServiceDescriber().getServiceId(), sm.getAlias(), e));
 			throw new EcmException(e);
 		}
 		return returnService;
 	}
 
 	// 初始化反向注入服务
-	private void initialServiceIID(Object service, String serviceName,
-			ServiceInvertInjectionDescriber siid, Field f, Object iidService,
-			IServiceContainer container) throws IllegalArgumentException,
-			IllegalAccessException, SecurityException, NoSuchMethodException,
-			InvocationTargetException {
+	private void initialServiceIID(Object service, String serviceName, ServiceInvertInjectionDescriber siid, Field f,
+			Object iidService, IServiceSite container) throws IllegalArgumentException, IllegalAccessException,
+			SecurityException, NoSuchMethodException, InvocationTargetException {
 		if (!(iidService instanceof IServiceSetter))
 			throw new RuntimeException("反向注入需实现IServiceSetter接口:" + iidService);
-		Method meth = iidService.getClass().getMethod("setService",
-				String.class, Object.class);
+		Method meth = iidService.getClass().getMethod("setService", String.class, Object.class);
 		meth.invoke(iidService, serviceName, service);
 	}
 
@@ -639,8 +579,7 @@ public abstract class ServiceInstanceFactory
 	}
 
 	private void setMethodFactory(Class<?> st)
-			throws NoSuchFieldException, SecurityException,
-			IllegalArgumentException, IllegalAccessException {
+			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		IServiceContainer container = (IServiceContainer) registry;
 		IServiceMethodInstanceFactory factory = (IServiceMethodInstanceFactory) container
 				.getServiceInstanceFactory(FactoryType.method);
@@ -660,8 +599,7 @@ public abstract class ServiceInstanceFactory
 	 * @param meta
 	 * @return
 	 */
-	protected Object createNewService(IServiceDefinition def,
-			IServiceMetaData meta) {
+	protected Object createNewService(IServiceDefinition def, IServiceMetaData meta) {
 		if (meta == null)
 			return null;
 
@@ -671,44 +609,35 @@ public abstract class ServiceInstanceFactory
 				return null;
 			Object service = null;
 			Class<?> serviceType = meta.getServiceTypeMeta();
-			boolean isWeaving = ICanWeavingMethod.class
-					.isAssignableFrom(serviceType);
+			boolean isWeaving = ICanWeavingMethod.class.isAssignableFrom(serviceType);
 			boolean isServiceInited = false;
 			if (isWeaving) {
 				setMethodFactory(serviceType);
 			}
-			String constructorAlias = def.getServiceDescriber()
-					.getConstructor();
+			String constructorAlias = def.getServiceDescriber().getConstructor();
 			if (StringUtil.isEmpty(constructorAlias)) {
 				service = meta.getServiceTypeMeta().newInstance();
 			} else {
 
 				ServiceMethod sm = findMethod(def, constructorAlias);
 				if (sm == null)
-					throw new EcmException(String.format(
-							"在服务%s头中指定的构造函数别名为%s不存在，请检查它是否是一个构造函数的别名",
-							def.getServiceDescriber().getServiceId(),
-							def.getServiceDescriber().getConstructor()));
+					throw new EcmException(String.format("在服务%s头中指定的构造函数别名为%s不存在，请检查它是否是一个构造函数的别名",
+							def.getServiceDescriber().getServiceId(), def.getServiceDescriber().getConstructor()));
 				if ("<init>".equals(sm.getBind())) {// 使用构造
 					String[] arr = sm.getParameterTypeNames();
 					Class<?>[] newArr = new Class<?>[arr.length];
 					for (int i = 0; i < arr.length; i++) {
 						String p = arr[i];
-						Class<?> cp = PrimitiveType.convert(p,
-								getContainer().getResource().getClassLoader());
+						Class<?> cp = PrimitiveType.convert(p, getContainer().getResource().getClassLoader());
 						newArr[i] = cp;
 					}
-					Constructor<?> constructor = meta.getServiceTypeMeta()
-							.getConstructor(newArr);
+					Constructor<?> constructor = meta.getServiceTypeMeta().getConstructor(newArr);
 					for (MethodDescriber md : sm.getMethodDescribers()) {
 						if (md instanceof ParametersMehtodDescriber) {
 							ParametersMehtodDescriber pmd = (ParametersMehtodDescriber) md;
 							if (pmd.getLength() != newArr.length)
-								throw new RuntimeException(String.format(
-										"服务%s中定义的构造%s的参数数目和实际构造的参数数目不一致",
-										def.getServiceDescriber()
-												.getServiceId(),
-										sm.getAlias()));
+								throw new RuntimeException(String.format("服务%s中定义的构造%s的参数数目和实际构造的参数数目不一致",
+										def.getServiceDescriber().getServiceId(), sm.getAlias()));
 							Object[] values = new Object[pmd.getLength()];
 							for (int j = 0; j < pmd.getLength(); j++) {
 								String mode = pmd.getInjectMode(j);
@@ -718,8 +647,7 @@ public abstract class ServiceInstanceFactory
 								} else if ("value".equals(mode)) {
 									String value = pmd.getArgDesc(j);
 									Class<?> c = newArr[j];
-									Object obj = PrimitiveType.convert(c,
-											value);
+									Object obj = PrimitiveType.convert(c, value);
 									values[j] = obj;
 								}
 							}
@@ -727,8 +655,7 @@ public abstract class ServiceInstanceFactory
 								service = constructor.newInstance(values);
 							} catch (Exception e) {
 								throw new EcmException(
-										String.format("指定构造创建服务时出错，在：%s，原因：%s",
-												constructor.toString(), e));
+										String.format("指定构造创建服务时出错，在：%s，原因：%s", constructor.toString(), e));
 							}
 							break;
 						}
@@ -738,25 +665,19 @@ public abstract class ServiceInstanceFactory
 					Class<?>[] newArr = new Class<?>[arr.length];
 					for (int i = 0; i < arr.length; i++) {
 						String p = arr[i];
-						Class<?> cp = PrimitiveType.convert(p,
-								getContainer().getResource().getClassLoader());
+						Class<?> cp = PrimitiveType.convert(p, getContainer().getResource().getClassLoader());
 						newArr[i] = cp;
 					}
-					Method constructor = meta.getServiceTypeMeta()
-							.getMethod(constructorAlias, newArr);
+					Method constructor = meta.getServiceTypeMeta().getMethod(constructorAlias, newArr);
 					if (!Modifier.isStatic(constructor.getModifiers())) {
-						throw new EcmException(String.format("方法：%s 必须声名为静态方法",
-								constructor.toString()));
+						throw new EcmException(String.format("方法：%s 必须声名为静态方法", constructor.toString()));
 					}
 					for (MethodDescriber md : sm.getMethodDescribers()) {
 						if (md instanceof ParametersMehtodDescriber) {
 							ParametersMehtodDescriber pmd = (ParametersMehtodDescriber) md;
 							if (pmd.getLength() != newArr.length)
-								throw new EcmException(String.format(
-										"服务%s中定义的静态方法:%s的参数数目和实际构造的参数数目不一致",
-										def.getServiceDescriber()
-												.getServiceId(),
-										sm.getAlias()));
+								throw new EcmException(String.format("服务%s中定义的静态方法:%s的参数数目和实际构造的参数数目不一致",
+										def.getServiceDescriber().getServiceId(), sm.getAlias()));
 							Object[] values = new Object[pmd.getLength()];
 							for (int j = 0; j < pmd.getLength(); j++) {
 								String mode = pmd.getInjectMode(j);
@@ -766,8 +687,7 @@ public abstract class ServiceInstanceFactory
 								} else if ("value".equals(mode)) {
 									String value = pmd.getArgDesc(j);
 									Class<?> c = newArr[j];
-									Object obj = PrimitiveType.convert(c,
-											value);
+									Object obj = PrimitiveType.convert(c, value);
 									values[j] = obj;
 								}
 							}
@@ -817,8 +737,7 @@ public abstract class ServiceInstanceFactory
 				continue;
 			ServiceDescriber sd = def.getServiceDescriber();
 			try {
-				Class<?> sclass = Class.forName(sd.getClassName(), true,
-						registry.getResource().getClassLoader());
+				Class<?> sclass = Class.forName(sd.getClassName(), true, registry.getResource().getClassLoader());
 				if (serviceClazz.isAssignableFrom(sclass)) {
 					T obj = (T) getService(sd.getServiceId());
 					if (obj == null)
@@ -838,7 +757,9 @@ public abstract class ServiceInstanceFactory
 	protected void dispose(boolean disposing) {
 		if (disposing) {
 			this.registry = null;
-			this.services.clear();
+			if (services != null) {
+				this.services.clear();
+			}
 		}
 	}
 

@@ -1,6 +1,7 @@
 package cj.studio.ecm;
 
 import cj.studio.ecm.container.factory.FactoryType;
+import cj.studio.ecm.context.IModuleContext;
 import cj.ultimate.IDisposable;
 
 /**
@@ -16,16 +17,15 @@ public interface IServiceInstanceFactory extends IServiceProvider,IDisposable {
 	String getDefinitionNameOfInstance(String instanceName);
 	@Override
 	public Object getService(String serviceId);
-	public void parent(IServiceProvider parent);
 
 	@Override
 	public <T> ServiceCollection<T> getServices(Class<T> serviceClazz);
 
 	/**
 	 * 初始化实例工厂。
-	 * @param registry 注册表
+	 * @param context 上下文
 	 * @param serviceNameGenerator 服务名生成器，它用来为服务实例生成名字，它在上下文刷新时为各服务实例工厂分配，以便统一为各工厂中的实例命名。
 	 */
-	void initialize(IServiceDefinitionRegistry registry, IServiceNameGenerator serviceNameGenerator);
+	void initialize(IModuleContext context, IServiceNameGenerator serviceNameGenerator);
 	void refresh();
 }

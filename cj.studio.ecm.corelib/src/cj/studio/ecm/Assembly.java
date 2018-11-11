@@ -8,6 +8,7 @@ import java.util.List;
 import cj.studio.ecm.annotation.CjExotericalType;
 import cj.studio.ecm.context.Element;
 import cj.studio.ecm.context.IElement;
+import cj.studio.ecm.context.IExotericalServiceSite;
 import cj.studio.ecm.context.IModuleContext;
 import cj.studio.ecm.context.INode;
 import cj.studio.ecm.context.IProperty;
@@ -54,7 +55,7 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 
 	protected IResource createResource(ClassLoader parent) {
 		// ***********以下恢复线程上下文加载器
-		if(parent!=null){
+		if (parent != null) {
 			Thread.currentThread().setContextClassLoader(parent);
 			JarClassLoader loader = new JarClassLoader(parent);
 			SystemResource sr = new SystemResource(loader);
@@ -70,14 +71,12 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 		SystemResource sr = new SystemResource(loader);
 		/*
 		 * 这一行不能带啊，如果带了将在反复启动缺载时出大问题.
-		 * 因为：当程序集第一次运行时，将当前程序集的类装载器设为当前线程的上下文，此后关闭，而当前线程的类加载器还是当前已关闭程序集的。
-		 * 当第二次运行时
+		 * 因为：当程序集第一次运行时，将当前程序集的类装载器设为当前线程的上下文，此后关闭，而当前线程的类加载器还是当前已关闭程序集的。 当第二次运行时
 		 * ，由于上面两行代码的作用，将当前线程的程序集又作为当前程序集的父，即先前关闭的程序集加载器为当前程序集类加载器的父集了，故事出现同一类冲突
 		 * 。因此必须注释掉。
 		 * 
-		 * ＃注意：
-		 * 当注释掉之后，脚本引擎scriptContainer虽然传入了自定义类加载器，但仍不起作用，可能是以当前线程上下文的加载器也有关系，因此导致在jss中获取不到自定义的java类型
-		 * 所以现改为：在此赋予线程上下文，而在stop方法里恢复线程上下文。如果不恢复则导致以上描述的问题。
+		 * ＃注意： 当注释掉之后，脚本引擎scriptContainer虽然传入了自定义类加载器，但仍不起作用，可能是以当前线程上下文的加载器也有关系，
+		 * 因此导致在jss中获取不到自定义的java类型 所以现改为：在此赋予线程上下文，而在stop方法里恢复线程上下文。如果不恢复则导致以上描述的问题。
 		 * 
 		 * 目前：同时也在scriptContainer.engine()方法中为线程上下文赋了资原加载器。实际上此步多余，但为了保障起见。
 		 */
@@ -236,21 +235,20 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 
 	@Override
 	public void load(ClassLoader parent) {
-		if ((state == null) || state == AssemblyState.inited
-				|| (state == AssemblyState.unloaded)) {
+		if ((state == null) || state == AssemblyState.inited || (state == AssemblyState.unloaded)) {
 			if ((state == null) || state == AssemblyState.unloaded) {
 				init(parent);
 			}
-			// this.moduleContext.refresh();
-			// this.workbin = this.createWorkBin(moduleContext);
 
 			state = AssemblyState.loaded;
 		}
 	}
+
 	@Override
 	public void load() {
 		load(null);
 	}
+
 	@Override
 	public void unload() {
 		this.dispose(true);
@@ -283,9 +281,8 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 	/**
 	 * 新建程序集
 	 * 
-	 * @param file
-	 *            such as c:/temp/assembly1.jar#cj.properties.Assembly.json<br>
-	 *            如果省略了#号，则在默认的位置找，asembly1.jar中的cj.properties下搜Assembly.json
+	 * @param file such as c:/temp/assembly1.jar#cj.properties.Assembly.json<br>
+	 *             如果省略了#号，则在默认的位置找，asembly1.jar中的cj.properties下搜Assembly.json
 	 * @return
 	 */
 	public static Assembly loadAssembly(String file) {
@@ -294,15 +291,15 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 		assembly.load();
 		return assembly;
 	}
+
 	/**
 	 * 新建程序集
 	 * 
-	 * @param file
-	 *            such as c:/temp/assembly1.jar#cj.properties.Assembly.json<br>
-	 *            如果省略了#号，则在默认的位置找，asembly1.jar中的cj.properties下搜Assembly.json
+	 * @param file such as c:/temp/assembly1.jar#cj.properties.Assembly.json<br>
+	 *             如果省略了#号，则在默认的位置找，asembly1.jar中的cj.properties下搜Assembly.json
 	 * @return
 	 */
-	public static Assembly loadAssembly(String file,ClassLoader parent) {
+	public static Assembly loadAssembly(String file, ClassLoader parent) {
 		Assembly assembly = new Assembly(file);
 		// assembly.init();
 		assembly.load(parent);
@@ -325,27 +322,21 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 	// 如果程序集已被装载，则调用refresh()刷新程序集，以使得类型重新装载
 	// @@@@遵循有限开放类型的原则，可使得开发者定义开放给别的芯片的包或指定类型或自定匹配
 	@Override
-	public void dependency(Assembly assembly) {
+	public void dependency(IAssembly assembly) {
 		// 注意：moduleContext.refresh的反复调用或start可能会导致容器加载多次，使得服务被反复创建。因此如之后修改此处代码时一定要修后测试以验证新的改动没有产生这个问题
 		// 是否被重复加载，一可将断点设在moduleContext.refresh内，二可以新建一个非代理和桥的普通服务，在其构造中打印，如果是一次输出则没问题。
-		resource.dependency(assembly.resource);
-		// moduleContext.refresh();
-		if (assembly.state() != AssemblyState.actived) {
-			assembly.start();
+		Assembly another = (Assembly) assembly;
+		resource.dependency(another.resource);
+		if (another.state() != AssemblyState.actived) {
+			another.start();
 		}
-		// if (this.state != AssemblyState.actived) {
-		// this.start();
-		// }
-		/*else {
-			moduleContext.refresh();
-		}*/
-		IDownriverPipeline parentpipeline = (IDownriverPipeline) assembly.moduleContext
-				.getService(IDownriverPipeline.class.getName());
-		IDownriverPipeline thispipeline = (IDownriverPipeline) moduleContext
-				.getService(IDownriverPipeline.class.getName());
-		// IExotericServiceFinder thisfinder=(IExotericServiceFinder)
-		// moduleContext.getService(IExotericServiceFinder.class.getName());
-		parentpipeline.addExotericServiceFinder(thispipeline.getOwner());
+		IExotericalServiceSite exoSite=(IExotericalServiceSite)another.moduleContext.getDownSite();
+		exoSite.setExotericalServiceProvider(moduleContext.getDownSite());
+		//$.exoteric.service.finder
+		Object finder=exoSite.getService("$.exoteric.service.finder");
+		if(finder!=null) {
+			another.moduleContext.getCoreSite().addService("$.exoteric.service.finder", finder);
+		}
 	}
 
 	@Override
@@ -354,31 +345,25 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 		if (assembly.state != AssemblyState.actived) {
 			assembly.start();
 		}
-		this.moduleContext.parent(assembly.moduleContext.getSite());
+		this.moduleContext.parent(assembly.moduleContext.getDownSite());
+	}
+
+	@Override
+	public void parent(IServiceProvider parent) {
+		this.moduleContext.parent(parent);
 	}
 
 	// 解除依赖
 	public void undependency(Assembly assembly) {
-		// this.stop();
-		// assembly.stop();
 		// 由于依赖后类型会加载到本地资源中，可以用返射ClassLoader基类和JarClassLoader取出资源的集合，并从中仅移除依赖的资源，解除依赖可留待之后在此添加
 		// 可以在JarClassLoader.dispose方法中反射基类中的类型集合以撤底消毁加载器的资源
 		resource.undependency(assembly.resource);
 		moduleContext.refresh();
-		IDownriverPipeline parentpipeline = (IDownriverPipeline) assembly.moduleContext
-				.getService(IDownriverPipeline.class.getName());
-		IDownriverPipeline thispipeline = (IDownriverPipeline) moduleContext
-				.getService(IDownriverPipeline.class.getName());
-		parentpipeline.removeExotericServiceFinder(thispipeline.getOwner());
-
-		// this.stop();
-		// this.start();
 	}
 
 	@Override
 	public IWorkbin workbin() {
-		if ((state == null) || ((state != AssemblyState.actived)
-				&& (state != AssemblyState.loaded)))
+		if ((state == null) || ((state != AssemblyState.actived) && (state != AssemblyState.loaded)))
 			throw new RuntimeException("程序集未启动，且服务容器未激活");
 		return workbin;
 	}
@@ -401,12 +386,6 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 				load();
 			}
 			this.moduleContext.refresh();
-			IServiceSite site = this.moduleContext.getSite();
-			// site.removeService("$.cj.studio.AssemblyDependency");
-			site.addService("$.cj.studio.ecm.AssemblyDependency",
-					new AssemblyDependency());
-			// 创建工具箱
-			// this.workbin = this.createWorkBin(moduleContext);
 			if (getEntryPoint() != null) {
 				this.entryPoint.start(assemblyContext);
 			}
@@ -422,24 +401,18 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 
 	@Override
 	public void stop() {
-		if ((state != AssemblyState.inactived)
-				&& (state != AssemblyState.unloaded)) {
-			// this.undependency(this);
+		if ((state != AssemblyState.inactived) && (state != AssemblyState.unloaded)) {
 			if (this.entryPoint != null)
 				this.entryPoint.stop(assemblyContext);
 			this.moduleContext.dispose();
 			// ***********以下恢复线程上下文加载器
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-			while ((cl instanceof IResource)
-					|| (cl instanceof JarClassLoader)) {
+			while ((cl instanceof IResource) || (cl instanceof JarClassLoader)) {
 				cl = cl.getParent();
 			}
 			Thread.currentThread().setContextClassLoader(cl);
 			// ********end
 			this.state = AssemblyState.inactived;
-			// this.resource.dispose();
-			// this.resource=null;
-			// this.moduleContext=null;
 		}
 	}
 
@@ -474,9 +447,9 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 
 		@Override
 		public IChipInfo chipInfo() {
-			IChipInfo info = (ChipInfo) moduleContext
-					.getService(IChipInfo.class.getName());
-			return info;
+			// 不经过getDownSite()直接取出
+			IChip chip = (IChip) moduleContext.getService(IChip.class.getName());
+			return chip.info();
 		}
 
 		@Override
@@ -497,59 +470,25 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 
 		@Override
 		public Object part(String name) {
-			IDownriverPipeline pl = (IDownriverPipeline) moduleContext
-					.getService(IDownriverPipeline.class.getName());
-			IExotericServiceFinder finder = pl.getOwner();
-			IServiceProvider sp = finder.getLocalExotericServiceProvider();
+			IServiceProvider sp = moduleContext.getDownSite();
 			Object service = sp.getService(name);
 			if (service != null)
 				return service;
-			if(IChipInfo.class.getName().equals(name)||String.format("$.%s", IChip.class.getName()).equals(
-					name)){
-				service = moduleContext.getService(name);
+			if (IChipInfo.class.getName().equals(name)) {
+				service = moduleContext.getDownSite().getService(name);
 			}
 			return service;
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public <T> ServiceCollection<T> part(Class<T> type) {
-			IDownriverPipeline pl = (IDownriverPipeline) moduleContext
-					.getService(IDownriverPipeline.class.getName());
-			IExotericServiceFinder finder = pl.getOwner();
-			IServiceProvider sp = finder.getLocalExotericServiceProvider();
+			IServiceProvider sp = moduleContext.getDownSite();
 			ServiceCollection<T> services = sp.getServices(type);
 			if (services != null && !services.isEmpty())
 				return services;
 
-			if (IChipInfo.class.isAssignableFrom(type)
-					|| IExotericServiceFinder.class.isAssignableFrom(type)) {
-				services = moduleContext.getServices(type);
-				return services;
-			}
-			if (IResource.class.isAssignableFrom(type)) {
-
-				ServiceCollection<IResource> col = new ServiceCollection<IResource>(
-						new IResource[] { resource });
-				return (ServiceCollection<T>) col;
-			}
 			return services;
 		}
-
-		// @Override
-		// public IChipInfo getChipInfo() {
-		// IChipInfo chip = (IChipInfo) moduleContext
-		// .getService(IChipInfo.class.getName());
-		// return chip;
-		// }
-		// @Override
-		// public <T> T getUniquePart(Class<T> type) {
-		// ICollection<T> col = this.getPart(type);
-		// if (!col.isEmpty()) {
-		// return col.get(0);
-		// }
-		// return null;
-		// }
 
 	}
 
@@ -564,61 +503,26 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 		@Override
 		public void start(IAssemblyContext ctx) {
 			IModuleContext mc = Assembly.this.moduleContext;
-			ServiceCollection<IEntryPointActivator> col = mc
-					.getServices(IEntryPointActivator.class);
+			ServiceCollection<IEntryPointActivator> col = mc.getServices(IEntryPointActivator.class);
 			for (IEntryPointActivator a : col) {
-				IElement args=new  Element("parameters");
+				IElement args = new Element("parameters");
 				a.activate((IServiceSite) mc, args);
 				this.activators.add(a);
 			}
-			IElement entryPoint = (IElement) ctx.getElement()
-					.getNode("entryPoint");
-			// String isServerStart = entryPoint.getNode("isStartNet") != null ?
-			// ((IProperty) entryPoint
-			// .getNode("isStartNet")).getValue().getName() : null;
-			// if (StringUtil.isEmpty(isServerStart))
-			// isServerStart = "true";
-//			this.activators = new ArrayList<IEntryPointActivator>();
-			// if ("true".equals(isServerStart)) {
-			// ServerManager sm = new ServerManager();
-			// sm.activate((IServiceSite) mc);
-			// activators.add(sm);
-			// /*
-			// * 注意：如果一个程序集a内直接启动另一个程序集b，且a,b之间通过网络连接，b是a的服务器，由于均是通过程序集入口点激活连接，
-			// * b的服务可能启动到a请求连接之后，因此会报错。 在需要建立连接时，调用其connectServers方法
-			// */
-			// ClientManager cm = new ClientManager();
-			// cm.activate((IServiceSite) mc);
-			// activators.add(cm);
-			//
-			// AssemblyNetGraphActivator anga = new AssemblyNetGraphActivator();
-			// anga.activate((IServiceSite) mc);
-			// activators.add(anga);
-			// }
+			IElement entryPoint = (IElement) ctx.getElement().getNode("entryPoint");
 			// 以下激活第三方活动器
 			IElement activators = (IElement) entryPoint.getNode("activators");
 			if (activators != null) {
 				try {
 					for (String activatorName : activators.enumNodeNames()) {
-						IElement activator = (IElement) activators
-								.getNode(activatorName);
-						String activator_class = ((IProperty) activator
-								.getNode("class")).getValue().getName();
-						Class<?> clazz = Class.forName(activator_class, true,
-								(ClassLoader) resource);
+						IElement activator = (IElement) activators.getNode(activatorName);
+						String activator_class = ((IProperty) activator.getNode("class")).getValue().getName();
+						Class<?> clazz = Class.forName(activator_class, true, (ClassLoader) resource);
 						Object obj = clazz.newInstance();
 						IEntryPointActivator a = (IEntryPointActivator) obj;
-						IElement args = (IElement) activator
-								.getNode("parameters");
+						IElement args = (IElement) activator.getNode("parameters");
 						a.activate((IServiceSite) mc, args);
 						this.activators.add(a);
-						// IElement
-						// parameters=(IElement)activator.getNode("parameters");
-						// for(String argName:parameters.enumNodeNames()){
-						// IProperty
-						// argValue=(IProperty)parameters.getNode(argName);
-						// String value=argValue.getValue().getName();
-						// }
 					}
 				} catch (Exception e) {
 					throw new RuntimeException(e);
@@ -637,53 +541,4 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 
 	}
 
-	class AssemblyDependency implements IAssemblyDependency {
-		@Override
-		public String assemblyGuid() {
-			return getGuid();
-		}
-
-		@Override
-		public String assemblyHome() {
-			return home();
-		}
-
-		@Override
-		public IChipInfo current() {
-			return (IChipInfo) moduleContext
-					.getService("$.cj.studio.ecm.IChipInfo");
-		}
-
-		@Override
-		public IAssembly assembly() {
-			return Assembly.this;
-		}
-
-		@Override
-		public void dependency(Assembly child) {
-			child.resource.dependency(resource);
-			if (child.state != AssemblyState.actived) {
-				child.start();
-			}
-			IDownriverPipeline parentpipeline = (IDownriverPipeline) moduleContext
-					.getService(IDownriverPipeline.class.getName());
-			IDownriverPipeline thispipeline = (IDownriverPipeline) child.moduleContext
-					.getService(IDownriverPipeline.class.getName());
-			parentpipeline.addExotericServiceFinder(thispipeline.getOwner());
-
-		}
-
-		@Override
-		public void undependency(Assembly child) {
-			child.resource.undependency(resource);
-			child.moduleContext.refresh();
-			IDownriverPipeline parentpipeline = (IDownriverPipeline) moduleContext
-					.getService(IDownriverPipeline.class.getName());
-			IDownriverPipeline thispipeline = (IDownriverPipeline) child.moduleContext
-					.getService(IDownriverPipeline.class.getName());
-			parentpipeline.removeExotericServiceFinder(thispipeline.getOwner());
-			// child.stop();
-			// child.start();
-		}
-	}
 }

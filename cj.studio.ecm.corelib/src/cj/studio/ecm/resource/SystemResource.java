@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 
 import cj.studio.ecm.EcmException;
-import cj.studio.ecm.IUpriverPipeline;
+import cj.studio.ecm.IExotericalResourcePipeline;
 import cj.studio.ecm.domain.AbstractDomain;
 import cj.studio.ecm.domain.ChipDomain;
 import cj.studio.ecm.domain.DomainTypeFactory;
@@ -26,7 +26,7 @@ import cj.ultimate.util.FileHelper;
 public class SystemResource extends JarClassLoader implements IResource,
 		IRuntimeBoundary {
 	private List<String> resourceNames;
-	private IUpriverPipeline pipeline;
+	private IExotericalResourcePipeline pipeline;
 	private ClassLoader jdkLoader;
 	// 仅仅存放那些有静态服务方法类型，因为这些类型需要被代理
 	private ServiceTypeWeaverChain weaverChain;
@@ -45,7 +45,7 @@ public class SystemResource extends JarClassLoader implements IResource,
 	}
 
 	@Override
-	public IUpriverPipeline getPipeline() {
+	public IExotericalResourcePipeline getPipeline() {
 		return pipeline;
 	}
 
@@ -275,7 +275,7 @@ public class SystemResource extends JarClassLoader implements IResource,
 
 	// 由ModuleSite初始化它，因为只有模块站点才知道如何定义其资源的加载顺序
 	@Override
-	public void setPipeline(IUpriverPipeline pipeline) {
+	public void setPipeline(IExotericalResourcePipeline pipeline) {
 		this.pipeline = pipeline;
 	}
 

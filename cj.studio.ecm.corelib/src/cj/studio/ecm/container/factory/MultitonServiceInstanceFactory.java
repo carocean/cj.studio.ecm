@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import cj.studio.ecm.IServiceDefinition;
-import cj.studio.ecm.IServiceDefinitionRegistry;
 import cj.studio.ecm.IServiceMetaData;
 import cj.studio.ecm.IServiceNameGenerator;
 import cj.studio.ecm.Scope;
@@ -13,6 +12,7 @@ import cj.studio.ecm.container.describer.PropertyDescriber;
 import cj.studio.ecm.container.describer.ServiceDescriber;
 import cj.studio.ecm.container.describer.ServiceInvertInjectionDescriber;
 import cj.studio.ecm.container.describer.ServiceProperty;
+import cj.studio.ecm.context.IModuleContext;
 import cj.ultimate.collection.ICollection;
 
 //多例工厂与动态工厂的差别在于，前者从服务定义生成实例，后者是运行时由开发者动态添加到容器中
@@ -35,10 +35,10 @@ public class MultitonServiceInstanceFactory extends ServiceInstanceFactory {
 	}
 
 	@Override
-	public void initialize(IServiceDefinitionRegistry registry,
+	public void initialize(IModuleContext context,
 			IServiceNameGenerator serviceNameGenerator) {
 		// TODO Auto-generated method stub
-		super.initialize(registry, serviceNameGenerator);
+		super.initialize(context, serviceNameGenerator);
 		this.multitonServiceDefinitonMap = searchMultitonServiceDefinitons();
 		this.serviceNameGenerator = serviceNameGenerator;
 	}
@@ -153,7 +153,7 @@ public class MultitonServiceInstanceFactory extends ServiceInstanceFactory {
 			return null;
 
 		IServiceMetaData meta = getRegistry().getMetaData(def);
-		if ((def == null) || (meta == null))
+		if (meta == null)
 			return null;
 		Object service = this.createNewService(def, meta);
 		Object[] arr = (Object[]) service;
@@ -180,17 +180,6 @@ public class MultitonServiceInstanceFactory extends ServiceInstanceFactory {
 		}
 		return service;
 	}
-//基类中已改，它会调用本类中的getService方法
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public <T> ServiceCollection<T> getServices(Class<T> serviceClazz) {
-//		List<T> list = new ArrayList<T>();
-//		for (Object service : this.multitonServiceDefinitonMap.values()) {
-//			if (serviceClazz.isInstance(service)) {
-//				list.add((T) service);
-//			}
-//		}
-//		return new ServiceCollection<T>(list);
-//	}
+
 
 }

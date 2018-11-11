@@ -17,10 +17,7 @@ import cj.studio.ecm.IAssemblyContext;
 import cj.studio.ecm.IChip;
 import cj.studio.ecm.IChipInfo;
 import cj.studio.ecm.ICombinServiceDefinitionStrategy;
-import cj.studio.ecm.IDownriverPipeline;
-import cj.studio.ecm.IExotericServiceFinder;
-import cj.studio.ecm.IPipeline;
-import cj.studio.ecm.IRuntimeServiceInstanceFactory;
+import cj.studio.ecm.IExotericalResourcePipeline;
 import cj.studio.ecm.IServiceAfter;
 import cj.studio.ecm.IServiceContainer;
 import cj.studio.ecm.IServiceDefinition;
@@ -34,11 +31,9 @@ import cj.studio.ecm.IServiceNameGenerator;
 import cj.studio.ecm.IServiceProvider;
 import cj.studio.ecm.IServiceSite;
 import cj.studio.ecm.IServiceTypeWeaver;
-import cj.studio.ecm.IUpriverPipeline;
-import cj.studio.ecm.IValve;
 import cj.studio.ecm.Scope;
 import cj.studio.ecm.ServiceCollection;
-import cj.studio.ecm.container.ServiceConainer;
+import cj.studio.ecm.container.ServiceContainer;
 import cj.studio.ecm.container.describer.ServiceDescriber;
 import cj.studio.ecm.container.factory.IServiceMethodInstanceFactory;
 import cj.studio.ecm.container.factory.MultitonServiceInstanceFactory;
@@ -54,10 +49,7 @@ import cj.studio.ecm.container.resolver.XmlServiceMetaDataResolver;
 import cj.studio.ecm.container.scanner.CombinServiceDefinitionStrategy;
 import cj.studio.ecm.container.scanner.ServiceDefinitionScanner;
 import cj.studio.ecm.container.scanner.ServiceMetaDataCompiler;
-import cj.studio.ecm.context.pipeline.ExotericServiceFinder;
-import cj.studio.ecm.context.pipeline.ExotericServicePipeline;
-import cj.studio.ecm.context.pipeline.ExotericalTypePipeline;
-import cj.studio.ecm.context.pipeline.LocalExotericServiceProvider;
+import cj.studio.ecm.context.pipeline.ExotericalResourcePipeline;
 import cj.studio.ecm.resource.IResource;
 import cj.studio.ecm.script.IScriptContainer;
 import cj.studio.ecm.script.JssServiceInstanceFactory;
@@ -69,37 +61,114 @@ import cj.studio.ecm.weaving.ServiceTypeWeaverChain;
 import cj.ultimate.collection.ICollection;
 import cj.ultimate.util.StringUtil;
 
-public class ModuleSite implements IServiceProvider, IModuleContext,
-		IServiceSite {
+public class ModuleSite implements IModuleContext, IServiceSite {
 	private IServiceContainer container;
 	private IChipInfo chipInfo;
 	private IAssemblyContext context;
-	private IRuntimeServiceInstanceFactory runtimeServiceInstanceFactory;
-	private IServiceSite serviceSite;
-	private IUpriverPipeline upriverPipeline;
-	private IDownriverPipeline downriverPipeline;
+	private IExotericalResourcePipeline exotericalResourcePipeline;
+	private IServiceProvider downServiceSite;
 	private IServiceNameGenerator nameGenerator;
-	private IServiceProvider parent;
 	private IScriptContainer scriptContainer;
+	private IServiceSite delegateSite;// 开发给芯片内的开发者
+	private IServiceSite coreSite;// 系统级服务容器
 
 	public ModuleSite(IAssemblyContext context) {
 		init(context);
 	}
 
-	public ModuleSite(IAssemblyContext context, IServiceSite parent) {
-		init(context);
-		this.parent = parent;
-	}
-
 	protected void init(IAssemblyContext context) {
-		this.container = new ServiceConainer(context.getResource());
-		this.scriptContainer = this.createScriptContainer(context.getResource()
-				.getClassLoader());
+		this.container = new ServiceContainer(this);
+		this.scriptContainer = this.createScriptContainer(context.getResource().getClassLoader());
 		this.context = context;
 		// 一个模块站点关联一个资源引用的策略
-		upriverPipeline = this.createUpriverPipeline(context.getResource());
-		downriverPipeline = this.createDownriverPipeline();
-		// nameGenerator = new ServiceInstanceNameGenerator();
+		exotericalResourcePipeline = this.createExotericalResourcePipeline(context.getResource());
+		downServiceSite = this.createDownriverServiceSite(this);
+		coreSite = new CoreSite();
+	}
+
+	@Override
+	public IServiceDefinitionRegistry getRegistry() {
+		return container;
+	}
+
+	@Override
+	public IServiceSite getCoreSite() {
+		return coreSite;
+	}
+
+	@Override
+	public IServiceSite getDelegateSite() {
+		if (delegateSite == null) {
+			this.delegateSite = new DelegateSite();
+		}
+		return delegateSite;
+	}
+
+	@Override
+	public IServiceProvider getDownSite() {
+		return downServiceSite;
+	}
+
+	// 给所有实例工厂调用
+	@Override
+	public Object getService(String serviceId) {
+		Object service = coreSite.getService(serviceId);
+		if (service != null) {
+			return service;
+		}
+
+		return container.getService(serviceId);
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public <T> ServiceCollection<T> getServices(Class<T> serviceClazz) {
+		ServiceCollection<T> col1 = coreSite.getServices(serviceClazz);
+
+		if (IChipInfo.class.isAssignableFrom(serviceClazz)) {
+			IChipInfo[] arr = new IChipInfo[] { chipInfo };
+			return new ServiceCollection(arr);
+		}
+		ServiceCollection<T> col2 = container.getServices(serviceClazz);
+		if (col1.isEmpty()) {
+			return col2;
+		}
+		if (col2.isEmpty()) {
+			return col1;
+		}
+		List<T> list = col2.asList();
+		list.addAll(col1.asList());
+		return new ServiceCollection<>(list);
+	}
+
+	@Override
+	public void addService(Class<?> clazz, Object service) {
+		container.addService(clazz, service);
+	}
+
+	@Override
+	public void addService(String serviceName, Object service) {
+		container.addService(serviceName, service);
+	}
+
+	@Override
+	public void removeService(Class<?> clazz) {
+		container.removeService(clazz);
+	}
+
+	@Override
+	public void removeService(String serviceName) {
+		container.removeService(serviceName);
+	}
+
+	@Override
+	public String getProperty(String key) {
+		return container.getProperty(key);
+	}
+
+	@Override
+	public String[] enumProperty() {
+		return container.enumProperty();
 	}
 
 	protected IScriptContainer createScriptContainer(ClassLoader cl) {
@@ -113,21 +182,16 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 	}
 
 	@Override
-	public void parent(IServiceProvider parent) {
-		this.parent = parent;
+	public final void parent(IServiceProvider parent) {
+		container.parent(parent);
 	}
 
-	private IDownriverPipeline createDownriverPipeline() {
-		LocalExotericServiceProvider lp = new LocalExotericServiceProvider(
-				container);
-		ExotericServiceFinder owner = new ExotericServiceFinder(lp);
-		ExotericServicePipeline pipeline = new ExotericServicePipeline(owner);
-		return pipeline;
+	protected IServiceProvider createDownriverServiceSite(IServiceProvider down) {
+		return new ExotericalServiceSite(down);
 	}
 
 	@Override
 	public IAssemblyContext getAssemblyContext() {
-		// TODO Auto-generated method stub
 		return context;
 	}
 
@@ -136,84 +200,8 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 		return new GenericChipInfo(this);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public <T> ServiceCollection<T> getServices(Class<T> serviceClazz) {
-		if (IChipInfo.class.isAssignableFrom(serviceClazz)) {
-			IChipInfo[] arr = new IChipInfo[] { chipInfo };
-			return new ServiceCollection(arr);
-		}
-		if (IDownriverPipeline.class.isAssignableFrom(serviceClazz))
-			return new ServiceCollection(
-					new IDownriverPipeline[] { downriverPipeline });
-		return this.container.getServices(serviceClazz);
-	}
-
-	@Override
-	public String[] enumProperty() {
-		return context.enumProperty();
-	}
-
-	@Override
-	public String getProperty(String key) {
-		return context.getProperty(key);
-	}
-
-	@Override
-	public Object getService(String serviceId) {
-		if (IScriptContainer.class.getName().equals(serviceId)) {
-			return scriptContainer;
-		}
-		if (IChip.class.getName().equals(serviceId)
-				|| String.format("$.%s", IChip.class.getName()).equals(
-						serviceId)) {
-			if (chipInfo == null)
-				chipInfo = createChipInfo();
-			return new MyChip();
-		}
-		
-		if (("$." + IChipInfo.class.getName()).equals(serviceId)
-				|| IChipInfo.class.getName().equals(serviceId)
-				|| (chipInfo != null && chipInfo.getId().equals(serviceId))) {
-			if (chipInfo == null) {
-				chipInfo = createChipInfo();
-				return chipInfo;
-			}
-			return chipInfo;
-		}
-		if(IResource.class.getName().equals(serviceId)){
-			return this.container.getResource();
-		}
-		if (IDownriverPipeline.class.getName().equals(serviceId))
-			return downriverPipeline;
-		return this.container.getService(serviceId);
-	}
-
-	@Override
-	public void addService(Class<?> clazz, Object service) {
-		this.runtimeServiceInstanceFactory.addService(clazz, service);
-	}
-
-	@Override
-	public void removeService(Class<?> clazz) {
-		// TODO Auto-generated method stub
-		this.runtimeServiceInstanceFactory.removeService(clazz);
-	}
-
-	@Override
-	public void addService(String serviceName, Object service) {
-		// TODO Auto-generated method stub
-		this.runtimeServiceInstanceFactory.addService(serviceName, service);
-	}
-
-	@Override
-	public void removeService(String serviceName) {
-		// TODO Auto-generated method stub
-		this.runtimeServiceInstanceFactory.removeService(serviceName);
-	}
-
-	protected IUpriverPipeline createUpriverPipeline(IResource resource) {
-		return new ExotericalTypePipeline(resource);
+	protected IExotericalResourcePipeline createExotericalResourcePipeline(IResource resource) {
+		return new ExotericalResourcePipeline(resource);
 	}
 
 	@Override
@@ -221,8 +209,7 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 		this.container.dispose();
 		nameGenerator = new ServiceInstanceNameGenerator();
 		IResource resource = context.getResource();
-		IServiceDefinitionScanner scanner = new ServiceDefinitionScanner(
-				this.container, resource);
+		IServiceDefinitionScanner scanner = new ServiceDefinitionScanner(this.container, resource);
 		AnnotationServiceDefinitionResolver annotationDSresolve = new AnnotationServiceDefinitionResolver();
 		IServiceDefinitionResolver jsonDSresolver = new JsonServiceDefinitionResolver();
 		IServiceDefinitionResolver xmlDsResolver = new XmlServiceDefinitionResolver();
@@ -239,12 +226,9 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 		IElement[] scans = this.context.getScans();
 		Map<String, Boolean> exotericalMap = new HashMap<String, Boolean>();
 		for (IElement e : scans) {
-			String pack = ((IProperty) e.getNode("package")).getValue()
-					.getName();
-			String extNames = ((IProperty) e.getNode("extName")).getValue()
-					.getName();
-			String exoterical = ((IProperty) e.getNode("exoterical"))
-					.getValue().getName();
+			String pack = ((IProperty) e.getNode("package")).getValue().getName();
+			String extNames = ((IProperty) e.getNode("extName")).getValue().getName();
+			String exoterical = ((IProperty) e.getNode("exoterical")).getValue().getName();
 			if ("true".equals(exoterical)) {
 				exotericalMap.put(pack, true);
 			}
@@ -275,12 +259,12 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 		// 设置开放类
 		for (String etn : map.keySet()) {
 			Boolean isPackage = map.get(etn);
-			upriverPipeline.addExotericalTypeName(etn, isPackage);
+			exotericalResourcePipeline.addExotericalTypeName(etn, isPackage);
 		}
 		// 释放到临时类加载器
 		annotationDSresolve.dispose();
 		IServiceMethodInstanceFactory methodFactory = new ServiceMethodInstanceFactory();
-		methodFactory.initialize(container, this.nameGenerator);
+		methodFactory.initialize(this, this.nameGenerator);
 		methodFactory.refresh();
 		container.registerServiceInstanceFactory(methodFactory);
 		IServiceMetaDataCompiler compiler = new ServiceMetaDataCompiler();
@@ -296,39 +280,34 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 		weaverlist.add(adapterWeaver);
 		weaverlist.add(methodWeaver);
 		weaverlist.add(bridgeWeaver);
-		ServiceTypeWeaverChain weaverChain = new ServiceTypeWeaverChain(
-				weaverlist);
+		ServiceTypeWeaverChain weaverChain = new ServiceTypeWeaverChain(weaverlist);
 		compiler.setWeaverChain(weaverChain);
 		compiler.compile();
 		compiler.dispose();
+
 		this.registerAndRefreshInstanceFactories();
+
 	}
 
 	protected void registerAndRefreshInstanceFactories() {
-		runtimeServiceInstanceFactory = new RuntimeServiceInstanceFactory();
-		runtimeServiceInstanceFactory.parent(parent);
-		IServiceInstanceFactory singleon = new SingleonServiceInstanceFactory(
-				this.getSite());
-		singleon.parent(parent);
+		IServiceInstanceFactory runtime = new RuntimeServiceInstanceFactory();
+		IServiceInstanceFactory singleon = new SingleonServiceInstanceFactory();
 		IServiceInstanceFactory multiton = new MultitonServiceInstanceFactory();
-		multiton.parent(parent);
 		IServiceInstanceFactory jss = new JssServiceInstanceFactory();
-		jss.parent(this);
 
 		this.container.registerServiceInstanceFactory(singleon);
 		this.container.registerServiceInstanceFactory(multiton);
-		this.container
-				.registerServiceInstanceFactory(runtimeServiceInstanceFactory);
+		this.container.registerServiceInstanceFactory(runtime);
 		this.container.registerServiceInstanceFactory(jss);
 
-		singleon.initialize(container, nameGenerator);
-		multiton.initialize(container, nameGenerator);
-		runtimeServiceInstanceFactory.initialize(this.container, nameGenerator);
-		jss.initialize(null, nameGenerator);
+		singleon.initialize(this, nameGenerator);
+		multiton.initialize(this, nameGenerator);
+		runtime.initialize(this, nameGenerator);
+		jss.initialize(this, nameGenerator);
 
 		singleon.refresh();
 		multiton.refresh();
-		runtimeServiceInstanceFactory.refresh();
+		runtime.refresh();
 		jss.refresh();
 		// 合并或组建组件
 		try {
@@ -347,8 +326,7 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 	 * @throws IllegalArgumentException
 	 * @throws SecurityException
 	 */
-	protected void combineParts() throws SecurityException,
-			IllegalArgumentException, NoSuchFieldException,
+	protected void combineParts() throws SecurityException, IllegalArgumentException, NoSuchFieldException,
 			IllegalAccessException, ClassNotFoundException {
 
 		// Field contextField = Pin.class.getDeclaredField("_site");
@@ -356,22 +334,11 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 
 		chipInfo = createChipInfo();
 		// 开放给容器内部使用，这样在服务定义中可见
-		this.addService(IChipInfo.class, chipInfo);
+		this.container.addService(IChipInfo.class, chipInfo);
 		ICollection<IServiceAfter> col = this.getServices(IServiceAfter.class);
 		for (IServiceAfter a : col) {
-			a.onAfter(serviceSite);
+			a.onAfter(getDelegateSite());
 		}
-	}
-
-	@Override
-	public IServiceSite getSite() {
-		if (this.serviceSite == null)
-			this.serviceSite = this.createServiceSite();
-		return this.serviceSite;
-	}
-
-	protected IServiceSite createServiceSite() {
-		return new ServiceSite();
 	}
 
 	protected void dispose(boolean isDisposing) {
@@ -379,13 +346,12 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 			this.container.dispose();
 			// this.context = null;
 			this.nameGenerator = null;
-			if (runtimeServiceInstanceFactory != null)
-				this.runtimeServiceInstanceFactory.dispose();
-			this.upriverPipeline.dispose();
+			this.exotericalResourcePipeline.dispose();
 			// this.runtimeServiceInstanceFactory = null;
-			this.serviceSite = null;
 			this.chipInfo = null;
-			this.downriverPipeline.dispose();
+			this.delegateSite = null;
+			this.scriptContainer = null;
+			this.coreSite = null;
 		}
 	}
 
@@ -396,105 +362,13 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
 		this.dispose(true);
 	}
 
-	// 给站点提供开放服务的搜索方法
-	private class SiteExotericServiceFiner implements IExotericServiceFinder {
+	private class ServiceDefinitionNameGenerator implements IServiceNameGenerator {
 
 		@Override
-		public IPipeline getPipeline() {
-			// TODO Auto-generated method stub
-			return new IPipeline() {
-
-				@Override
-				public IValve getOwner() {
-					// TODO Auto-generated method stub
-					return SiteExotericServiceFiner.this;
-				}
-			};
-		}
-
-		@Override
-		public IServiceProvider getLocalExotericServiceProvider() {
-			LocalExotericServiceProvider p = new LocalExotericServiceProvider(
-					container);
-			return p;
-		}
-
-		@Override
-		public <T> ServiceCollection<T> getExotericServices(
-				Class<T> serviceClazz) {
-			return downriverPipeline.getExotericServices(serviceClazz);
-		}
-	};
-
-	private class ServiceSite implements IServiceSite {
-		private IExotericServiceFinder finder;
-
-		public ServiceSite() {
-			finder = new SiteExotericServiceFiner();
-		}
-
-		public String getProperty(String key) {
-			return ModuleSite.this.getProperty(key);
-		}
-
-		public String[] enumProperty() {
-			return ModuleSite.this.enumProperty();
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public <T> ServiceCollection<T> getServices(Class<T> serviceClazz) {
-			if (IExotericServiceFinder.class.isAssignableFrom(serviceClazz)) {
-				List<T> list = new ArrayList<T>();
-				list.add((T) finder);
-				return new ServiceCollection<T>(list);
-			}
-			return ModuleSite.this.getServices(serviceClazz);
-		}
-
-		@Override
-		public Object getService(String serviceId) {
-			if (IExotericServiceFinder.class.getName().equals(serviceId))
-				return finder;
-			return ModuleSite.this.getService(serviceId);
-		}
-
-		@Override
-		public void addService(Class<?> clazz, Object service) {
-			// TODO Auto-generated method stub
-			ModuleSite.this.addService(clazz, service);
-		}
-
-		@Override
-		public void removeService(Class<?> clazz) {
-			// TODO Auto-generated method stub
-			ModuleSite.this.removeService(clazz);
-		}
-
-		@Override
-		public void addService(String serviceName, Object service) {
-			// TODO Auto-generated method stub
-			ModuleSite.this.addService(serviceName, service);
-		}
-
-		@Override
-		public void removeService(String serviceName) {
-			// TODO Auto-generated method stub
-			ModuleSite.this.removeService(serviceName);
-		}
-
-	}
-
-	private class ServiceDefinitionNameGenerator implements
-			IServiceNameGenerator {
-
-		@Override
-		public String generateServiceName(IServiceDefinition definition,
-				IServiceDefinitionRegistry registry) {
+		public String generateServiceName(IServiceDefinition definition, IServiceDefinitionRegistry registry) {
 			ServiceDescriber sd = definition.getServiceDescriber();
 			String id = sd.getServiceId();
 			if ((null == id) || "".equals(id)) {
@@ -504,10 +378,8 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 			}
 			if (registry.isServiceNameInUse(id)) {
 				IServiceDefinition old = registry.getServiceDefinition(id);
-				throw new EcmException(String.format(
-						"已存在服务ID:%s,冲突class:%s与class:%s", id,
-						sd.getClassName(), old.getServiceDescriber()
-								.getClassName()));
+				throw new EcmException(String.format("已存在服务ID:%s,冲突class:%s与class:%s", id, sd.getClassName(),
+						old.getServiceDescriber().getClassName()));
 			}
 			return id;
 		}
@@ -523,8 +395,7 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 		}
 
 		@Override
-		public String generateServiceName(IServiceDefinition definition,
-				IServiceDefinitionRegistry registry) {
+		public String generateServiceName(IServiceDefinition definition, IServiceDefinitionRegistry registry) {
 			// IServiceContainer container = registry.getOwner();
 
 			String name = "";
@@ -577,36 +448,30 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 
 		@Override
 		public String getCompany() {
-			// TODO Auto-generated method stub
 			return assemblyCompany;
 		}
 
 		@Override
 		public String getCopyright() {
-			// TODO Auto-generated method stub
 			return assemblyCopyright;
 		}
 
 		@Override
 		public String getDeveloperHome() {
-			// TODO Auto-generated method stub
 			return assemblyDeveloperHome;
 		}
 
 		@Override
 		public String getProduct() {
-			// TODO Auto-generated method stub
 			return assemblyProduct;
 		}
 
 		@Override
 		public InputStream getIconStream() {
-			// TODO Auto-generated method stub
 			String url = "";
 			if (CHIP_DEFAULT_ICON_KEY.equals(icon)) {// 找不到默认资源还得再调
 				url = icon;
-				InputStream in = container.getResource().getResourceAsStream(
-						url);
+				InputStream in = container.getResource().getResourceAsStream(url);
 				if (in == null) {
 					URL z = container.getResource().getResource(url);
 					if (z != null) {
@@ -622,8 +487,7 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 				return in;
 			} else {
 				url = String.format("cj/properties/%s", icon);
-				InputStream in = container.getResource().getResourceAsStream(
-						url);
+				InputStream in = container.getResource().getResourceAsStream(url);
 				return in;
 			}
 
@@ -631,14 +495,12 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 
 		@Override
 		public String[] enumProperty() {
-			// TODO Auto-generated method stub
-			return ModuleSite.this.enumProperty();
+			return ModuleSite.this.context.enumProperty();
 		}
 
 		@Override
 		public String getProperty(String name) {
-			// TODO Auto-generated method stub
-			return ModuleSite.this.getProperty(name);
+			return ModuleSite.this.context.getProperty(name);
 		}
 
 		@Override
@@ -692,22 +554,18 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 					if (StringUtil.isEmpty(pair))
 						continue;
 					if (!pair.contains("=")) {
-						throw new EcmException(
-								String.format(
-										"程序集%s上下文中配置的resource欲配置成key=value对形式，而格式错误。正确格式为:key1=value1;key2=value2",
-										this.getName()));
+						throw new EcmException(String.format(
+								"程序集%s上下文中配置的resource欲配置成key=value对形式，而格式错误。正确格式为:key1=value1;key2=value2",
+								this.getName()));
 					}
 					String[] arr = pair.split("=");
 					if (StringUtil.isEmpty(arr[0])) {
-						throw new EcmException(String.format(
-								"程序集%s上下文中配置的resource欲配置成key=value对形式,而key名为空",
-								this.getName()));
+						throw new EcmException(
+								String.format("程序集%s上下文中配置的resource欲配置成key=value对形式,而key名为空", this.getName()));
 					}
 					if (arr[0].equals("@")) {
 						throw new EcmException(
-								String.format(
-										"程序集%s上下文中配置的resource欲配置成key=value对形式,而key名不能指定为@",
-										this.getName()));
+								String.format("程序集%s上下文中配置的resource欲配置成key=value对形式,而key名不能指定为@", this.getName()));
 					}
 					if (arr.length < 1)
 						resource.put(arr[0], "");
@@ -756,25 +614,21 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 
 		@Override
 		public String getId() {
-			// TODO Auto-generated method stub
 			return id;
 		}
 
 		@Override
 		public String getName() {
-			// TODO Auto-generated method stub
 			return name;
 		}
 
 		@Override
 		public String getDescription() {
-			// TODO Auto-generated method stub
 			return description;
 		}
 
 		@Override
 		public String getVersion() {
-			// TODO Auto-generated method stub
 			return version;
 		}
 
@@ -783,12 +637,142 @@ public class ModuleSite implements IServiceProvider, IModuleContext,
 	private class MyChip implements IChip {
 		@Override
 		public IServiceSite site() {
-			return getSite();
+			return getDelegateSite();
 		}
 
 		@Override
 		public IChipInfo info() {
 			return chipInfo;
+		}
+
+	}
+
+	// 给开发者调用
+	class DelegateSite implements IServiceSite {
+		@Override
+		public <T> ServiceCollection<T> getServices(Class<T> serviceClazz) {
+			return ModuleSite.this.getServices(serviceClazz);
+		}
+
+		@Override
+		public Object getService(String serviceId) {
+			return ModuleSite.this.getService(serviceId);
+		}
+
+		@Override
+		public void addService(Class<?> clazz, Object service) {
+			ModuleSite.this.addService(clazz, service);
+		}
+
+		@Override
+		public void removeService(Class<?> clazz) {
+			ModuleSite.this.removeService(clazz);
+		}
+
+		@Override
+		public void addService(String serviceName, Object service) {
+			ModuleSite.this.addService(serviceName, service);
+		}
+
+		@Override
+		public void removeService(String serviceName) {
+			ModuleSite.this.removeService(serviceName);
+		}
+
+		@Override
+		public String getProperty(String key) {
+			return ModuleSite.this.getProperty(key);
+		}
+
+		@Override
+		public String[] enumProperty() {
+			return ModuleSite.this.enumProperty();
+		}
+
+	}
+
+	// 提供系统核心服务
+	class CoreSite implements IServiceSite {
+		Map<String, Object> map;
+
+		public CoreSite() {
+			map = new HashMap<>();
+			registerCoreServices();
+		}
+
+		protected void registerCoreServices() {
+			
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public <T> ServiceCollection<T> getServices(Class<T> serviceClazz) {
+			List<T> list = new ArrayList<>();
+			for (Object obj : map.values()) {
+				if (serviceClazz.isAssignableFrom(obj.getClass())) {
+					list.add((T) obj);
+				}
+			}
+			return new ServiceCollection<T>(list);
+		}
+
+		@Override
+		public Object getService(String serviceId) {
+			Object service = map.get(serviceId);
+			if (service != null) {
+				return service;
+			}
+			if (IServiceSite.KEY_SERVICE_SITE.equals(serviceId)) {
+				return getDelegateSite();
+			}
+			if (IScriptContainer.class.getName().equals(serviceId)) {
+				return scriptContainer;
+			}
+			if (IChip.class.getName().equals(serviceId)) {
+				if (chipInfo == null)
+					chipInfo = createChipInfo();
+				return new MyChip();
+			}
+
+			if (IResource.class.getName().equals(serviceId)) {
+				return container.getResource();
+			}
+			return null;
+		}
+
+		@Override
+		public void addService(Class<?> clazz, Object service) {
+			map.put(clazz.getName(), service);
+		}
+
+		@Override
+		public void removeService(Class<?> clazz) {
+			// TODO Auto-generated method stub
+			map.remove(clazz.getName());
+		}
+
+		@Override
+		public void addService(String serviceName, Object service) {
+			// TODO Auto-generated method stub
+			map.put(serviceName, service);
+		}
+
+		@Override
+		public void removeService(String serviceName) {
+			// TODO Auto-generated method stub
+			map.remove(serviceName);
+		}
+
+		@Override
+		public String getProperty(String key) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String[] enumProperty() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 	}

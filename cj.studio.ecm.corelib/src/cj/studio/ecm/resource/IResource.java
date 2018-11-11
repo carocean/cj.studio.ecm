@@ -4,13 +4,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 
-import cj.studio.ecm.IUpriverPipeline;
-import cj.studio.ecm.IValve;
+import cj.studio.ecm.IExotericalResourcePipeline;
 import cj.studio.ecm.weaving.ServiceTypeWeaverChain;
 import cj.ultimate.IDisposable;
 
 
-public interface IResource extends IDisposable,IValve{
+public interface IResource extends IDisposable{
 	public static final String CONTEXT_CONFIG_FILE="cj/properties/Assembly.json";
 	public static final String CONTEXT_PROP_FILE="cj/properties/Assembly.properties";
 	public static final String REFRECENCE_LIBPATH_FILE="cj/references";
@@ -36,10 +35,10 @@ public interface IResource extends IDisposable,IValve{
 	 * </pre>
 	 * @param pipeline
 	 */
-	void setPipeline(IUpriverPipeline pipeline);
+	void setPipeline(IExotericalResourcePipeline pipeline);
 	//是否包含开放类型名
 	boolean isContainsExotericalTypeName(String name);
-	IUpriverPipeline getPipeline();
+	IExotericalResourcePipeline getPipeline();
 	 void copyTo(SystemResource resource);
 	 String getResourcefile();
 }

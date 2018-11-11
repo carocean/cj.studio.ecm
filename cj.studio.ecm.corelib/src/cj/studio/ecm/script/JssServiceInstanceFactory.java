@@ -17,7 +17,6 @@ import cj.studio.ecm.EcmException;
 import cj.studio.ecm.IAssemblyContext;
 import cj.studio.ecm.IChip;
 import cj.studio.ecm.IChipInfo;
-import cj.studio.ecm.IServiceDefinitionRegistry;
 import cj.studio.ecm.IServiceInstanceFactory;
 import cj.studio.ecm.IServiceNameGenerator;
 import cj.studio.ecm.IServiceProvider;
@@ -75,20 +74,21 @@ public class JssServiceInstanceFactory implements IServiceInstanceFactory {
 	// moduleDomain;//key=moduleName，由于一个eval只能绑定一个Bindings，因此无法实现模块域和imports域，因此去掉了模块域概念。
 	private IScriptContainer container;
 	private String chipHome;
-	//之前的注释： 为了防止在刷新前请求jss服务，因此0表示初始化，1表示由getService刷新了工厂，2表示refresh方法被执行过了。
-	//改后的注释：如果为true表示正在刷新或已刷新实例工厂
+	// 之前的注释： 为了防止在刷新前请求jss服务，因此0表示初始化，1表示由getService刷新了工厂，2表示refresh方法被执行过了。
+	// 改后的注释：如果为true表示正在刷新或已刷新实例工厂
 	private boolean refreshCtr;
 	private IServiceProvider parent;
 	private boolean switchFilter;// 开关
-	private static Logger log = Logger
-			.getLogger(JssServiceInstanceFactory.class);
+	private static Logger log = Logger.getLogger(JssServiceInstanceFactory.class);
 
 	public JssServiceInstanceFactory() {
 	}
 
 	@Override
 	public void dispose() {
-		registry.clear();
+		if (registry != null) {
+			registry.clear();
+		}
 		container = null;
 		if (modules != null)
 			modules.clear();
@@ -106,112 +106,6 @@ public class JssServiceInstanceFactory implements IServiceInstanceFactory {
 		return registry.get(instanceName).selectName();
 	}
 
-	@SuppressWarnings({ "unchecked" })
-	@Override
-	public void parent(IServiceProvider parent) {
-		this.parent = parent;
-		IModuleContext ctx = (IModuleContext) parent;
-		IAssemblyContext context = ctx.getAssemblyContext();
-		this.container = ctx.getScriptContainer();
-		this.container.init();
-		// ＊＊＊＊＊＊构建芯片域
-		IChip chip = (IChip) ctx.getService("$." + IChip.class.getName());
-		IChipInfo chipinfo = chip.info();
-		container.global().put("chip", chip);
-		// ****end
-		switchFilter = "on".equals(context.switchFilter());
-		chipHome = context.getProperty("home.dir");
-		this.modules = new HashMap<String, IJssModule>(4);
-		this.registry = new HashMap<String, IJssDefinition>(4);
-		this.services = new HashMap<String, Object>(4);
-
-		IElement jss = context.getJss();
-		IJssModule httpModule = null;
-		IJssModule wsModule = null;
-		if (chipinfo.isWebChip()) {
-			// 加固定模块
-			String sitejss_pages_home = chipinfo.getResourceProp("http.jss");
-			String sitejss_widgets_home = chipinfo.getResourceProp("ws.jss");
-			String jssPagesHome = sitejss_pages_home.startsWith(File.separator) ? sitejss_pages_home
-					.substring(1, sitejss_pages_home.length())
-					: sitejss_pages_home;
-			String jssWsHome = sitejss_widgets_home.startsWith(File.separator) ? sitejss_widgets_home
-					.substring(1, sitejss_widgets_home.length())
-					: sitejss_widgets_home;
-			httpModule = IJssModule.create(parent,context.getResource(),
-					IJssModule.FIXED_MODULENAME_HTTP_JSS, ".jss.js",
-					jssPagesHome.replace(File.separator, "."), true, "link",
-					chipHome, true);
-			wsModule = IJssModule.create(parent,context.getResource(),
-					IJssModule.FIXED_MODULENAME_WS_JSS, ".jss.js",
-					jssWsHome.replace(File.separator, "."), true, "link",
-					chipHome, true);
-			this.modules.put(httpModule.name(), httpModule);
-			this.modules.put(wsModule.name(), wsModule);
-			// 解压site
-			String site = chipinfo.getResourceProp("site");
-			if (!sitejss_pages_home.startsWith(site)) {// http一定是解压、link方式
-				httpModule.doUnzip();
-			}
-			if (!sitejss_widgets_home.startsWith(site)) {
-				wsModule.doUnzip();
-			}
-			log.info(String.format("发现web芯片%s-%s，尝试解压", chipinfo.getName(),
-					chipinfo.getVersion()));
-			String outFolder = String.format("%s/%s/%s", chipHome,
-					IJssModule.RUNTIME_SITE_DIR, site);
-			outFolder = outFolder.replace("///", File.separator)
-					.replace("//", File.separator).replace("/", File.separator);
-			String sitepath = site.replace(File.separator, "/");
-			if (sitepath.startsWith("/") || sitepath.startsWith("\\")) {
-				sitepath = sitepath.substring(1, sitepath.length());
-			}
-			try {
-				UnzipUtil.unzip(context.getResource().getResourcefile(),
-						sitepath, outFolder);
-				httpModule.setUnziped(true);
-				wsModule.setUnziped(true);
-				log.info(String.format("解压web芯片%s-%s，到：\r\n%s",
-						chipinfo.getName(), chipinfo.getVersion(), outFolder));
-			} catch (IOException e) {
-				throw new EcmException(e);
-			}
-		}
-		if (jss != null) {
-			List<IJssModule> cust = (List<IJssModule>) jss.parser().getEntity();
-			// 装载自定义模块
-			for (IJssModule m : cust) {
-				if (httpModule != null
-						&& StringUtil.isPackageConflict(httpModule.pack(),
-								m.pack())) {
-					throw new EcmException(String.format(
-							"jss与系统模块包充突.module%s:%s", m.name(), m.pack()));
-				}
-				if (wsModule != null
-						&& StringUtil.isPackageConflict(wsModule.pack(),
-								m.pack())) {
-					throw new EcmException(String.format(
-							"jss与系统模块包充突.module%s:%s", m.name(), m.pack()));
-				}
-				if (context.getResource().getResourceAsStream(
-						m.pack().replace(".", "/")) == null) {
-					log.info(String.format("模块%s的包%s不存在，或为空包。", m.name(),
-							m.pack()));
-					continue;
-				}
-				m.chipHome(chipHome);
-				m.resource(context.getResource());
-				m.serviceProvider(parent);
-				if (m.unzip() && !m.isUnziped()) {
-					m.doUnzip();
-				}
-				modules.put(m.name(), m);
-
-			}
-		}
-
-	}
-
 	// 当jss过滤器配置了通过类型拦载的方式时
 	@SuppressWarnings("unchecked")
 	@Override
@@ -225,7 +119,7 @@ public class JssServiceInstanceFactory implements IServiceInstanceFactory {
 			return new ServiceCollection<T>(list);
 		}
 		try {
-			List<T> list=getJssInterface(serviceClazz.getName());
+			List<T> list = getJssInterface(serviceClazz.getName());
 //			list.addAll((Collection<? extends T>) services.values());
 			return new ServiceCollection<T>(list);
 		} catch (ClassNotFoundException e) {
@@ -233,15 +127,15 @@ public class JssServiceInstanceFactory implements IServiceInstanceFactory {
 		}
 	}
 
-	private <T> List<T> getJssInterface(String className)
-			throws ClassNotFoundException {
+	private <T> List<T> getJssInterface(String className) throws ClassNotFoundException {
 		List<T> list = new ArrayList<T>();
 		Set<String> set = this.registry.keySet();
 		for (String key : set) {
 			IJssDefinition def = registry.get(key);
 			String type = def.getDecriber().extendsType;
-			if(!className.equals(type))continue;
-			
+			if (!className.equals(type))
+				continue;
+
 			@SuppressWarnings("unchecked")
 			Class<T> clazz = (Class<T>) container.classloader().loadClass(type);
 			if (clazz == null)
@@ -254,13 +148,13 @@ public class JssServiceInstanceFactory implements IServiceInstanceFactory {
 				return list;
 //			ScriptObjectMirror m=(ScriptObjectMirror)inst;
 //			m.put("head", def.getHead());
-			if(!(inst instanceof ScriptObjectMirror)){
+			if (!(inst instanceof ScriptObjectMirror)) {
 				list.add(inst);
 				continue;
 			}
 			T obj = container.getInterface(inst, clazz);
-			if(obj!=null)
-			list.add(obj);
+			if (obj != null)
+				list.add(obj);
 		}
 		return list;
 	}
@@ -297,16 +191,15 @@ public class JssServiceInstanceFactory implements IServiceInstanceFactory {
 		if (serviceId.startsWith(JSS_REQUEST_JAVA_SERVICEKEY)) {
 			return null;
 		}
-		if (!serviceId.startsWith("$.cj.jss.")){
+		if (!serviceId.startsWith("$.cj.jss.")) {
 			return null;
 		}
 		if (!refreshCtr) {
 			refresh();// 由于实例工厂的加类jss工厂在最后，在其它实例工厂请求注入时，该工厂可能还没刷新，因此在此判断并刷新。
 		}
 		String[] filter = matchFilter(serviceId);
-		if (filter != null&&filter.length>0) {
-			String javaReqId = String.format("%s.%s",
-					JSS_REQUEST_JAVA_SERVICEKEY, serviceId);
+		if (filter != null && filter.length > 0) {
+			String javaReqId = String.format("%s.%s", JSS_REQUEST_JAVA_SERVICEKEY, serviceId);
 			Object proxy = parent.getService(javaReqId);// java服务
 			if (proxy == null)
 				return null;
@@ -314,8 +207,7 @@ public class JssServiceInstanceFactory implements IServiceInstanceFactory {
 			if (jss == null)
 				return null;
 
-			ICommand cmd = new ProxyCommand(proxy, (ScriptObjectMirror) jss,
-					filter[1]);
+			ICommand cmd = new ProxyCommand(proxy, (ScriptObjectMirror) jss, filter[1]);
 			IAdaptable adapater = AdapterFactory.createAdaptable(cmd);
 			Object a = adapater.getAdapter(proxy.getClass());
 			return a;
@@ -343,8 +235,7 @@ public class JssServiceInstanceFactory implements IServiceInstanceFactory {
 		if (registry.containsKey(serviceId)) {
 			IJssDefinition jssDef = registry.get(serviceId);
 			if (!jssDef.ownerModule().equals(uri[0])) {
-				throw new RuntimeException(String.format(
-						"jss服务定义中模块不匹配。%s!=%s", uri[0], jssDef.ownerModule()));
+				throw new RuntimeException(String.format("jss服务定义中模块不匹配。%s!=%s", uri[0], jssDef.ownerModule()));
 			}
 			Object som = null;
 			switch (jssDef.getDecriber().scope()) {
@@ -381,20 +272,103 @@ public class JssServiceInstanceFactory implements IServiceInstanceFactory {
 	}
 
 	@Override
-	public void initialize(IServiceDefinitionRegistry registry,
-			IServiceNameGenerator serviceNameGenerator) {
+	public void initialize(IModuleContext ctx, IServiceNameGenerator serviceNameGenerator) {
+		this.parent = ctx;
+		IAssemblyContext context = ctx.getAssemblyContext();
+		this.container = ctx.getScriptContainer();
+		this.container.init();
+		// ＊＊＊＊＊＊构建芯片域
+		IChip chip = (IChip) ctx.getService(IChip.class.getName());
+		IChipInfo chipinfo = chip.info();
+		container.global().put("chip", chip);
+		// ****end
+		switchFilter = "on".equals(context.switchFilter());
+		chipHome = context.getProperty("home.dir");
+		this.modules = new HashMap<String, IJssModule>(4);
+		this.registry = new HashMap<String, IJssDefinition>(4);
+		this.services = new HashMap<String, Object>(4);
+
+		IElement jss = context.getJss();
+		IJssModule httpModule = null;
+		IJssModule wsModule = null;
+		if (chipinfo.isWebChip()) {
+			// 加固定模块
+			String sitejss_pages_home = chipinfo.getResourceProp("http.jss");
+			String sitejss_widgets_home = chipinfo.getResourceProp("ws.jss");
+			String jssPagesHome = sitejss_pages_home.startsWith(File.separator)
+					? sitejss_pages_home.substring(1, sitejss_pages_home.length())
+					: sitejss_pages_home;
+			String jssWsHome = sitejss_widgets_home.startsWith(File.separator)
+					? sitejss_widgets_home.substring(1, sitejss_widgets_home.length())
+					: sitejss_widgets_home;
+			httpModule = IJssModule.create(parent, context.getResource(), IJssModule.FIXED_MODULENAME_HTTP_JSS,
+					".jss.js", jssPagesHome.replace(File.separator, "."), true, "link", chipHome, true);
+			wsModule = IJssModule.create(parent, context.getResource(), IJssModule.FIXED_MODULENAME_WS_JSS, ".jss.js",
+					jssWsHome.replace(File.separator, "."), true, "link", chipHome, true);
+			this.modules.put(httpModule.name(), httpModule);
+			this.modules.put(wsModule.name(), wsModule);
+			// 解压site
+			String site = chipinfo.getResourceProp("site");
+			if (!sitejss_pages_home.startsWith(site)) {// http一定是解压、link方式
+				httpModule.doUnzip();
+			}
+			if (!sitejss_widgets_home.startsWith(site)) {
+				wsModule.doUnzip();
+			}
+			log.info(String.format("发现web芯片%s-%s，尝试解压", chipinfo.getName(), chipinfo.getVersion()));
+			String outFolder = String.format("%s/%s/%s", chipHome, IJssModule.RUNTIME_SITE_DIR, site);
+			outFolder = outFolder.replace("///", File.separator).replace("//", File.separator).replace("/",
+					File.separator);
+			String sitepath = site.replace(File.separator, "/");
+			if (sitepath.startsWith("/") || sitepath.startsWith("\\")) {
+				sitepath = sitepath.substring(1, sitepath.length());
+			}
+			try {
+				UnzipUtil.unzip(context.getResource().getResourcefile(), sitepath, outFolder);
+				httpModule.setUnziped(true);
+				wsModule.setUnziped(true);
+				log.info(String.format("解压web芯片%s-%s，到：\r\n%s", chipinfo.getName(), chipinfo.getVersion(), outFolder));
+			} catch (IOException e) {
+				throw new EcmException(e);
+			}
+		}
+		if (jss != null) {
+			@SuppressWarnings("unchecked")
+			List<IJssModule> cust = (List<IJssModule>) jss.parser().getEntity();
+			// 装载自定义模块
+			for (IJssModule m : cust) {
+				if (httpModule != null && StringUtil.isPackageConflict(httpModule.pack(), m.pack())) {
+					throw new EcmException(String.format("jss与系统模块包充突.module%s:%s", m.name(), m.pack()));
+				}
+				if (wsModule != null && StringUtil.isPackageConflict(wsModule.pack(), m.pack())) {
+					throw new EcmException(String.format("jss与系统模块包充突.module%s:%s", m.name(), m.pack()));
+				}
+				if (context.getResource().getResourceAsStream(m.pack().replace(".", "/")) == null) {
+					log.info(String.format("模块%s的包%s不存在，或为空包。", m.name(), m.pack()));
+					continue;
+				}
+				m.chipHome(chipHome);
+				m.resource(context.getResource());
+				m.serviceProvider(parent);
+				if (m.unzip() && !m.isUnziped()) {
+					m.doUnzip();
+				}
+				modules.put(m.name(), m);
+
+			}
+		}
 	}
 
 	@Override
 	public void refresh() {
 		if (refreshCtr)
 			return;
-		refreshCtr=true;
+		refreshCtr = true;
 		registry.clear();
 		services.clear();
 		IJssModuleCallback cb = new JssModuleCallback();
 		for (IJssModule m : modules.values()) {
-			if (m.unzip()) {
+			if (m.unzip() && !m.isUnziped()) {
 				m.doUnzip();
 			}
 
@@ -410,8 +384,7 @@ public class JssServiceInstanceFactory implements IServiceInstanceFactory {
 //						def.selectName()));
 //			}
 			registry.put(def.selectName(), def);
-			if (m!=null&&def.getDecriber() != null
-					&& def.getDecriber().scope() == Scope.singleon) {
+			if (m != null && def.getDecriber() != null && def.getDecriber().scope() == Scope.singleon) {
 				services.put(def.selectName(), m);
 			}
 		}
@@ -422,19 +395,18 @@ public class JssServiceInstanceFactory implements IServiceInstanceFactory {
 		ScriptObjectMirror jssCommand;
 		String filter;
 
-		public ProxyCommand(Object proxy, ScriptObjectMirror jssCommand,
-				String filter) {
+		public ProxyCommand(Object proxy, ScriptObjectMirror jssCommand, String filter) {
 			this.proxy = proxy;
 			this.jssCommand = jssCommand;
 			this.filter = filter;
 		}
 
 		@Override
-		public Object exeCommand(Object adapter, String method,Class<?>[] argtypes, Object[] args) {
+		public Object exeCommand(Object adapter, String method, Class<?>[] argtypes, Object[] args) {
 			if (jssCommand.hasMember(filter)) {
-				Method m=findMethod(method, argtypes, proxy.getClass());
-				if(m==null){
-					throw new EcmException(String.format("NoSuchMethod %s.%s", adapter.getClass(),method));
+				Method m = findMethod(method, argtypes, proxy.getClass());
+				if (m == null) {
+					throw new EcmException(String.format("NoSuchMethod %s.%s", adapter.getClass(), method));
 				}
 				Object ret = jssCommand.callMember(filter, proxy, m, args);
 				if (ret instanceof Undefined) {
@@ -444,6 +416,7 @@ public class JssServiceInstanceFactory implements IServiceInstanceFactory {
 			}
 			return null;
 		}
+
 		private Method findMethod(String name, Class<?>[] argTypes, Class<?> clazz) {
 			Method m = null;
 			try {

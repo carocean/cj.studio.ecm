@@ -1,27 +1,24 @@
 package cj.studio.ecm;
-
 /**
- * 用于发现芯片中的开放服务
- * 
- * @author Administrator
- * 
+ * 搜索外部服务实现
+ * <pre>
+ * 设有两个程序集a,b,在a中有开放类型ITest,b中Test类实现了ITest;且b.dependency(a)，那么：
+ * 在a中可使用IExotericServiceFinder服务搜索b中的服务实现Test
+ * </pre>
+ * @author caroceanjofers
+ *
  */
-public interface IExotericServiceFinder extends IValve {
+public interface IExotericServiceFinder {
 	/**
-	 * 获取下游芯片包含的指定服务类型的服务
-	 * @param serviceClazz
+	 * 获取程序集b中的外部服务实现
+	 * @param clazz
 	 * @return
 	 */
-	public <T> ServiceCollection<T> getExotericServices(Class<T> serviceClazz);
-	//获取本地开放服务提供器，该提供器可查询本地芯片包含的开放服务
+	<T> ServiceCollection<T> getExotericServices(Class<T> clazz);
 	/**
-	 * 获取本地开放服务提供器，该提供器可查询本地芯片包含的开放服务
+	 * 获取本程序集a中的外部服务实现
+	 * @param clazz
 	 * @return
 	 */
-	public IServiceProvider getLocalExotericServiceProvider();
-	/**
-	 * 获取管道，该方法返回一个不可用的管道
-	 */
-	@Override
-	public IPipeline getPipeline();
+	<T> ServiceCollection<T> getLocalServices(Class<T> clazz);
 }

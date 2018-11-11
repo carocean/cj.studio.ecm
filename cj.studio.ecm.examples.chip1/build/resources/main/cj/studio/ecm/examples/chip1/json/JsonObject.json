@@ -1,0 +1,13 @@
+{
+	"description":"玩玩",
+	"serviceId":"jsonObject",
+	"class":"",
+	"scope":"singleon",
+	"properties":[
+		{
+			"name":"text",
+			"value":"xxxxiiiii"
+		}
+	],
+	"methods":[]
+}

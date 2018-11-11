@@ -34,11 +34,14 @@ public interface IServiceDefinitionRegistry {
 	 * @return
 	 */
 	IServiceMetaData getMetaData(IServiceDefinition definition);
-	IServiceContainer getOwner();
+	
 	/**
 	 * 为服务定义分配元数据。如果不存在此定义，则先注册定义而后分配
 	 * @param definition
 	 * @param meta如果该参数为null则移除先前的定义和元数据
 	 */
 	void assignMetaData(IServiceDefinition definition, IServiceMetaData meta);
+
+	IServiceContainer getContainer();
+	IServiceSite getOwner();
 }

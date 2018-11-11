@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<logging>
+	<!-- log的调用通过CjSystem.out.error();.info();.debug();将根据国际化代码输出文本 -->
+	<log outter="console" level="info" /><!-- info,warning,debug,error, -->
+	<log outter="file" level="info" /><!-- info,warning,debug,error, -->
+</logging>
