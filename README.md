@@ -2,7 +2,7 @@
 
 关键词 keywords：j2ee,java,nodejs,osgi,jsp,struts,spring,spring mvc,mongodb,radis,zookeeper,netty,mina,jetty,tomcat,weblogic,websphere,orm,cloud,nashron,jdk
 
-![Image text](https://github.com/carocean/cj.studio.ecm/blob/cj/document/img/ecm-design.png)
+![Image text](https://github.com/carocean/cj.studio.ecm/blob/master/document/img/ecm-design.png)
 
 ## ecm 面向连接电子模型开发工具包
 
