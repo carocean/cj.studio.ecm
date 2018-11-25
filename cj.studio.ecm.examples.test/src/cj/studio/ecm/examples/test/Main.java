@@ -16,8 +16,19 @@ public class Main {
 		
 	}
 	public static void main(String... strings) {
-		test3();
+		test5();
 		// 测jss
+	}
+
+	private static void test5() {
+		// TODO Auto-generated method stub
+		String fn1 = "/Users/caroceanjofers/studio/lns.github.com/cj.studio.ecm/examples/cj.studio.ecm.examples.chip1-1.0.jar";
+		IAssembly chip1 = Assembly.loadAssembly(fn1);
+		chip1.start();
+		Object obj=chip1.workbin().part("main");
+		IAdaptable a=(IAdaptable)obj;
+		IActuator t=a.getAdapter(IActuator.class);
+		t.exactCommand("test", new Class<?>[] {String.class}, "tttt");
 	}
 
 	// 测json/xml注解方式

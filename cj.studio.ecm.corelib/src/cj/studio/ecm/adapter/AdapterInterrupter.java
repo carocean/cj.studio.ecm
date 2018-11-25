@@ -98,7 +98,7 @@ public class AdapterInterrupter implements IAdapterInterrupter {
 				if (f == null)
 					throw new NoSuchFieldException("本类或基类中不存在属性：" + adaptee.getClass() + "   fieldName:" + fName);
 				f.setAccessible(true);
-				f.set(adaptee, args[1]);
+				f.set(adaptee, args[1]);//如果要设的实例是代理桥而转换失败，很可能是因为使用了方面的对象没有通过接口引用。这是为了引导开发者多使用接口
 				return null;
 			}
 			if ("get".equals(method.getName())) {
