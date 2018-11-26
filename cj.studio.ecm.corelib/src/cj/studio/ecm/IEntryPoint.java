@@ -5,7 +5,7 @@ package cj.studio.ecm;
  * @author Administrator
  *
  */
-public interface IEntryPoint {
+public interface IEntryPoint extends INamedProvider{
 	/**
 	 * 开始。<br>
 	 * 1.如果已是激活状，则不做工作 <br>
@@ -23,5 +23,7 @@ public interface IEntryPoint {
 	 * 3.状态改为inactive状态
 	 */
 	public abstract void stop(IAssemblyContext ctx);
+
+	public abstract void load(IAssemblyContext assemblyContext);
 
 }

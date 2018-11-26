@@ -8,7 +8,7 @@ package cj.studio.ecm;
  *
  */
 //服务容器和站点实现此接口，向组件提供服务支持。
-public interface IServiceProvider {
+public interface IServiceProvider extends INamedProvider{
 	String $="$";
 	String $_cj="$.cj";
 	String $_cj_studio="$.cj.studio";

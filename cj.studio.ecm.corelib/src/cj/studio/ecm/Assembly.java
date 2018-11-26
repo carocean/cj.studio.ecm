@@ -3,7 +3,9 @@ package cj.studio.ecm;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cj.studio.ecm.annotation.CjExotericalType;
 import cj.studio.ecm.context.Element;
@@ -29,6 +31,7 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 	private IWorkbin workbin;
 	private AssemblyState state;
 	private IEntryPoint entryPoint;
+	private ProviderLinker providerLinker;
 
 	Assembly(String file) {
 		this.file = file;
@@ -230,6 +233,8 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 		assemblyContext = this.createAssemblyContext(resource);
 		this.moduleContext = this.createModuleContext(assemblyContext);
 		this.workbin = this.createWorkBin(moduleContext);
+		this.providerLinker = new ProviderLinker();
+		this.moduleContext.parent(providerLinker);
 		state = AssemblyState.inited;
 	}
 
@@ -330,11 +335,11 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 		if (another.state() != AssemblyState.actived) {
 			another.start();
 		}
-		IExotericalServiceSite exoSite=(IExotericalServiceSite)another.moduleContext.getDownSite();
+		IExotericalServiceSite exoSite = (IExotericalServiceSite) another.moduleContext.getDownSite();
 		exoSite.setExotericalServiceProvider(moduleContext.getDownSite());
-		//$.exoteric.service.finder
-		Object finder=exoSite.getService("$.exoteric.service.finder");
-		if(finder!=null) {
+		// $.exoteric.service.finder
+		Object finder = exoSite.getService("$.exoteric.service.finder");
+		if (finder != null) {
 			another.moduleContext.getCoreSite().addService("$.exoteric.service.finder", finder);
 		}
 	}
@@ -350,7 +355,7 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 
 	@Override
 	public void parent(IServiceProvider parent) {
-		this.moduleContext.parent(parent);
+		this.providerLinker.setParent(parent);
 	}
 
 	// 解除依赖
@@ -384,6 +389,9 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 		if (state != AssemblyState.actived) {
 			if (state == AssemblyState.unloaded) {
 				load();
+			}
+			if (getEntryPoint() != null) {
+				this.entryPoint.load(assemblyContext);
 			}
 			this.moduleContext.refresh();
 			if (getEntryPoint() != null) {
@@ -425,6 +433,32 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 		// TODO Auto-generated method stub
 		this.unload();
 		this.load();
+	}
+
+	class ProviderLinker implements IServiceProvider {
+		IServiceProvider parent;
+
+		public void setParent(IServiceProvider parent) {
+			this.parent = parent;
+		}
+
+		@Override
+		public <T> ServiceCollection<T> getServices(Class<T> serviceClazz) {
+			if (parent == null)
+				return new ServiceCollection<>();
+			return parent.getServices(serviceClazz);
+		}
+
+		@Override
+		public Object getService(String serviceId) {
+			Object obj = entryPoint.getService(serviceId);
+			if (obj != null) {
+				return obj;
+			}
+			if (parent == null)
+				return null;
+			return parent.getService(serviceId);
+		}
 	}
 
 	// 限制普通服务的输出
@@ -495,9 +529,58 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 	private class EntryPoint implements IEntryPoint {
 
 		private List<IEntryPointActivator> activators;
+		private Map<String, IChipPlugin> plugins;
 
 		public EntryPoint() {
-			this.activators = new ArrayList<IEntryPointActivator>();
+			this.activators = new ArrayList<>();
+			this.plugins = new HashMap<>();
+		}
+
+		@Override
+		public Object getService(String serviceId) {
+			if (plugins.isEmpty())
+				return null;
+			int pos = serviceId.indexOf(".");
+			if (pos < 1) {
+				throw new EcmException("请求插件服务格式错误，应该为：插件名.服务名");
+			}
+			String key = serviceId.substring(0, pos);
+			String sid = serviceId.substring(pos + 1, serviceId.length());
+			IChipPlugin plugin = plugins.get(key);
+			if (plugin == null)
+				return null;
+			Object obj = plugin.getService(sid);
+			if (obj != null)
+				return obj;
+			return null;
+		}
+
+		@Override
+		public void load(IAssemblyContext ctx) {
+			IElement entryPoint = (IElement) ctx.getElement().getNode("entryPoint");
+			IElement plugins = (IElement) entryPoint.getNode("plugins");
+			if (plugins != null) {
+				try {
+					for (String pluginName : plugins.enumNodeNames()) {
+						IElement plugin = (IElement) plugins.getNode(pluginName);
+						String plugin_class = ((IProperty) plugin.getNode("class")).getValue().getName();
+						String plugin_name = ((IProperty) plugin.getNode("name")).getValue().getName();
+						Class<?> clazz = Class.forName(plugin_class, true, (ClassLoader) resource);
+						Object obj = clazz.newInstance();
+						if (obj instanceof IChipPlugin) {
+							CJSystem.logging().warn(getClass(),
+									String.format("名为%s插件无效，因为未实现IChipPlugin，在类：%s", plugin_name, clazz));
+							continue;
+						}
+						IChipPlugin a = (IChipPlugin) obj;
+						IElement args = (IElement) plugin.getNode("parameters");
+						a.load(ctx, args);
+						this.plugins.put(plugin_name, a);
+					}
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
 		}
 
 		@Override
@@ -510,6 +593,7 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 				this.activators.add(a);
 			}
 			IElement entryPoint = (IElement) ctx.getElement().getNode("entryPoint");
+
 			// 以下激活第三方活动器
 			IElement activators = (IElement) entryPoint.getNode("activators");
 			if (activators != null) {
@@ -517,8 +601,14 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 					for (String activatorName : activators.enumNodeNames()) {
 						IElement activator = (IElement) activators.getNode(activatorName);
 						String activator_class = ((IProperty) activator.getNode("class")).getValue().getName();
+						String activator_name = ((IProperty) activator.getNode("name")).getValue().getName();
 						Class<?> clazz = Class.forName(activator_class, true, (ClassLoader) resource);
 						Object obj = clazz.newInstance();
+						if (obj instanceof IEntryPointActivator) {
+							CJSystem.logging().warn(getClass(),
+									String.format("名为%s活动器无效，因为未实现IEntryPointActivator，在类：%s", activator_name, clazz));
+							continue;
+						}
 						IEntryPointActivator a = (IEntryPointActivator) obj;
 						IElement args = (IElement) activator.getNode("parameters");
 						a.activate((IServiceSite) mc, args);
@@ -536,6 +626,9 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 			IModuleContext mc = Assembly.this.moduleContext;
 			for (IEntryPointActivator a : activators) {
 				a.inactivate((IServiceSite) mc);
+			}
+			for (IChipPlugin a : plugins.values()) {
+				a.unload();
 			}
 		}
 

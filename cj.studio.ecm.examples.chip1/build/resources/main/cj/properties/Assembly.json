@@ -4,7 +4,15 @@
 //jss 配置中的runtimeHome属性：它用于指定jss运行时的搜索根目录，不指定则采用系统默认，在：/work/modulename下
 {
 	entryPoint : {
-		isStartNet:'true',		
+		plugins:[
+			{
+				name:"test",
+				class:"cj.studio.ecm.examples.chip1.TestPlugin",
+				parameters:{
+					name:'forTest'
+				}
+			}
+		],		
 		activators : []
 	},
 	assemblyInfo : {

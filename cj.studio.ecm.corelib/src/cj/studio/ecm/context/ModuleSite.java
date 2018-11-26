@@ -406,10 +406,10 @@ public class ModuleSite implements IModuleContext, IServiceSite {
 					names.put(defId, 0);
 				return defId;
 			}
-			if (definition.getServiceDescriber().getScope() == Scope.runtime) {
-				if (names.containsKey(defId))
-					throw new RuntimeException("已存在名为" + defId + "的服务");
-			}
+//			if (definition.getServiceDescriber().getScope() == Scope.runtime) {
+//				if (names.containsKey(defId))
+//					throw new RuntimeException("已存在名为" + defId + "的服务");
+//			}
 			if (names.containsKey(defId)) {
 				int i = names.get(defId);
 				i = i + 1;

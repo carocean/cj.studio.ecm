@@ -108,7 +108,40 @@ public class JsonAssemblyContext implements IAssemblyContext {
 			throw new RuntimeException("入口点需是对象格式。");
 		JsonObject epObj = ep.getAsJsonObject();
 		IElement entrypoint = new Element("entryPoint");
+		//plugins
+		JsonArray pluginsArr = epObj.get("plugins") == null ? null : epObj.get(
+				"plugins").getAsJsonArray();
+		if (pluginsArr != null) {
+			IElement plugins = new Element("plugins");
+			for (int i = 0; i < pluginsArr.size(); i++) {
+				JsonObject plugin = pluginsArr.get(i).getAsJsonObject();
+				IElement pluginObj = new Element("plugin_" + i);
+				plugins.addNode(pluginObj);
+				IProperty a = new Property("name", plugin.get("name")
+						.getAsString());
+				pluginObj.addNode(a);
+				IProperty b = new Property("class", plugin.get("class")
+						.getAsString());
+				pluginObj.addNode(b);
+				if(plugin.get("parameters")==null){
+					throw new EcmException(String.format("parameters of the activator %s  is null.",plugin.get("class")));
+				}
+				IElement c = new Element("parameters");
+				JsonObject paramJo = plugin.get("parameters")
+						.getAsJsonObject();
+				Iterator<Entry<String, JsonElement>> it = paramJo.entrySet()
+						.iterator();
+				while (it.hasNext()) {
+					Entry<String, JsonElement> entry = it.next();
+					String value = paramJo.get(entry.getKey()).getAsString();
+					INode param = new Property(entry.getKey(), value);
+					c.addNode(param);
+				}
+				pluginObj.addNode(c);
 
+			}
+			entrypoint.addNode(plugins);
+		}
 		// activators
 		JsonArray jarr = epObj.get("activators") == null ? null : epObj.get(
 				"activators").getAsJsonArray();

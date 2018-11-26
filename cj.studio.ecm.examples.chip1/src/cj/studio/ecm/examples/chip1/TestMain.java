@@ -8,6 +8,8 @@ import cj.studio.ecm.examples.chip1.aspect.IRefAspect;
 public class TestMain {
 	@CjServiceRef(refByName="refAspect")
 	IRefAspect refAspect;
+	@CjServiceRef(refByName="refService")
+	RefService refService;
 	public void test(String args) {
 		refAspect.test(args);
 		System.out.println(args);

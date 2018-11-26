@@ -16,4 +16,6 @@ public class RefService {
 	Object refField2;
 	@CjServiceRef(refByName="$.object")
 	Object refObject;
+	@CjServiceRef(refByName="test.text")//引用插件服务
+	String text;
 }
