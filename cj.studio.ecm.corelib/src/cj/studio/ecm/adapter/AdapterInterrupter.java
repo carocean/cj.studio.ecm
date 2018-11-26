@@ -5,7 +5,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import cj.studio.ecm.EcmException;
 import cj.studio.ecm.annotation.CjService;
+import cj.studio.ecm.bridge.IBridgeable;
 import cj.studio.ecm.util.ObjectHelper;
 import cj.ultimate.net.sf.cglib.proxy.Enhancer;
 import cj.ultimate.net.sf.cglib.proxy.InvocationHandler;
@@ -34,13 +36,15 @@ public class AdapterInterrupter implements IAdapterInterrupter {
 		this.prototype = new Prototype(defId, aspects, is);
 		proxySetter = new ProxySetter();
 	}
+
 	public AdapterInterrupter(Object adaptee) {
 		this.adaptee = adaptee;
-		CjService cs=adaptee.getClass().getAnnotation(CjService.class);
-		String name=cs==null?adaptee.getClass().getName():cs.name();
+		CjService cs = adaptee.getClass().getAnnotation(CjService.class);
+		String name = cs == null ? adaptee.getClass().getName() : cs.name();
 		this.prototype = new Prototype(name, "", false);
 		proxySetter = new ProxySetter();
 	}
+
 	private Field findField(Class<?> clazz, String fieldName) {
 		Field f = null;
 		try {
@@ -63,17 +67,17 @@ public class AdapterInterrupter implements IAdapterInterrupter {
 			if (arg instanceof IAdaptable)
 				return adapter;
 			Class<?> argClazz = (Class<?>) arg;
-			Enhancer e=new Enhancer();
+			Enhancer e = new Enhancer();
 			e.setSuperclass(Object.class);
 			e.setClassLoader(argClazz.getClassLoader());
-			if(argClazz.isInterface()){
+			if (argClazz.isInterface()) {
 				e.setInterfaces(new Class<?>[] { argClazz, IAdaptable.class });
 				e.setCallback(this);
 				return e.create();
 			}
-			List<Class<?>> faces=new ArrayList<>();
+			List<Class<?>> faces = new ArrayList<>();
 			ObjectHelper.fetchAllInterface(argClazz, faces);
-			if(!faces.contains(IAdaptable.class)){
+			if (!faces.contains(IAdaptable.class)) {
 				faces.add(IAdaptable.class);
 			}
 			e.setInterfaces(faces.toArray(new Class<?>[0]));
@@ -98,7 +102,15 @@ public class AdapterInterrupter implements IAdapterInterrupter {
 				if (f == null)
 					throw new NoSuchFieldException("本类或基类中不存在属性：" + adaptee.getClass() + "   fieldName:" + fName);
 				f.setAccessible(true);
-				f.set(adaptee, args[1]);//如果要设的实例是代理桥而转换失败，很可能是因为使用了方面的对象没有通过接口引用。这是为了引导开发者多使用接口
+				try {
+					f.set(adaptee, args[1]);// 如果要设的实例是代理桥而转换失败，很可能是因为使用了方面的对象没有通过接口引用。这是为了引导开发者多使用接口
+				} catch (Exception e) {
+					if (args[1] instanceof IBridgeable) {
+						throw new EcmException(String.format(
+								"引用桥对像失败。只所以是桥，是因为桥接了方面，因此引用者应该关注于桥对象的一个方面，而不是整个桥对象。所以ecm强迫开发者使用桥对象的某个接口来引用桥。异常原因：%s", e));
+					}
+					throw e;
+				}
 				return null;
 			}
 			if ("get".equals(method.getName())) {
@@ -122,28 +134,28 @@ public class AdapterInterrupter implements IAdapterInterrupter {
 				}
 				if (adaptee instanceof ICommand) {
 					ICommand inter = (ICommand) adapter;
-					return inter.exeCommand(adapter, commondAction,argTypes, commondArgs);
+					return inter.exeCommand(adapter, commondAction, argTypes, commondArgs);
 				}
 				Method foundMeth = findMethod(commondAction, argTypes, adaptee.getClass());
 				if (foundMeth != null)
 					return foundMeth.invoke(adaptee, commondArgs);
-				else{
-					throw new NoSuchMethodException(adaptee.getClass()+"." +commondAction);
+				else {
+					throw new NoSuchMethodException(adaptee.getClass() + "." + commondAction);
 				}
 			}
 			if (method.getName().equals("exactCommand")) {
 				String commondAction = (String) args[0];
 				Object[] commondArgs = (Object[]) args[2];
-				Class<?>[] argTypes =(Class<?>[]) args[1];
+				Class<?>[] argTypes = (Class<?>[]) args[1];
 				if (adaptee instanceof ICommand) {
 					ICommand inter = (ICommand) adapter;
-					return inter.exeCommand(adapter, commondAction, argTypes,commondArgs);
+					return inter.exeCommand(adapter, commondAction, argTypes, commondArgs);
 				}
 				Method foundMeth = findMethod(commondAction, argTypes, adaptee.getClass());
 				if (foundMeth != null)
 					return foundMeth.invoke(adaptee, commondArgs);
-				else{
-					throw new NoSuchMethodException(adaptee.getClass()+"." +commondAction);
+				else {
+					throw new NoSuchMethodException(adaptee.getClass() + "." + commondAction);
 				}
 			}
 		}
@@ -166,8 +178,8 @@ public class AdapterInterrupter implements IAdapterInterrupter {
 			method.setAccessible(true);
 			return method.invoke(adaptee, args);
 		}
-		if(adaptee instanceof ICommand){
-			return ((ICommand)adaptee).exeCommand(adapter, method.getName(),method.getParameterTypes(), args);
+		if (adaptee instanceof ICommand) {
+			return ((ICommand) adaptee).exeCommand(adapter, method.getName(), method.getParameterTypes(), args);
 		}
 		Method foundMeth = findMethod(method.getName(), method.getParameterTypes(), adaptee.getClass());
 		if (foundMeth != null)
@@ -175,6 +187,7 @@ public class AdapterInterrupter implements IAdapterInterrupter {
 		else
 			throw new NoSuchMethodException(method.getName());
 	}
+
 	private Method findMethod(String name, Class<?>[] argTypes, Class<?> clazz) {
 		Method m = null;
 		try {
