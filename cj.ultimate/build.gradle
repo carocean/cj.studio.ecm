@@ -21,7 +21,7 @@ sourceSets {
         options.encoding = "UTF-8"  
     } 
     task release(type: Copy) {
-     dependsOn "build","javadocJar"
+     dependsOn "build","sourcesJar"
      from 'build/libs/'
      into '../outputs/'
      include '**/*.jar'
