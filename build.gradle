@@ -32,7 +32,15 @@ subprojects {
 	tasks.withType(JavaCompile) {  
         options.encoding = "UTF-8"  
     }  
-	
+	tasks.withType(Javadoc) {
+	    options.addStringOption('Xdoclint:none', '-quiet')
+	    options.addStringOption('encoding', 'UTF-8')
+	    options.addStringOption('charSet', 'UTF-8')
+	}
+	task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+	}
     uploadArchives {
 	    repositories {
 	       flatDir {
@@ -41,6 +49,7 @@ subprojects {
     	}
 
 	}
+	
 }
 task studio_ecm(){
 	doLast {

@@ -28,7 +28,7 @@ dependencies {
     runtime fileTree(dir: 'libs', includes: ['*.jar'])
 }
     task release(type: Copy) {
-     dependsOn "build"
+     dependsOn "build","javadocJar"
      from 'build/libs/'
      into '../outputs'
      include '**/*.jar'
