@@ -566,7 +566,7 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 						String plugin_name = ((IProperty) plugin.getNode("name")).getValue().getName();
 						Class<?> clazz = Class.forName(plugin_class, true, (ClassLoader) resource);
 						Object obj = clazz.newInstance();
-						if (obj instanceof IChipPlugin) {
+						if (!(obj instanceof IChipPlugin)) {
 							CJSystem.logging().warn(getClass(),
 									String.format("名为%s插件无效，因为未实现IChipPlugin，在类：%s", plugin_name, clazz));
 							continue;

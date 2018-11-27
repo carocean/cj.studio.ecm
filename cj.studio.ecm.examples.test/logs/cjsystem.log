@@ -6,3 +6,6 @@
 2018年11月26日 08:23:35  错误: cj.studio.ecm.container.factory.SingleonServiceInstanceFactory - 服务:main构建失败，原因：cj.studio.ecm.EcmException: 引用桥对像失败。只所以是桥，是因为桥接了方面，因此引用者应该关注于桥对象的一个方面，而不是整个桥对象。所以ecm强迫开发者使用桥对象的某个接口来引用桥。异常原因：java.lang.IllegalArgumentException: Can not set cj.studio.ecm.examples.chip1.aspect.RefAspect field cj.studio.ecm.examples.chip1.TestMain.refAspect to cj.studio.ecm.examples.chip1.aspect.IRefAspect$$EnhancerByCGLIB$$2efdf569
 2018年11月27日 00:30:21  错误: cj.studio.ecm.container.factory.SingleonServiceInstanceFactory - 服务:main构建失败，原因：java.lang.RuntimeException: java.lang.NullPointerException
 2018年11月27日 00:44:31  警告: cj.studio.ecm.Assembly$EntryPoint - 名为test插件无效，因为未实现IChipPlugin，在类：class cj.studio.ecm.examples.chip1.TestPlugin
+2018年11月27日 08:08:34  警告: cj.studio.ecm.Assembly$EntryPoint - 名为test插件无效，因为未实现IChipPlugin，在类：class cj.studio.ecm.examples.chip1.TestPlugin
+2018年11月27日 09:41:10  警告: cj.studio.ecm.Assembly$EntryPoint - 名为test插件无效，因为未实现IChipPlugin，在类：class cj.studio.ecm.examples.chip1.TestPlugin
+2018年11月27日 09:41:44  警告: cj.studio.ecm.Assembly$EntryPoint - 名为test插件无效，因为未实现IChipPlugin，在类：class cj.studio.ecm.examples.chip1.TestPlugin

@@ -29,6 +29,7 @@ public class Main {
 		IAdaptable a=(IAdaptable)obj;
 		IActuator t=a.getAdapter(IActuator.class);
 		t.exactCommand("test", new Class<?>[] {String.class}, "tttt");
+		chip1.stop();
 	}
 
 	// 测json/xml注解方式
