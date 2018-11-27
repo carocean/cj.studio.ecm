@@ -603,7 +603,7 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 						String activator_name = ((IProperty) activator.getNode("name")).getValue().getName();
 						Class<?> clazz = Class.forName(activator_class, true, (ClassLoader) resource);
 						Object obj = clazz.newInstance();
-						if (obj instanceof IEntryPointActivator) {
+						if (!(obj instanceof IEntryPointActivator)) {
 							CJSystem.logging().warn(getClass(),
 									String.format("名为%s活动器无效，因为未实现IEntryPointActivator，在类：%s", activator_name, clazz));
 							continue;
