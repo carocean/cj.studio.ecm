@@ -20,5 +20,9 @@ public interface IChipPlugin extends INamedProvider{
 	void load(IAssemblyContext ctx, IElement args);
 
 	void unload();
-	
+	/**
+	 * 插件的服务请求格式是：插件名.服务名。故不能直接以服务名获取到
+	 */
+	@Override
+	Object getService(String serviceId);
 }

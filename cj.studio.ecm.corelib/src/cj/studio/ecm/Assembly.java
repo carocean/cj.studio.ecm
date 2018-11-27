@@ -541,17 +541,16 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 			if (plugins.isEmpty())
 				return null;
 			int pos = serviceId.indexOf(".");
-			if (pos < 1) {
-				throw new EcmException("请求插件服务格式错误，应该为：插件名.服务名");
+			if (pos > 0) {
+				String key = serviceId.substring(0, pos);
+				String sid = serviceId.substring(pos + 1, serviceId.length());
+				IChipPlugin plugin = plugins.get(key);
+				if (plugin == null)
+					return null;
+				Object obj = plugin.getService(sid);
+				if (obj != null)
+					return obj;
 			}
-			String key = serviceId.substring(0, pos);
-			String sid = serviceId.substring(pos + 1, serviceId.length());
-			IChipPlugin plugin = plugins.get(key);
-			if (plugin == null)
-				return null;
-			Object obj = plugin.getService(sid);
-			if (obj != null)
-				return obj;
 			return null;
 		}
 
