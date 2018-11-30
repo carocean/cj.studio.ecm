@@ -32,6 +32,7 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 	private AssemblyState state;
 	private IEntryPoint entryPoint;
 	private ProviderLinker providerLinker;
+	private ClassLoader pcl;
 
 	Assembly(String file) {
 		this.file = file;
@@ -55,12 +56,16 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 	public IAssemblyInfo info() {
 		return this;
 	}
-
+	@Override
+	public ClassLoader getReferences() {
+		return pcl;
+	}
 	protected IResource createResource(ClassLoader parent) {
 		// ***********以下恢复线程上下文加载器
 		if (parent != null) {
 			Thread.currentThread().setContextClassLoader(parent);
 			JarClassLoader loader = new JarClassLoader(parent);
+			this.pcl=loader;
 			SystemResource sr = new SystemResource(loader);
 			Thread.currentThread().setContextClassLoader(sr);
 			return sr;
@@ -71,6 +76,7 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
 		}
 		Thread.currentThread().setContextClassLoader(cl);
 		JarClassLoader loader = new JarClassLoader(cl);
+		this.pcl=loader;
 		SystemResource sr = new SystemResource(loader);
 		/*
 		 * 这一行不能带啊，如果带了将在反复启动缺载时出大问题.

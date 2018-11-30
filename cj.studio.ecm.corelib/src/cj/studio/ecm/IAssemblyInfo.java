@@ -14,4 +14,5 @@ public interface IAssemblyInfo {
 	String getCopyright();
 	InputStream getIconStream();
 	String getProperty(String name);
+	ClassLoader getReferences();//父加载器就是references
 }
