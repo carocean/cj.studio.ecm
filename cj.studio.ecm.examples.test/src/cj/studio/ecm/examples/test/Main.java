@@ -19,6 +19,7 @@ public class Main {
 		test5();
 		// 测jss
 	}
+	
 
 	private static void test5() {
 		// TODO Auto-generated method stub

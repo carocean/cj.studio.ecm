@@ -66,3 +66,4 @@ studio_ecm.dependsOn ':cj.studio.ecm.net:release'
 studio_ecm.dependsOn ':cj.studio.ecm.jee:release'
 studio_ecm.dependsOn ':cj.studio.ecm.examples.chip1:release'
 studio_ecm.dependsOn ':cj.studio.ecm.examples.chip2:release'
+
