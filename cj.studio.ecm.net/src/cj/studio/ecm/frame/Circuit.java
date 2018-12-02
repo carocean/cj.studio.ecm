@@ -138,19 +138,19 @@ public class Circuit implements IPrinter, IDisposable {
 	 * @return 注意：可能返回为空。
 	 * @throws CircuitException 
 	 */
-	public void writeFeeds(Object content) throws CircuitException {
+	public void writeFeeds(ByteBuf content) throws CircuitException {
 		if(feedback!=null) {
-			feedback.write(content);
+			feedback.write(content,this);
 		}
 	}
-	public void beginFeeds(Object content) {
+	public void beginFeeds() {
 		if(feedback!=null) {
-			feedback.begin(content);
+			feedback.begin(this);
 		}
 	}
-	public void doneFeeds(Object content){
+	public void doneFeeds(ByteBuf content){
 		if(feedback!=null) {
-			feedback.done(content);
+			feedback.done(content,this);
 		}
 	}
 	public boolean hasFeedback() {

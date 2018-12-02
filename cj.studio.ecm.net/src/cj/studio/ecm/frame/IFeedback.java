@@ -2,6 +2,7 @@ package cj.studio.ecm.frame;
 
 import cj.studio.ecm.graph.CircuitException;
 import cj.studio.ecm.net.nio.NetConstans;
+import io.netty.buffer.ByteBuf;
 
 /**
  * 用于回路中倒序执行。
@@ -92,8 +93,8 @@ public interface IFeedback {
 	 * @param content
 	 *            回馈侦
 	 */
-	public void write(Object content) throws CircuitException;
-	public void begin(Object content);
-	public void done(Object content);
+	public void write(ByteBuf content,Circuit circuit) throws CircuitException;
+	public void begin(Circuit circuit);
+	public void done(ByteBuf content,Circuit circuit);
 
 }
