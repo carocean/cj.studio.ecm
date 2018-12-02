@@ -1,19 +1,18 @@
 package cj.studio.ecm.frame;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
 import cj.studio.ecm.EcmException;
+import cj.studio.ecm.graph.CircuitException;
 import cj.studio.ecm.graph.IPrinter;
 import cj.studio.ecm.net.nio.NetConstans;
-import cj.studio.ecm.net.web.HttpCircuit;
 import cj.ultimate.IDisposable;
 import cj.ultimate.util.StringUtil;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 /**
  * 回路。它是一个执行序列
@@ -42,10 +41,13 @@ public class Circuit implements IPrinter, IDisposable {
 	private Map<String, Object> attributemap;
 	protected IFlowContent content;
 	static final String CODE = "utf-8";
-	private Map<String, IFeedback> feedbacks;
+	private IFeedback feedback;
 
 	// private List<ICircuitCallback> callbacks;
-
+	public Circuit(String frame_line,IFeedback feedback) {
+		this(frame_line);
+		this.feedback=feedback;
+	}
 	public Circuit(String frame_line) {
 		init();
 		String[] arr = frame_line.split(" ");
@@ -71,7 +73,6 @@ public class Circuit implements IPrinter, IDisposable {
 			attributemap.clear();
 		if (content.refCnt() > 0)
 			content.release();
-		feedbacks.clear();
 	}
 
 	Circuit() {
@@ -93,11 +94,13 @@ public class Circuit implements IPrinter, IDisposable {
 		headmap = f.headmap;
 		content.writeBytes(f.content.copy());
 	}
-
+	public Circuit(Frame f,IFeedback feedback) {
+		this(f);
+		this.feedback=feedback;
+	}
 	private void init() {
 		headmap = new Hashtable<String, String>(4);
 		content = createContent(8192);
-		feedbacks = new HashMap<String, IFeedback>(2);
 	}
 
 	public static void main(String... headmap) {
@@ -114,9 +117,6 @@ public class Circuit implements IPrinter, IDisposable {
 		System.out.println(new String(b2));
 	}
 
-	public boolean containsFeedback(String name) {
-		return feedbacks.containsKey(name);
-	}
 
 	/**
 	 * 回路返馈器
@@ -136,63 +136,26 @@ public class Circuit implements IPrinter, IDisposable {
 	 * 
 	 * @see NetConstans
 	 * @return 注意：可能返回为空。
+	 * @throws CircuitException 
 	 */
-	public IFeedback feedback(String name) {
-		return feedbacks.get(name);
-	}
-
-	/**
-	 * 为当前回路设置回馈源点
-	 * 
-	 * <pre>
-	 *  如果成功设置则返回true
-	 * 如果回馈器已设置，则返回false，如果没有则设置。
-	 * 
-	 * 在netsite中系统默认两个源点，名称分别为：
-	 * 1.outputNet:用于服务器主动向客户端推送信息，http除外（因为该协议不能主动回馈）。
-	 * 2.inputNet：用于客户端的反馈侦，包含http协议客户端回馈。该源点需要开发者在相应位置设置。
-	 *   如果在回路中的多段接收客户端返馈侦且无法使用同一反馈通路，则可在inputNet的源点对接另一个反馈回路的doBack，以触发另一个反馈回路
-	 * </pre>
-	 * 
-	 * @param p
-	 * @return
-	 */
-	public boolean feedbackSetSource(String name) {
-		if (!feedbacks.containsKey(name)) {
-			IFeedback feedback = new Feedback();
-			feedbacks.put(name, feedback);
-			return true;
+	public void writeFeeds(Object content) throws CircuitException {
+		if(feedback!=null) {
+			feedback.write(content);
 		}
-		return false;
 	}
-	public boolean isEmptyFeedback() {
-		return feedbacks.isEmpty();
+	public void beginFeeds(Object content) {
+		if(feedback!=null) {
+			feedback.begin(content);
+		}
 	}
-
-	public void feedbackRemove(String name) {
-		feedbacks.remove(name);
+	public void doneFeeds(Object content){
+		if(feedback!=null) {
+			feedback.done(content);
+		}
 	}
-
-	public String[] enumFeedback() {
-		return feedbacks.keySet().toArray(new String[0]);
+	public boolean hasFeedback() {
+		return feedback!=null;
 	}
-
-	// public void addCallback(ICircuitCallback cb){
-	// callbacks.add(cb);
-	// }
-	// public void removeCallback(ICircuitCallback cb){
-	// callbacks.remove(cb);
-	// }
-	// public void emptyCallback(){
-	// callbacks.clear();
-	// }
-	// public void fireCallback(Frame response) throws CircuitException{
-	// if(callbacks.isEmpty())return;
-	// ICircuitCallback[] arr=callbacks.toArray(new ICircuitCallback[0]);
-	// for(ICircuitCallback cb:arr){
-	// cb.response(response,this);
-	// }
-	// }
 	/**
 	 * 回路信息是否可被网络捎带.该属性仅在net/1.1中有效 attributemap.get("piggybacking");
 	 * 
@@ -605,7 +568,7 @@ public class Circuit implements IPrinter, IDisposable {
 		this.attributemap=by.attributemap;
 		this.content=by.content;
 		this.headmap=by.headmap;
-		this.feedbacks=by.feedbacks;
+		this.feedback=by.feedback;
 	}
 
 }

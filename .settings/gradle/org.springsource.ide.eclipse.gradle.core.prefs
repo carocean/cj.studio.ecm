@@ -1,5 +1,4 @@
 #org.springsource.ide.eclipse.gradle.core.preferences.GradleProjectPreferences
-#Fri Nov 30 15:55:54 CST 2018
-build.family.org.gradle.tooling.model.eclipse.HierarchicalEclipseProject=;cj.studio.ecm.corelib;cj.studio.ecm.examples.chip1;cj.studio.ecm.examples.chip2;cj.studio.ecm.examples.embeds.inner;cj.studio.ecm.examples.embeds.test;cj.studio.ecm.examples.embeds.type;cj.studio.ecm.jee;cj.studio.ecm.net;cj.ultimate;
-org.springsource.ide.eclipse.gradle.linkedresources=
+#Sun Dec 02 01:38:35 CST 2018
+build.family.org.gradle.tooling.model.eclipse.HierarchicalEclipseProject=;cj.studio.ecm.corelib;cj.studio.ecm.examples.chip1;cj.studio.ecm.examples.chip2;cj.studio.ecm.net;cj.ultimate;
 org.springsource.ide.eclipse.gradle.rootprojectloc=

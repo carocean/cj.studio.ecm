@@ -1,3 +1,3 @@
 
-include "cj.ultimate", "cj.studio.ecm.corelib", "cj.studio.ecm.net","cj.studio.ecm.jee"
+include "cj.ultimate", "cj.studio.ecm.corelib", "cj.studio.ecm.net"
 include "cj.studio.ecm.examples.chip1","cj.studio.ecm.examples.chip2"
