@@ -1,5 +1,6 @@
 package cj.studio.ecm.graph;
 
+import java.lang.reflect.Field;
 import java.util.Stack;
 
 import org.slf4j.Logger;
@@ -181,8 +182,60 @@ public class CircuitException extends Exception {
 		return sb.toString();
 	}
 
-	
+	private StackTraceElement[] getNativeStackTrace() throws CircuitException {
+		StackTraceElement[] trace = null;
+		Class<?> c = this.getClass();
+		Field f = null;
+		do {
+			c = c.getSuperclass();
+		} while (!c.equals(Throwable.class));
+		try {
+			f = c.getDeclaredField("stackTrace");
+			f.setAccessible(true);
+			getStackTrace();// 由于是native方法，因此必须调一次堆栈字段才有值
+			trace = (StackTraceElement[]) f.get(this);
+			return trace;
+		} catch (NoSuchFieldException e) {
+			throw new CircuitException(status, e);
+		} catch (SecurityException e) {
+			throw new CircuitException(status, e);
+		} catch (IllegalArgumentException e) {
+			throw new CircuitException(status, e);
+		} catch (IllegalAccessException e) {
+			throw new CircuitException(status, e);
+		}
+	}
 
+	public void update(String graphName, String pinName, String sinkName,
+			Class<? extends ISink> sinkClazz) {
+		try {
+			if (dirty.length < 1) {
+				dirty = getNativeStackTrace();
+			}
+			for (int i = 0; i < dirty.length; i++) {
+				StackTraceElement st = dirty[i];
+				if (st.getClassName().equals(sinkClazz.getName())) {
+					dirty[i] = new StackTraceElement("circuit:[" + graphName
+							+ "." + sinkName + " " + st.getMethodName() + "]\t"
+							+ st.getClassName(), st.getMethodName(),
+							st.getFileName(), st.getLineNumber());
+					StackTraceElement next = dirty[i + 1];
+
+					if (!StringUtil.isEmpty(pinName)
+							&& next.getClassName().equals(Pin.class.getName())) {
+						dirty[i + 1] = new StackTraceElement("circuit:["
+								+ graphName + "." + pinName + " "
+								+ st.getMethodName() + "]\t"
+								+ next.getClassName(), next.getMethodName(),
+								next.getFileName(), next.getLineNumber());
+						break;
+					}
+				}
+			}
+		} catch (CircuitException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	/**
 	 * 打印错误信息
@@ -239,6 +292,30 @@ public class CircuitException extends Exception {
 		if (logger != null)
 			logger.error(cause);
 		return new RuntimeException(ce.status+" "+cause);
+	}
+	/**
+	 * 判断指定的pin名是否是执行回路中的第一个调起pin
+	 * 
+	 * <pre>
+	 *
+	 * </pre>
+	 * 
+	 * @param name
+	 *            pinname
+	 * @return
+	 */
+	public boolean isFirstPinEle(String name) {
+		boolean is = false;
+		for (int i = dirty.length - 1; i > 0; i--) {
+			StackTraceElement st = dirty[i];
+			if (st.getClassName().equals(Pin.class.getName())) {
+				if (st.getClassName().indexOf("." + name) > 0) {
+					is = true;
+				}
+				break;
+			}
+		}
+		return is;
 	}
 	@Override
 	public String toString() {

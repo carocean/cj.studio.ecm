@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cj.studio.ecm.IChipInfo;
+import cj.studio.ecm.net.layer.ISession;
 import cj.ultimate.util.StringUtil;
 
 /**
@@ -17,8 +18,6 @@ import cj.ultimate.util.StringUtil;
  *
  */
 public class SiteConfig {
-	public static final int DEFAULT_EXPIRE_TIME=1800;//1800秒
-
 	public final static String WEBCONFIG_KEY = "siteconfig";
 	private String siteIcon;
 	private String siteWelcome;
@@ -125,7 +124,7 @@ public class SiteConfig {
 
 	public long getSessionTimeout(String simple){
 		Long i=sessionTimeout.get(simple);
-		return i==null?DEFAULT_EXPIRE_TIME:i;
+		return i==null?ISession.DEFAULT_EXPIRE_TIME:i;
 	}
 
 	public String[] enumMime() {

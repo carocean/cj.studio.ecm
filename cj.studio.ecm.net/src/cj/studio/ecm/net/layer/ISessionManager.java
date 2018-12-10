@@ -25,6 +25,7 @@ public interface ISessionManager extends IDisposable{
 	void addEvent(ISessionEvent event);
 	void removeEvent(ISessionEvent event);
 	
+	void removeSelectId(String netSourceName, String localAddress, String selid);
 	void siteConfig(SiteConfig wc);
 	public void setCjTokenDistributionStrategy(
 			ITokenDistributionStrategy strategy);

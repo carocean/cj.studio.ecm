@@ -1,8 +1,10 @@
 package cj.studio.ecm.frame;
 
 import cj.studio.ecm.graph.CircuitException;
+import cj.studio.ecm.graph.IPlug;
+import cj.studio.ecm.graph.ISink;
 import cj.studio.ecm.net.nio.NetConstans;
-import io.netty.buffer.ByteBuf;
+import cj.ultimate.IDisposable;
 
 /**
  * 用于回路中倒序执行。
@@ -47,7 +49,74 @@ import io.netty.buffer.ByteBuf;
  * @author carocean
  * @see NetConstans
  */
-public interface IFeedback {
+public interface IFeedback extends IDisposable {
+	/**
+	 * <pre>
+	 * 说明：
+	 * － 返馈回路是在主回路下向源端通讯的一种方法。分为输出反馈和输入反馈，要理解这些概念，先看下主回路在网络中的流向：
+	 * 假设有net a ,net b两个net端，在之间有一个应用app，则主回路流向为：
+	 * a(output)->app->b(input)
+	 * 在app的主回路中，如果想向a net写回，则使用KEY_OUTPUT_FEEDBACK（在主回路中已存在），如果想向b回路输出，
+	 * 则设置一个KEY_INPUT_FEEDBACK（app新建并设置），这种反馈回路，可以多次调用。
+	 * 
+	 * 注意事项：
+	 * 
+	 * 在net/1.1中，由于采用的是多路复用架构，一个信道仅有一个线程，因此，如果在反馈回路中使用等待回路响应的功能，则势必堵塞主回路，因此：
+	 * 应启用一个线程并在线程内调用等待晌应反回的反馈回路
+	 * 在net/1.0中，每次作业事件均在独自的线程下，因此可以不必启用新线程调用等待响应式反馈。
+	 * 	 
+	 * 用于向net回馈信息到远程
+	 * 关于回馈线路对net信道的关闭操作：
+	 * 1.使用circuit.attribute("net-action","disconnect");在捎带信息后关闭连接
+	 * 2.使用：
+	 * //		f = new Frame("close / feedback/1.0");
+	 * //		c = new Circuit("feedback/1.0 200 ok");
+	 * //		back.doBack(f, c);
+	 * </pre>
+	 */
+	public static final String KEY_OUTPUT_FEEDBACK = "outputNet";
+	/**
+	 * <pre>
+	 * 说明： 
+	 * － 返馈回路是在主回路下向源端通讯的一种方法。分为输出反馈和输入反馈，要理解这些概念，先看下主回路在网络中的流向： 假设有net a
+	 * ,net b两个net端，在之间有一个应用app，则主回路流向为： a(output)->app->b(input)
+	 * 在app的主回路中，如果想向a net写回，则使用KEY_OUTPUT_FEEDBACK（在主回路中已存在），如果想向b回路输出，
+	 * 则设置一个KEY_INPUT_FEEDBACK（app新建并设置），这种反馈回路，可以多次调用。
+	 * 
+	 * 注意事项：
+	 * 
+	 * 在net/1.1中，由于采用的是多路复用架构，一个信道仅有一个线程，因此，如果在反馈回路中使用等待回路响应的功能，则势必堵塞主回路，因此：
+	 * 应启用一个线程并在线程内调用等待晌应反回的反馈回路 在net/1.0中，每次作业事件均在独自的线程下，因此可以不必启用新线程调用等待响应式反馈。
+	 * 用于向net回馈信息到远程 
+	 * 
+	  * 用于向net回馈信息到远程
+	 * 关于回馈线路对net信道的关闭操作：
+	 * 1.使用circuit.attribute("net-action","disconnect");在捎带信息后关闭连接
+	 * 2.使用：
+	 * //		f = new Frame("close / feedback/1.0");
+	 * //		c = new Circuit("feedback/1.0 200 ok");
+	 * //		back.doBack(f, c);
+	 * </pre>
+	 */
+	public static final String KEY_INPUT_FEEDBACK = "inputNet";
+	public static final String KEY_ENDSINK_FEEDBACK = "end_sink";
+
+	/**
+	 * 调用此方法会插到导线的头部
+	 * 
+	 * <pre>
+	 * 
+	 * </pre>
+	 * 
+	 * @param sink
+	 */
+	IPlug plugSink(String name, ISink sink);
+
+	boolean containsSink(String name);
+
+	void removeSink(String name);
+
+	int count();
 
 	/**
 	 * 回馈到回馈点。该方法从当前点向源头执行
@@ -90,11 +159,14 @@ public interface IFeedback {
 	 *   而只需插入sink以接收net返回侦
 	 * </pre>
 	 * 
-	 * @param content
+	 * @param frame
 	 *            回馈侦
+	 * @param circuit
+	 *            可指定回馈回路。circuit可指定输入回馈点，用于接收对端同步返回的捎带侦
 	 */
-	public void write(ByteBuf content,Circuit circuit) throws CircuitException;
-	public void begin(Circuit circuit);
-	public void done(ByteBuf content,Circuit circuit);
+	public void doBack(Frame frame, Circuit circuit) throws CircuitException;
 
+	Object options(String name);
+
+	void options(String name, Object v);
 }
