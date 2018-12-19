@@ -24,7 +24,6 @@ dependencies {
 	compile fileTree(dir: '../global/lib', includes: ['*.jar'])
 	compile fileTree(dir: 'libs', includes: ['*.jar'])
     runtime fileTree(dir: 'libs', includes: ['*.jar'])
-    compile fileTree('src/cj/refembeds')
     
 }
 

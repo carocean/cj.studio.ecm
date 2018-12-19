@@ -90,8 +90,12 @@ public class SingleonServiceInstanceFactory extends ServiceInstanceFactory {
 		if (service != null) {
 			return service;
 		}
+		service = super.getService(serviceId);
+		if (service != null) {
+			return service;
+		}
 		if (serviceId.startsWith("$.")) {
-			String className = serviceId.substring(1, serviceId.length());
+			String className = serviceId.substring(2, serviceId.length());
 			try {
 				// class不能在此反射，因为此处反射取不到systemResource，而以当前cj.coreLib所在的系统classloader加载肯定找不到芯片的类
 				// class的加载应在类定义或元数据解析时从芯片的systemResource直接反射好类，其它的地方使用即可
@@ -99,19 +103,18 @@ public class SingleonServiceInstanceFactory extends ServiceInstanceFactory {
 				// Class.forName(className,true,);
 				// 因此在注册表中增加方法:
 				Class<?> serviceClazz = getRegistry().getResource().loadClass(className);
-				if (serviceClazz == null)
-					return null;
-				ServiceCollection<?> col = this.getServices(serviceClazz);
-				for (Object s : col) {
-					service = s;
-					break;
+				if (serviceClazz != null) {
+					ServiceCollection<?> col = this.getServices(serviceClazz);
+					if (!col.isEmpty()) {
+						for (Object s : col) {
+							service = s;
+							break;
+						}
+					}
 				}
 			} catch (ClassNotFoundException e) {
 				throw new RuntimeException(e);
 			}
-		}
-		if (service == null) {
-			service = super.getService(serviceId);
 		}
 		return service;
 	}

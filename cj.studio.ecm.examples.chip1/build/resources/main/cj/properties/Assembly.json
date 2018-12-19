@@ -44,6 +44,10 @@
 			extName:".jss.js"
 		}],
 		scans : [{
+					package : "cj.studio.ecm.examples.test",
+					extName : ".class|.json|.xml",
+					exoterical:"true"
+				},{
 					package : "cj.studio.ecm.examples.chip1",
 					extName : ".class|.json|.xml",
 					exoterical:"true"

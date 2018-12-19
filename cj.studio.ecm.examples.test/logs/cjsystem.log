@@ -9,3 +9,4 @@
 2018年11月27日 08:08:34  警告: cj.studio.ecm.Assembly$EntryPoint - 名为test插件无效，因为未实现IChipPlugin，在类：class cj.studio.ecm.examples.chip1.TestPlugin
 2018年11月27日 09:41:10  警告: cj.studio.ecm.Assembly$EntryPoint - 名为test插件无效，因为未实现IChipPlugin，在类：class cj.studio.ecm.examples.chip1.TestPlugin
 2018年11月27日 09:41:44  警告: cj.studio.ecm.Assembly$EntryPoint - 名为test插件无效，因为未实现IChipPlugin，在类：class cj.studio.ecm.examples.chip1.TestPlugin
+2018年12月19日 17:25:50  错误: cj.studio.ecm.container.factory.SingleonServiceInstanceFactory - 服务:main构建失败，原因：java.lang.IllegalArgumentException: Can not set cj.studio.ecm.examples.test.IRest field cj.studio.ecm.examples.chip1.TestMain.rest to cj.studio.ecm.examples.test.Rest
