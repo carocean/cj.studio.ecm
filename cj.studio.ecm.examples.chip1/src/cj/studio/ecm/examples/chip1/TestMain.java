@@ -1,5 +1,6 @@
 package cj.studio.ecm.examples.chip1;
 
+import cj.studio.ecm.adapter.AdapterFactory;
 import cj.studio.ecm.annotation.CjService;
 import cj.studio.ecm.annotation.CjServiceRef;
 import cj.studio.ecm.examples.chip1.aspect.IRefAspect;
@@ -15,6 +16,8 @@ public class TestMain {
 	IRest rest;
 	public void test(String args) {
 		refAspect.test(args);
+		AdapterFactory.createAdaptable(new Object());
 		System.out.println(args);
+		
 	}
 }

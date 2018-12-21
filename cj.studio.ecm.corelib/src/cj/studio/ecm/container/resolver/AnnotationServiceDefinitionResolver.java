@@ -1,9 +1,9 @@
 package cj.studio.ecm.container.resolver;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 import cj.studio.ecm.IServiceDefinition;
 import cj.studio.ecm.annotation.CjBridge;
@@ -237,16 +237,11 @@ public class AnnotationServiceDefinitionResolver extends
 				argsTypeStr[i]=argsType[i].getName();
 			}
 			sm.setParameterTypeNames(argsTypeStr);
-			Annotation[][] argAnnotations= m.getParameterAnnotations();
-			for (int j = 0; j < argAnnotations.length; j++) {
-				Annotation[] argAnnos=argAnnotations[j];
-				if(argAnnos.length<1)continue;
+			Parameter[] params= m.getParameters();
+			for (int j = 0; j < params.length; j++) {
+				Parameter p=params[j];
 				//方法参数的注解目前只支持一个
-				CjMethodArg arg=null;
-				for(Annotation a:argAnnos){
-					if(a instanceof CjMethodArg)
-						arg=(CjMethodArg)a;
-				}
+				CjMethodArg arg=p.getAnnotation(CjMethodArg.class);
 				if(arg==null)continue;
 				String ref = arg.ref();
 				String value = arg.value();
@@ -306,16 +301,11 @@ public class AnnotationServiceDefinitionResolver extends
 				argsTypeStr[i]=argsType[i].getName();
 			}
 			sm.setParameterTypeNames(argsTypeStr);
-			Annotation[][] argAnnotations= m.getParameterAnnotations();
-			for (int j = 0; j < argAnnotations.length; j++) {
-				Annotation[] argAnnos=argAnnotations[j];
-				if(argAnnos.length<1)continue;
+			Parameter[] params= m.getParameters();
+			for (int j = 0; j < params.length; j++) {
+				Parameter p=params[j];
 				//方法参数的注解目前只支持一个
-				CjMethodArg arg=null;
-				for(Annotation a:argAnnos){
-					if(a instanceof CjMethodArg)
-						arg=(CjMethodArg)a;
-				}
+				CjMethodArg arg=p.getAnnotation(CjMethodArg.class);
 				if(arg==null)continue;
 				String ref = arg.ref();
 				String value = arg.value();

@@ -18,4 +18,10 @@ public class MyAspect implements IAspect{
 		return null;
 	}
 
+	@Override
+	public void observe(Object service) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

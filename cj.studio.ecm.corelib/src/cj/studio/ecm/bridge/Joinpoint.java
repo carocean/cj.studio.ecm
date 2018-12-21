@@ -113,7 +113,9 @@ public class Joinpoint implements IJoinpoint {
 				if (aspect == null) {
 					throw new EcmException(String.format("方面服务不存在：%s", allow));
 				}
-				accepts.add(new AspectWrapper(allow, (IAspect) aspect));
+				IAspect a= (IAspect) aspect;
+				a.observe(this.service);
+				accepts.add(new AspectWrapper(allow,a));
 			}
 		}
 		return allows;
@@ -196,31 +198,7 @@ public class Joinpoint implements IJoinpoint {
 			return method.getAnnotation(clazz);
 		}
 
-		// @Override
-		// public Object cut(Object bridge, Object[] args) {
-		// if (index < accepts.size()) {
-		// IAspect current = accepts.get(index);
-		// Class<?>[] arr = current.getCutInterfaces();
-		// // 都为空视为拦截所有方法
-		// if (arr == null || arr.length == 0) {
-		// current = accepts.get(index);
-		// index++;
-		// return current.cut(bridge, args, this);
-		// }
-		// for (Class<?> c : arr) {
-		// if (c.isAssignableFrom(type)) {
-		// current = accepts.get(index);
-		// index++;
-		// return current.cut(bridge, args, this);
-		// }
-		// }
-		// current = accepts.get(index);
-		// index++;
-		// return null;
-		// }
-		//
-		// return null;
-		// }
+		
 		@Override
 		public Object cut(Object bridge, Object[] args) {
 			if (index < accepts.length) {
@@ -333,6 +311,9 @@ public class Joinpoint implements IJoinpoint {
 			// TODO Auto-generated method stub
 			return null;
 		}
-
+		@Override
+		public void observe(Object service) {
+			
+		}
 	}
 }

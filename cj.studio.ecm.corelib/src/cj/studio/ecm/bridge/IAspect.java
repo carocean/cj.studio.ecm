@@ -70,5 +70,10 @@ public interface IAspect {
 	// 是否能应用到指定的服务，在元数据编译前被调用以修改桥。
 	// boolean canApplyTo(String serviceDefId);
 	// boolean canApplyTo(Class<?> serviceClass);
+	/**
+	 * 观察对象
+	 * @param service
+	 */
+	void observe(Object service);
 
 }
