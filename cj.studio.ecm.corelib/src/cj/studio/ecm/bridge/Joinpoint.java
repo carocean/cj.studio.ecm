@@ -51,7 +51,7 @@ public class Joinpoint implements IJoinpoint {
 	}
 
 //	private Pattern p = Pattern.compile("(\\-|\\+){0,1}(\\w+)");
-	Pattern p = Pattern.compile("(\\-|\\+){0,1}([\\$|\\.|\\w]+)");//带上了jss作为方面的能力：例：$.jss.mod.JssService
+	Pattern p = Pattern.compile("(\\-|\\+){0,1}([\\$|\\@|\\.|\\w]+)");//带上了jss作为方面的能力：例：$.jss.mod.JssService
 	/**
 	 * init在服务被实例化时调用一次，将声明的方面注入作为将来的模板被属性桥接时使用
 	 */
