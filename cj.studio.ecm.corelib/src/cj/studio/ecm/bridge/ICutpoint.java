@@ -73,5 +73,5 @@ public interface ICutpoint {
 	 * @param args
 	 * @return
 	 */
-	Object cut(Object bridge, Object[] args);
+	Object cut(Object bridge, Object[] args) throws Throwable;
 }

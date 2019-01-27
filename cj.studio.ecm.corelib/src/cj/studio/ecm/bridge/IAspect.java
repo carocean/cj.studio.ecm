@@ -40,7 +40,7 @@ public interface IAspect {
 	 * @param point
 	 * @return
 	 */
-	Object cut(Object bridge, Object[] args, ICutpoint point);
+	Object cut(Object bridge, Object[] args, ICutpoint point) throws Throwable;
 
 	/**
 	 * 服务对象的面子

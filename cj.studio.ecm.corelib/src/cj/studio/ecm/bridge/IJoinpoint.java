@@ -16,7 +16,7 @@ import cj.ultimate.net.sf.cglib.proxy.MethodProxy;
  */
 //连接点是在桥、服务和切面间进行连接的装置
 public interface IJoinpoint {
-	Object cut(Object bridge, Method method, MethodProxy proxy, Object[] args);
+	Object cut(Object bridge, Method method, MethodProxy proxy, Object[] args)throws Throwable;
 
 	void init(String aspects, IServiceProvider provider);
 

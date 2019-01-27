@@ -40,7 +40,7 @@ public class Joinpoint implements IJoinpoint {
 
 	@Override
 	public Object cut(Object bridge, Method method, MethodProxy proxy,
-			Object[] args) {
+			Object[] args) throws Throwable{
 		IAdaptable a = (IAdaptable) bridge;
 		IPrototype pt = a.getAdapter(IPrototype.class);
 		String id = pt.getServiceDefinitionId();
@@ -200,7 +200,7 @@ public class Joinpoint implements IJoinpoint {
 
 		
 		@Override
-		public Object cut(Object bridge, Object[] args) {
+		public Object cut(Object bridge, Object[] args) throws Throwable{
 			if (index < accepts.length) {
 				IAspect current = accepts[index].getAspect();
 				index++;
@@ -247,7 +247,7 @@ public class Joinpoint implements IJoinpoint {
 		}
 
 		@Override
-		public Object cut(Object bridge, Object[] args, ICutpoint point) {
+		public Object cut(Object bridge, Object[] args, ICutpoint point) throws Throwable{
 
 			try {
 				// 注释掉原因：尽量使用java返射执行，因为在cglib下容易导致适配器的unWrapper方法得不到原始对象,cglib的method是原始被代理方法可用
@@ -289,6 +289,7 @@ public class Joinpoint implements IJoinpoint {
 				// e);
 				if (e instanceof InvocationTargetException) {
 					e = ((InvocationTargetException) e).getTargetException();
+					throw e;
 				}
 				throw new EcmException(e);
 			}
