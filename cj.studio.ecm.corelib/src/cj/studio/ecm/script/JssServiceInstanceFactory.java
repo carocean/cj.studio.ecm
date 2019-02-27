@@ -263,7 +263,7 @@ public class JssServiceInstanceFactory implements IServiceInstanceFactory {
 			if (jss.length == 0)
 				return null;
 			IJssDefinition def = (IJssDefinition) jss[0];
-			ScriptObjectMirror som = (ScriptObjectMirror) jss[1];
+			Object som = jss[1];
 			if (som != null && def.getDecriber().scope() == Scope.singleon) {
 				services.put(def.selectName(), som);
 			}

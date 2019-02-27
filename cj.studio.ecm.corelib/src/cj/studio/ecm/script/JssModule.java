@@ -347,6 +347,7 @@ class JssModule implements IJssModule {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object[] loadJss(String relateName, IScriptContainer container,
 			IJssModuleCallback cb, boolean forceLoad) {
@@ -485,6 +486,35 @@ class JssModule implements IJssModule {
 				}
 				if (cb != null) {
 					cb.newJss(def, m);
+				}
+				ScriptObjectMirror jsshead = (ScriptObjectMirror) head.get("jss");
+				if (jsshead != null) {
+					Object isStronglyJss = jsshead.get("isStronglyJss");
+					if (isStronglyJss != null && ("true".equals(isStronglyJss)
+							|| isStronglyJss.equals(true))) {
+						String extendclass=(String)jsshead.get("extends");
+						if(StringUtil.isEmpty(extendclass)){
+							throw new EcmException(String.format(
+									"jss服务对象:%s 初始化失败，指定了强jss类型，但head.jss.extends实现的接口未指定。",
+									def.selectName()));
+						}
+						
+						Class<Object> clazz=null;
+						try {
+							clazz = (Class<Object>) container.classloader().loadClass(extendclass);
+							if(clazz==null){
+								throw new ClassNotFoundException(extendclass);
+							}
+						} catch (ClassNotFoundException e) {
+							throw new EcmException(String.format(
+									"jss服务对象:%s 初始化失败，head.jss.extends接口类型: %s 不存在。",
+									def.selectName(),extendclass));
+						}
+						if (!clazz.isInterface())
+							throw new EcmException(String.format("不是接口。%s", extendclass));
+						Object ret= container.getInterface(m, clazz);
+						return new Object[] {def,ret};
+					}
 				}
 				return new Object[] { def, m };
 			} else {
