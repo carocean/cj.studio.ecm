@@ -3,7 +3,7 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'eclipse'
 	apply plugin: 'maven'
-	version = '1.0'
+	version = engineer_version
     sourceSets { 
 	 main { 
 	 	java{
@@ -45,15 +45,43 @@ subprojects {
 	    classifier = 'sources'
 	    from sourceSets.main.allSource
 	}
-    uploadArchives {
-	    repositories {
-	       flatDir {
-	           dirs file('../release')
-	       }
-    	}
-
+    artifacts {  
+	    archives jar  
+	    archives javadocJar  
+	    archives sourcesJar  
+   	}
+   
+	uploadArchives {
+		repositories{
+			mavenDeployer {
+		        pom.groupId = project.group
+		        pom.version = project.version
+		        pom.artifactId = project.name
+				pom.project{
+					name project.name
+					packaging 'jar'
+					description ''
+					licenses {
+						license {
+							name 'The Apache Software License, Version 2.0'
+								url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+								distribution ''
+						}
+					}
+					developers{
+						developer {
+							id 'cj'
+							name 'Carocean Jofers'
+						}
+					}
+				}
+			 
+		        repository(url: "http://localhost:65000/nexus/content/repositories/netos"){
+					authentication(userName:"admin",password:"admin123")
+		        }
+			}
+		}
 	}
-	
 }
 task studio_ecm(){
 	doLast {
