@@ -71,6 +71,7 @@ public class ModuleSite implements IModuleContext, IServiceSite {
 	private IScriptContainer scriptContainer;
 	private IServiceSite delegateSite;// 开发给芯片内的开发者
 	private IServiceSite coreSite;// 系统级服务容器
+	private IServiceContainerMonitor serviceContainerMonitor;
 
 	public ModuleSite(IAssemblyContext context) {
 		init(context);
@@ -204,9 +205,24 @@ public class ModuleSite implements IModuleContext, IServiceSite {
 		return new ExotericalResourcePipeline(resource);
 	}
 
+	protected void monitorServiceContainerBefore() {
+		String monitorClass = this.context.serviceContainerMonitor();
+		if (StringUtil.isEmpty(monitorClass)) {
+			return;
+		}
+		try {
+			Class<?> clazz = Class.forName(monitorClass, true, container.getResource().getClassLoader());
+			serviceContainerMonitor = (IServiceContainerMonitor) clazz.newInstance();
+			serviceContainerMonitor.onBeforeRefresh(getDelegateSite());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			throw new EcmException(e);
+		}
+	}
+
 	@Override
 	public void refresh() {
 		this.container.dispose();
+		monitorServiceContainerBefore();
 		nameGenerator = new ServiceInstanceNameGenerator();
 		IResource resource = context.getResource();
 		IServiceDefinitionScanner scanner = new ServiceDefinitionScanner(this.container, resource);
@@ -286,7 +302,14 @@ public class ModuleSite implements IModuleContext, IServiceSite {
 		compiler.dispose();
 
 		this.registerAndRefreshInstanceFactories();
+		monitorServiceContainerAfter();
+	}
 
+	protected void monitorServiceContainerAfter() {
+		if (serviceContainerMonitor == null) {
+			return;
+		}
+		serviceContainerMonitor.onAfterRefresh(getDelegateSite());
 	}
 
 	protected void registerAndRefreshInstanceFactories() {
@@ -701,7 +724,7 @@ public class ModuleSite implements IModuleContext, IServiceSite {
 		}
 
 		protected void registerCoreServices() {
-			
+
 		}
 
 		@SuppressWarnings("unchecked")

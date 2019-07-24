@@ -15,4 +15,9 @@ public interface IAssemblyContext {
 	public String[] enumProperty();
 	public String getProperty(String key);
 //	String getClassLoaderName();
+	/**
+	 * 服务容器启动前监视器，返回为监视器实现类
+	 * @return
+	 */
+	String serviceContainerMonitor();
 }

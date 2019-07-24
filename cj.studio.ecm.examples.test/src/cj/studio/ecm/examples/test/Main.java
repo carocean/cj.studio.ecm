@@ -16,11 +16,17 @@ public class Main {
 		
 	}
 	public static void main(String... strings) {
-		test5();
+		test6();
 		// 测jss
 	}
-	
-
+	//
+	private static void test6() {
+		// TODO Auto-generated method stub
+		String fn1 = "/Users/caroceanjofers/studio/github/cj.studio.ecm/examples/cj.studio.ecm.examples.chip1-1.0.0.jar";
+		IAssembly chip1 = Assembly.loadAssembly(fn1);
+		chip1.start();
+		chip1.stop();
+	}
 	private static void test5() {
 		// TODO Auto-generated method stub
 		String fn1 = "/Users/caroceanjofers/studio/lns.github.com/cj.studio.ecm/examples/cj.studio.ecm.examples.chip1-1.0.jar";

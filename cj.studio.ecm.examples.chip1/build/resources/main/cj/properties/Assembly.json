@@ -36,6 +36,7 @@
 	serviceContainer : {
 		name : "netContainer",
 		switchFilter:"off",
+		monitor:"cj.studio.ecm.examples.chip1.MyServiceContainerMonitor",
 		jss:[{
 			module:"services1",
 			package:"cj.studio.ecm.examples.chip1.jss",

@@ -35,6 +35,7 @@
 		},
 	serviceContainer : {
 		name : "netContainer",
+		monitor:"",
 		switchFilter:"off",
 		jss:[{
 			module:"services1",

@@ -235,6 +235,9 @@ public class JsonAssemblyContext implements IAssemblyContext {
 		containerObj.addNode(new Property("switchFilter", container
 				.get("switchFilter") == null ? "off" : container.get(
 				"switchFilter").getAsString()));
+		containerObj.addNode(new Property("monitor", container
+				.get("monitor") == null ? "" : container.get(
+				"monitor").getAsString()));
 		JsonArray jss = container.get("jss") == null ? null : container.get(
 				"jss").getAsJsonArray();
 		if (jss != null) {
@@ -346,6 +349,13 @@ public class JsonAssemblyContext implements IAssemblyContext {
 		return (IElement) sNode;
 	}
 
+	@Override
+	public String serviceContainerMonitor() {
+		IElement scNode = ((IElement) element.getNode("serviceContainer"));
+		Property sNode = (Property) scNode.getNode("monitor");
+
+		return sNode.getValue().getName();
+	}
 	@Override
 	public String switchFilter() {
 		IElement scNode = ((IElement) element.getNode("serviceContainer"));
