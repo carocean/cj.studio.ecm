@@ -74,9 +74,7 @@ public class Frame implements IPrinter, IDisposable {
 		if (!pro.contains("/") || pro.indexOf("/") == pro.length() - 1) {
 			throw new RuntimeException("侦没指定协议");
 		}
-		String mid = frame_line
-				.substring(cmd.length(), frame_line.length() - pro.length())
-				.trim();
+		String mid = frame_line.substring(cmd.length(), frame_line.length() - pro.length()).trim();
 		if (StringUtil.isEmpty(mid))
 			throw new RuntimeException("侦路径错,如果没有路径，至少指定一个/号");
 		arr = new String[] { cmd, mid, pro };
@@ -123,9 +121,8 @@ public class Frame implements IPrinter, IDisposable {
 		byte field = 0;// 0=heads;1=params;2=content
 
 		while (down < frameRaw.length) {
-			if (field < 2) {//修改了当内容的头几行是连续空行的情况的bug因此使用了field<2
-				if (frameRaw[up] == '\r' && (up + 1 < frameRaw.length
-						&& frameRaw[up + 1] == '\n')) {// 跳域
+			if (field < 2) {// 修改了当内容的头几行是连续空行的情况的bug因此使用了field<2
+				if (frameRaw[up] == '\r' && (up + 1 < frameRaw.length && frameRaw[up + 1] == '\n')) {// 跳域
 					field++;
 					up += 2;
 					down += 2;
@@ -138,8 +135,7 @@ public class Frame implements IPrinter, IDisposable {
 				content.writeBytes(b);
 				break;
 			}
-			if (frameRaw[down] == '\r' && (down + 1 < frameRaw.length
-					&& frameRaw[down + 1] == '\n')) {// 跳行
+			if (frameRaw[down] == '\r' && (down + 1 < frameRaw.length && frameRaw[down + 1] == '\n')) {// 跳行
 				byte[] b = new byte[down - up];
 				System.arraycopy(frameRaw, up, b, 0, b.length);
 				try {
@@ -183,35 +179,32 @@ public class Frame implements IPrinter, IDisposable {
 		}
 	}
 
-	public <T extends Frame> T fillToFrame(Class<T> ft)
-			throws CircuitException {
+	public <T extends Frame> T fillToFrame(Class<T> ft) throws CircuitException {
 		try {
 			Constructor<T> c = ft.getConstructor(byte[].class);
 			byte[] b = toBytes();
 			T t = c.newInstance(b);
 			return t;
-		} catch (NoSuchMethodException | SecurityException
-				| InstantiationException | IllegalAccessException
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException e) {
 			throw new CircuitException(NetConstans.STATUS_601, e);
 		}
 	}
 
 	/*
-	 * public static void main(String... content) throws CircuitException {
-	 * Frame f = new Frame("get   /a/b net/1.0"); f.parameter("it", "33");
+	 * public static void main(String... content) throws CircuitException { Frame f
+	 * = new Frame("get   /a/b net/1.0"); f.parameter("it", "33");
 	 * f.content.writeBytes("df\r\n\r\nmm".getBytes());
-	 * System.out.println(f.rootName()); Frame n =
-	 * f.fillToFrame(HttpFrame.class);
+	 * System.out.println(f.rootName()); Frame n = f.fillToFrame(HttpFrame.class);
 	 * 
 	 * System.out.println(n); System.out.println(((byte) '\"')); // f.head("t1",
 	 * "t1"); // f.parameter("p1", null); // System.out.println(f.url()); //
 	 * f.content //
 	 * .writeBytes("近几个月以来，解放军南京军事学院主要领导发生密集调整，政委、副政委、副院长、训练部部长、政治部主任等职位相继易人" //
-	 * .getBytes()); // byte[] b = f.toBytes(); // // Frame f2 = new Frame(b);
-	 * // byte[] b2 = new byte[f2.content.readableBytes()]; //
-	 * f2.content.readBytes(b2); // boolean is = f2.parameter("p1") == null ?
-	 * true : false; // System.out.println(new String(b2)); }
+	 * .getBytes()); // byte[] b = f.toBytes(); // // Frame f2 = new Frame(b); //
+	 * byte[] b2 = new byte[f2.content.readableBytes()]; //
+	 * f2.content.readBytes(b2); // boolean is = f2.parameter("p1") == null ? true :
+	 * false; // System.out.println(new String(b2)); }
 	 */
 	private void init() {
 		headmap = new Hashtable<String, String>(8);
@@ -312,15 +305,15 @@ public class Frame implements IPrinter, IDisposable {
 	 * @param v
 	 */
 	public void head(String key, String v) {
-		if (StringUtil.isEmpty(v))
-			return;
-		if ((key.contains("\r") || key.contains("\n"))) {
-			throw new EcmException(String.format(
-					"key 不能包含\\r 或 \\n. key is %s, value is %s", key, v));
-		}
-		if ((v.contains("\r") || v.contains("\n"))) {
-			throw new EcmException(String.format(
-					"value 不能包含\\r 或 \\n. key is %s, value is %s", key, v));
+		if (v == null) {
+			v = "";
+		} else {
+			if ((key.contains("\r") || key.contains("\n"))) {
+				throw new EcmException(String.format("key 不能包含\\r 或 \\n. key is %s, value is %s", key, v));
+			}
+			if ((v.contains("\r") || v.contains("\n"))) {
+				throw new EcmException(String.format("value 不能包含\\r 或 \\n. key is %s, value is %s", key, v));
+			}
 		}
 		if ("protocol".equalsIgnoreCase(key)) {
 			v = v.toUpperCase();
@@ -392,13 +385,15 @@ public class Frame implements IPrinter, IDisposable {
 	 * @param v
 	 */
 	public void parameter(String key, String v) {
-		if (StringUtil.isEmpty(v))
-			return;
-		if ((key.contains("\r") || key.contains("\n"))) {
-			throw new EcmException("不能包含\\r 或 \\n");
-		}
-		if (v.contains("\r") || v.contains("\n")) {
-			throw new RuntimeException("不能包含\\r 或 \\n");
+		if (v == null) {
+			v = "";
+		} else {
+			if ((key.contains("\r") || key.contains("\n"))) {
+				throw new EcmException("不能包含\\r 或 \\n");
+			}
+			if (v.contains("\r") || v.contains("\n")) {
+				throw new RuntimeException("不能包含\\r 或 \\n");
+			}
 		}
 		if (containedQueryStrParam(key)) {
 			throw new RuntimeException("不可覆盖querystring参数." + key);
@@ -474,16 +469,14 @@ public class Frame implements IPrinter, IDisposable {
 		if (heade != null) {
 			JsonObject head = heade.getAsJsonObject();
 			for (Map.Entry<String, JsonElement> en : head.entrySet()) {
-				headmap.put(en.getKey(), en.getValue() == null ? ""
-						: en.getValue().getAsString());
+				headmap.put(en.getKey(), en.getValue() == null ? "" : en.getValue().getAsString());
 			}
 		}
 		JsonElement parae = f.get("para");
 		if (heade != null) {
 			JsonObject para = parae.getAsJsonObject();
 			for (Map.Entry<String, JsonElement> en : para.entrySet()) {
-				parametermap.put(en.getKey(), en.getValue() == null ? ""
-						: en.getValue().getAsString());
+				parametermap.put(en.getKey(), en.getValue() == null ? "" : en.getValue().getAsString());
 			}
 		}
 		JsonElement conte = f.get("content");
@@ -708,21 +701,22 @@ public class Frame implements IPrinter, IDisposable {
 	 */
 	public String retrieveQueryString() {
 		String q = queryString();
-		if(!StringUtil.isEmpty(q)&&q.endsWith("&")) {
-			q=q.substring(0,q.length()-1);
+		if (!StringUtil.isEmpty(q) && q.endsWith("&")) {
+			q = q.substring(0, q.length() - 1);
 		}
 		Set<String> set = parametermap.keySet();
 		for (String key : set) {
 			String v = parametermap.get(key);
-			
+
 			q = String.format("%s&%s=%s", q, key, v);
-			
+
 		}
 		if (q.startsWith("&")) {
 			q = q.substring(1, q.length());
 		}
 		return q;
 	}
+
 	/**
 	 * 找回路径
 	 * 
@@ -740,6 +734,7 @@ public class Frame implements IPrinter, IDisposable {
 		String url = String.format("%s?%s", path(), q);
 		return url;
 	}
+
 	/**
 	 * 找回查询串
 	 * 
@@ -751,25 +746,26 @@ public class Frame implements IPrinter, IDisposable {
 	 */
 	public String retrieveQueryStringAndEncode(String charset) {
 		String q = queryString();
-		if(!StringUtil.isEmpty(q)&&q.endsWith("&")) {
-			q=q.substring(0,q.length()-1);
+		if (!StringUtil.isEmpty(q) && q.endsWith("&")) {
+			q = q.substring(0, q.length() - 1);
 		}
 		Set<String> set = parametermap.keySet();
 		for (String key : set) {
 			String v = parametermap.get(key);
 			try {
-				v=URLEncoder.encode(v, charset);
+				v = URLEncoder.encode(v, charset);
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
 			q = String.format("%s&%s=%s", q, key, v);
-			
+
 		}
 		if (q.startsWith("&")) {
 			q = q.substring(1, q.length());
 		}
 		return q;
 	}
+
 	/**
 	 * 找回路径
 	 * 
@@ -787,9 +783,11 @@ public class Frame implements IPrinter, IDisposable {
 		String url = String.format("%s?%s", path(), q);
 		return url;
 	}
+
 	/**
-	 * 找回查询串
-	 * <br>将深度查找QueryString。即除了在参数集合中找，还分析地址中带的参数并编码
+	 * 找回查询串 <br>
+	 * 将深度查找QueryString。即除了在参数集合中找，还分析地址中带的参数并编码
+	 * 
 	 * <pre>
 	 * 即：将所有参数拼到原查询串后面
 	 * </pre>
@@ -798,45 +796,48 @@ public class Frame implements IPrinter, IDisposable {
 	 */
 	public String deepRetrieveQueryStringAndEncode(String charset) {
 		String q = queryString();
-		if(!StringUtil.isEmpty(q)&&q.endsWith("&")) {
-			q=q.substring(0,q.length()-1);
+		if (!StringUtil.isEmpty(q) && q.endsWith("&")) {
+			q = q.substring(0, q.length() - 1);
 		}
-		if(!StringUtil.isEmpty(q)) {
-			String arr[]=q.split("&");
-			String nq="";
-			for(String kv:arr) {
-				if(StringUtil.isEmpty(kv))continue;
-				int pos=kv.indexOf("=");
-				if(pos<0)continue;
-				String k=kv.substring(0,pos);
-				String v=kv.substring(pos+1,kv.length());
-				if(!StringUtil.isEmpty(v)) {
+		if (!StringUtil.isEmpty(q)) {
+			String arr[] = q.split("&");
+			String nq = "";
+			for (String kv : arr) {
+				if (StringUtil.isEmpty(kv))
+					continue;
+				int pos = kv.indexOf("=");
+				if (pos < 0)
+					continue;
+				String k = kv.substring(0, pos);
+				String v = kv.substring(pos + 1, kv.length());
+				if (!StringUtil.isEmpty(v)) {
 					try {
-						v=URLEncoder.encode(v, charset);
+						v = URLEncoder.encode(v, charset);
 					} catch (UnsupportedEncodingException e) {
 						e.printStackTrace();
 					}
 				}
-				nq=String.format("%s&%s=%s", nq,k,v);
+				nq = String.format("%s&%s=%s", nq, k, v);
 			}
-			q=nq;
+			q = nq;
 		}
 		Set<String> set = parametermap.keySet();
 		for (String key : set) {
 			String v = parametermap.get(key);
 			try {
-				v=URLEncoder.encode(v, charset);
+				v = URLEncoder.encode(v, charset);
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
 			q = String.format("%s&%s=%s", q, key, v);
-			
+
 		}
 		if (q.startsWith("&")) {
 			q = q.substring(1, q.length());
 		}
 		return q;
 	}
+
 	public String command() {
 		return head("command").trim();
 	}
@@ -873,16 +874,14 @@ public class Frame implements IPrinter, IDisposable {
 	 * </pre>
 	 * 
 	 * @param frame
-	 * @param shallow
-	 *            true浅表拷贝, false深表拷贝（deep copy)。
+	 * @param shallow true浅表拷贝, false深表拷贝（deep copy)。
 	 */
 	public void copyFrom(Frame frame, boolean shallow) {
 		if (shallow) {
 			this.content = frame.content;
 			this.parametermap = frame.parametermap;
 			for (String key : frame.headmap.keySet()) {
-				if (key.equalsIgnoreCase("protocol")
-						|| key.equalsIgnoreCase("url")
+				if (key.equalsIgnoreCase("protocol") || key.equalsIgnoreCase("url")
 						|| key.equalsIgnoreCase("command")) {
 					continue;
 				}
@@ -892,8 +891,7 @@ public class Frame implements IPrinter, IDisposable {
 		} else {
 			content = frame.content.copyIt();
 			for (String key : frame.headmap.keySet()) {
-				if (key.equalsIgnoreCase("protocol")
-						|| key.equalsIgnoreCase("url")
+				if (key.equalsIgnoreCase("protocol") || key.equalsIgnoreCase("url")
 						|| key.equalsIgnoreCase("command")) {
 					continue;
 				}
@@ -1006,8 +1004,7 @@ public class Frame implements IPrinter, IDisposable {
 		}
 		ByteBuf ctxCopy = content.copy();
 		// if(!headmap.containsKey("Content-Length")){
-		headmap.put("Content-Length",
-				Integer.toString(ctxCopy.readableBytes()));
+		headmap.put("Content-Length", Integer.toString(ctxCopy.readableBytes()));
 		// }
 		for (String key : headmap.keySet()) {
 			String v = headmap.get(key);
@@ -1044,10 +1041,10 @@ public class Frame implements IPrinter, IDisposable {
 	}
 
 	public static void main(String... strings) {
-		 Frame f=new Frame("get /test/1.html?des=20&type=中国人 http/1.1");
-		 f.parameter("user","li");
-		 f.parameter("pwd","11");
-		 System.out.println(f.deepRetrieveUrlAndEncode("utf-8"));
+		Frame f = new Frame("get /test/1.html?des=20&type=中国人 http/1.1");
+		f.parameter("user", "li");
+		f.parameter("pwd", "11");
+		System.out.println(f.deepRetrieveUrlAndEncode("utf-8"));
 //		String p = URLEncoder.encode("干啥里");
 //		Frame f = new Frame(String.format(
 //				"get /test/u.s?uid=吃了没& swsid = 55555 & p=%s&name = |&z= peer/1.0",
