@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cj.studio.ecm.IRuntimeServiceCreator;
 import cj.studio.ecm.IRuntimeServiceInstanceFactory;
 import cj.studio.ecm.IServiceDefinition;
 import cj.studio.ecm.IServiceNameGenerator;
@@ -68,6 +69,14 @@ public class RuntimeServiceInstanceFactory extends ServiceInstanceFactory implem
 			service = getServiceInstances().get(serviceId);
 		}
 		if (service != null) {
+			if(service instanceof IRuntimeServiceCreator) {
+				IRuntimeServiceCreator creator=(IRuntimeServiceCreator)service;
+				Object obj=creator.create();
+				if(obj==null) {
+					obj=service;
+				}
+				return obj;
+			}
 			return service;
 		}
 		if (serviceId.startsWith("$.")) {
@@ -99,6 +108,15 @@ public class RuntimeServiceInstanceFactory extends ServiceInstanceFactory implem
 		List<T> list = new ArrayList<T>();
 		for (Object service : this.getServiceInstances().values()) {
 			if (serviceClazz.isInstance(service)) {
+				if(service instanceof IRuntimeServiceCreator) {
+					IRuntimeServiceCreator creator=(IRuntimeServiceCreator)service;
+					Object obj=creator.create();
+					if(obj==null) {
+						obj=service;
+					}
+					list.add((T) obj);
+					continue;
+				}
 				list.add((T) service);
 			}
 		}
