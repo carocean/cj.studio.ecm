@@ -222,7 +222,6 @@ public class ModuleSite implements IModuleContext, IServiceSite {
 	@Override
 	public void refresh() {
 		this.container.dispose();
-		monitorServiceContainerBefore();
 		nameGenerator = new ServiceInstanceNameGenerator();
 		IResource resource = context.getResource();
 		IServiceDefinitionScanner scanner = new ServiceDefinitionScanner(this.container, resource);
@@ -302,7 +301,6 @@ public class ModuleSite implements IModuleContext, IServiceSite {
 		compiler.dispose();
 
 		this.registerAndRefreshInstanceFactories();
-		monitorServiceContainerAfter();
 	}
 
 	protected void monitorServiceContainerAfter() {
@@ -327,7 +325,9 @@ public class ModuleSite implements IModuleContext, IServiceSite {
 		multiton.initialize(this, nameGenerator);
 		runtime.initialize(this, nameGenerator);
 		jss.initialize(this, nameGenerator);
-
+		
+		monitorServiceContainerBefore();
+		
 		singleon.refresh();
 		multiton.refresh();
 		runtime.refresh();
@@ -338,6 +338,8 @@ public class ModuleSite implements IModuleContext, IServiceSite {
 		} catch (Exception e) {
 			throw new EcmException(e);
 		}
+		
+		monitorServiceContainerAfter();
 	}
 
 	/**

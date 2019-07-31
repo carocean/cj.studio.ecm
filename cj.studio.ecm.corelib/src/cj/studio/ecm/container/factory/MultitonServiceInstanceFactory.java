@@ -59,11 +59,16 @@ public class MultitonServiceInstanceFactory extends ServiceInstanceFactory {
 
 	@Override
 	public void refresh() {
-		this.getServiceInstances().clear();
 		// 实例化拥有强制反向描述属性的服务
 		this.instanceInjectionInvertForceServices();
 	}
-
+	@Override
+	protected void dispose(boolean disposing) {
+		super.dispose(disposing);
+		if(disposing) {
+			multitonServiceDefinitonMap.clear();
+		}
+	}
 	protected void instanceInjectionInvertForceServices() {
 		ICollection<String> names = getRegistry().enumServiceDefinitionNames();
 		for (String name : names) {

@@ -110,7 +110,14 @@ public class ServiceMethodInstanceFactory extends ServiceInstanceFactory
 		}
 
 	}
-
+	@Override
+	protected void dispose(boolean disposing) {
+		super.dispose(disposing);
+		if(disposing) {
+			serviceDefinitionMap.clear();
+			this.initializerMap.clear();
+		}
+	}
 	@Override
 	protected Map<String, Object> createServiceInstanceMap() {
 		return new WeakHashMap<String, Object>();

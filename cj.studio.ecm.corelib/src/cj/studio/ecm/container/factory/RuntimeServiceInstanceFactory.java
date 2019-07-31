@@ -25,9 +25,9 @@ public class RuntimeServiceInstanceFactory extends ServiceInstanceFactory implem
 
 	@Override
 	public void refresh() {
-		this.getServiceInstances().clear();
+		
 	}
-
+	
 	@Override
 	public void addService(Class<?> serviceClazz, Object serviceInstance) {
 		String className = serviceClazz.getName();
