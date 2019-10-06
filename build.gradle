@@ -18,7 +18,6 @@ subprojects {
     targetCompatibility = 1.8
     repositories {
        mavenCentral()
-       flatDir(dirs: file("../global/lib")) 
     }
 
     dependencies {
@@ -76,8 +75,8 @@ subprojects {
 					}
 				}
 			 
-		        repository(url: "http://localhost:65000/nexus/content/repositories/netos"){
-					authentication(userName:"admin",password:"admin123")
+		        repository(url: "http://47.105.165.186/nexus/content/repositories/netos"){
+					authentication(userName:"deployment",password:"deployment123")
 		        }
 			}
 		}
