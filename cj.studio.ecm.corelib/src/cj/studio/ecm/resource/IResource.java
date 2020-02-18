@@ -16,7 +16,7 @@ public interface IResource extends IDisposable{
 	/**
 	 * 此包将优先装载，用于加载一些被系统依赖包，它拦截到父的查找，而先装载它
 	 */
-	public static final String REFINES_LIBPATH_FILE="cj/refines";
+	public static final String REFOVERRIDE_LIBPATH_FILE ="cj/refoverrides";
 	/**
 	 * 内嵌的包路径，内嵌包和芯片使用同一个类加载器，而引用包则被芯片的父级加载器装载。
 	 */

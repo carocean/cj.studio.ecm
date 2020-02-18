@@ -212,7 +212,7 @@ public class SystemResource extends JarClassLoader implements IResource,
 			
 		}finally{
 		try {
-			
+
 			// 先加载织入类
 			if (this.weaverChain != null) {
 				weaverChain.reset();

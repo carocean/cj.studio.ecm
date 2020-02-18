@@ -19,8 +19,6 @@ import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLDecoder;
-import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +38,6 @@ import java.util.jar.Manifest;
 import cj.studio.ecm.CJSystem;
 import cj.studio.ecm.util.ObjectHelper;
 import cj.ultimate.IDisposable;
-import cj.ultimate.util.StringUtil;
 
 /**
  * @uml.dependency supplier="cj.nns.ultimate.IDisposable"
@@ -54,13 +51,13 @@ public class JarClassLoader extends URLClassLoader implements IDisposable {
 
     private PrintStream logger;
     private final List<JarFile> lstJarFile;
-    private final List<JarFile> refinesJarFile;
+    private final List<JarFile> overridesJarFile;
     private Set<File> hsNativeFile;
     private Map<String, Class<?>> hmClass;
     private ProtectionDomain pd;
     final private String referencePath = IResource.REFRECENCE_LIBPATH_FILE;
     final private String refembedPath = IResource.REFEMBED_LIBPATH_FILE;
-    final private String refinesPath = IResource.REFINES_LIBPATH_FILE;
+    final private String refoverridePath = IResource.REFOVERRIDE_LIBPATH_FILE;
 
     /**
      * Default constructor. Defines system class loader as a parent class
@@ -96,13 +93,13 @@ public class JarClassLoader extends URLClassLoader implements IDisposable {
         }
         hmClass = new HashMap<String, Class<?>>();
         lstJarFile = new ArrayList<JarFile>();
-        refinesJarFile = new ArrayList<JarFile>();
+        overridesJarFile = new ArrayList<JarFile>();
         hsNativeFile = new HashSet<File>();
 
         String sUrlTopJAR = null;
         //受保护域是主代码jar，因为它在构造所以每新建一个加载器都会被装载一次，在多层级的加载器结构中，它由于会被不同层级的加载器装载，因此应去掉它
 //        try {
-            pd = getClass().getProtectionDomain();
+        pd = getClass().getProtectionDomain();
 //            CodeSource cs = pd.getCodeSource();
 //            URL urlTopJAR = cs.getLocation();
 //            // URL.getFile() returns "/C:/my%20dir/MyApp.jar"
@@ -175,7 +172,7 @@ public class JarClassLoader extends URLClassLoader implements IDisposable {
         try {
             f = new JarFile(file);
             //将f添加到this.lstJarFile
-            this.loadJar(f,this.lstJarFile);
+            this.loadJar(f, this.lstJarFile);
 //            System.out.println("~~2~~~~~~~~~~~~"+f.getName());
         } catch (IOException e) {
             log("Loading inner JAR %s from temp file %s", e);
@@ -222,16 +219,20 @@ public class JarClassLoader extends URLClassLoader implements IDisposable {
                     log("Loading inner JAR %s from temp file %s", inf.jarEntry,
                             getFilename4Log(file));
                     try {
-                        if (s.startsWith(this.referencePath)) {
+                        if (s.startsWith(this.refembedPath)) {
+                            loadJar(new JarFile(file), this.lstJarFile);
+                        } else if (s.startsWith(this.referencePath)) {
                             ClassLoader parent = getParent();
                             if (parent instanceof JarClassLoader) {
                                 JarClassLoader jcl = (JarClassLoader) parent;
-                                jcl.loadJar(new JarFile(file), this.lstJarFile);
+                                jcl.loadJar(new JarFile(file), jcl.lstJarFile);
                             }
-                        } else if (s.startsWith(this.refembedPath)) {
-                            loadJar(new JarFile(file), this.lstJarFile);
-                        } else if (s.startsWith(this.refinesPath)) {
-                            loadJar(new JarFile(file), this.refinesJarFile);
+                        } else if (s.startsWith(this.refoverridePath)) {
+                            ClassLoader parent = getParent();
+                            if (parent instanceof JarClassLoader) {
+                                JarClassLoader jcl = (JarClassLoader) parent;
+                                jcl.loadJar(new JarFile(file), jcl.overridesJarFile);
+                            }
                         } else {
                             CJSystem.current().environment().logging()
                                     .info(String.format(
@@ -383,7 +384,7 @@ public class JarClassLoader extends URLClassLoader implements IDisposable {
                 // Ignore. In the worst case temp files will accumulate.
             }
         }
-        for (JarFile jarFile : refinesJarFile) {
+        for (JarFile jarFile : overridesJarFile) {
             try {
                 jarFile.close();
             } catch (IOException e) {
@@ -585,7 +586,7 @@ public class JarClassLoader extends URLClassLoader implements IDisposable {
         }
         if (c == null && isLaunchedFromJar()) {
             try {
-                c = findJarClass(sClassName, this.refinesJarFile);
+                c = findJarClass(sClassName, this.overridesJarFile);
                 log("Loaded %s from JAR by %s", sClassName,
                         getClass().getName());
                 return c;
@@ -648,7 +649,7 @@ public class JarClassLoader extends URLClassLoader implements IDisposable {
     public URL findResource(String sName) {
         log("findResource: %s", sName);
         if (isLaunchedFromJar()) {
-            JarEntryInfo inf = findJarEntry(sName, this.refinesJarFile);
+            JarEntryInfo inf = findJarEntry(sName, this.overridesJarFile);
             if (inf == null) {
                 inf = findJarEntry(sName, this.lstJarFile);
             }
@@ -870,7 +871,7 @@ public class JarClassLoader extends URLClassLoader implements IDisposable {
             this.hmClass.clear();
             this.hsNativeFile.clear();
             this.lstJarFile.clear();
-            this.refinesJarFile.clear();
+            this.overridesJarFile.clear();
             this.disposeSuper();
             // 清除父加载器是非常错误的
             // if ((this.getParent() != null)&&(this.getParent() instanceof
