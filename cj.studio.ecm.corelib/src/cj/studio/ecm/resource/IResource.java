@@ -14,6 +14,10 @@ public interface IResource extends IDisposable{
 	public static final String CONTEXT_PROP_FILE="cj/properties/Assembly.properties";
 	public static final String REFRECENCE_LIBPATH_FILE="cj/references";
 	/**
+	 * 此包将优先装载，用于加载一些被系统依赖包，它拦截到父的查找，而先装载它
+	 */
+	public static final String REFINES_LIBPATH_FILE="cj/refines";
+	/**
 	 * 内嵌的包路径，内嵌包和芯片使用同一个类加载器，而引用包则被芯片的父级加载器装载。
 	 */
 	public static final String REFEMBED_LIBPATH_FILE="cj/refembeds";

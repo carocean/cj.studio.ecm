@@ -251,7 +251,7 @@ public class SystemResource extends JarClassLoader implements IResource,
 	@Override
 	public void load(String file) {
 		resourcefile=file;
-		super.loadJar(file, REFRECENCE_LIBPATH_FILE,REFEMBED_LIBPATH_FILE);
+		super.loadJar(file);
 	}
 	public String getResourcefile() {
 		return resourcefile;

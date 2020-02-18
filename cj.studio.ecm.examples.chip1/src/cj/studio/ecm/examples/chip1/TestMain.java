@@ -18,6 +18,8 @@ public class TestMain {
 		refAspect.test(args);
 		AdapterFactory.createAdaptable(new Object());
 		System.out.println(args);
-		
+//		ByteBuf bb= Unpooled.buffer();
+//		bb.readableBytes();
+//		System.out.println("+++++++++"+bb);
 	}
 }

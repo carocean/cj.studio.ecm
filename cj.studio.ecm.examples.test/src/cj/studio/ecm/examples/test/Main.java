@@ -16,7 +16,7 @@ public class Main {
 		
 	}
 	public static void main(String... strings) {
-		test6();
+		test5();
 		// 测jss
 	}
 	//
@@ -29,7 +29,7 @@ public class Main {
 	}
 	private static void test5() {
 		// TODO Auto-generated method stub
-		String fn1 = "/Users/caroceanjofers/studio/lns.github.com/cj.studio.ecm/examples/cj.studio.ecm.examples.chip1-1.0.jar";
+		String fn1 = "/Users/caroceanjofers/studio/cj.studio.ecm/examples/cj.studio.ecm.examples.chip1-2.3.7.jar";
 		IAssembly chip1 = Assembly.loadAssembly(fn1);
 		chip1.start();
 		Object obj=chip1.workbin().part("main");

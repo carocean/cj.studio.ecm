@@ -25,7 +25,7 @@ dependencies {
 	compile fileTree(dir: 'libs', includes: ['*.jar'])
     runtime fileTree(dir: 'libs', includes: ['*.jar'])
     compile fileTree('src/cj/refembeds')
-    
+//	compile fileTree('src/cj/refines')
 }
 
 task release(type: Copy) {
