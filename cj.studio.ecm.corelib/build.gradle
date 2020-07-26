@@ -15,12 +15,11 @@ sourceSets {
         options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
     } 
  repositories { 
-	 flatDir(dirs: "$projectDir/global/lib") 
- } 
+ }
  
 dependencies {
+	compile group: 'org.yaml', name: 'snakeyaml', version: '1.26'
 	compile project(':cj.ultimate')
-	compile fileTree(dir: '../global/lib', includes: ['*.jar'])
 	compile fileTree(dir: 'libs', includes: ['*.jar'])
     runtime fileTree(dir: 'libs', includes: ['*.jar'])
     

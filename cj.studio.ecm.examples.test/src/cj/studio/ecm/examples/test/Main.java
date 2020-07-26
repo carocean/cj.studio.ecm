@@ -16,13 +16,13 @@ public class Main {
 		
 	}
 	public static void main(String... strings) {
-		test5();
+		test6();
 		// 测jss
 	}
 	//
 	private static void test6() {
 		// TODO Auto-generated method stub
-		String fn1 = "/Users/caroceanjofers/studio/github/cj.studio.ecm/examples/cj.studio.ecm.examples.chip1-1.0.0.jar";
+		String fn1 = "/Users/caroceanjofers/studio/cj.studio.ecm/examples/cj.studio.ecm.examples.chip1-2.3.9.jar";
 		IAssembly chip1 = Assembly.loadAssembly(fn1);
 		chip1.start();
 		chip1.stop();

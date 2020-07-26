@@ -11,6 +11,6 @@ public interface IElementParser {
 	 * @return
 	 */
 	Object getEntity();
-	void parse(IElement e,JsonElement je);
+	void parse(IElement e,Object je);
 
 }

@@ -16,10 +16,10 @@ import cj.ultimate.gson2.com.google.gson.JsonElement;
 import cj.ultimate.gson2.com.google.gson.JsonObject;
 import cj.ultimate.util.StringUtil;
 
-public class JssModuleParser implements IElementParser {
+public class JssModuleJsonParser implements IElementParser {
 	private IElement ele;
 
-	public JssModuleParser() {
+	public JssModuleJsonParser() {
 	}
 
 	public Object getEntity() {
@@ -65,7 +65,7 @@ public class JssModuleParser implements IElementParser {
 	}
 
 	@Override
-	public void parse(IElement e, JsonElement je) {
+	public void parse(IElement e, Object je) {
 		this.ele = e;
 		JsonArray jss = (JsonArray) je;
 		Map<String, String> map = new HashMap<String, String>();

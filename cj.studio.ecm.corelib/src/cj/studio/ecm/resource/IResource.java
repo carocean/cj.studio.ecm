@@ -10,7 +10,8 @@ import cj.ultimate.IDisposable;
 
 
 public interface IResource extends IDisposable{
-	public static final String CONTEXT_CONFIG_FILE="cj/properties/Assembly.json";
+	//yaml,json作为扩展名
+//	public static final String CONTEXT_CONFIG_FILE="cj/properties/Assembly";
 	public static final String CONTEXT_PROP_FILE="cj/properties/Assembly.properties";
 	public static final String REFRECENCE_LIBPATH_FILE="cj/references";
 	/**

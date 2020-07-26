@@ -19,5 +19,5 @@ public interface IAssemblyContext {
 	 * 服务容器启动前监视器，返回为监视器实现类
 	 * @return
 	 */
-	String serviceContainerMonitor();
+	String serviceContainerMonitors();
 }

@@ -23,6 +23,8 @@
 
 ## 面向模块开发
 
+```java
+
 	IAssambly assambly=Assambly.load("/home/cj/test/helloworld.jar");
 	assambly.start();
 	
@@ -32,8 +34,10 @@
 	
 	assambly.close();
 
+```    
+- 注：程序集上下文优先加载jar中的，如果在程序集运行目录下发现properties目录中包含有Assembly.json|Assembly.yaml|Assembly.properties文件，则优先使用
 ## 使用注解声明服务
-
+```java
 	package your.crop.examples.chip2.anno;
 	
 	import java.util.List;
@@ -133,10 +137,13 @@
 		}
 	
 	}
+```
 ## 使用json声明服务
 
 	1.java文件MyJsonService.java
-	
+
+```java	
+
 	package your.crop.examples.chip2.json;
 	
 	import java.util.List;
@@ -285,11 +292,11 @@
 	    	}
 		]
 	}
-	
+```
 ## 使用xml声明服务
 
 1.MyXmlService.java
-
+```java
 	package your.crop.examples.chip2.xml;
 	
 	import java.util.List;
@@ -379,42 +386,15 @@
 			return new MyJsonService();
 		}
 	}
-	
+```	
 	2.MyXmlService.xml
-	
-	
-	
-	
-		
-		
-		
-		
-		
-			
-			fuck you
-		
-		
-			
-			
-		
-		
-			
-			new your.crop.examples.chip2.xml.ShowCreateObjectByValueParser();
-		
-		
-			
-			
-			{"age1":"333","myObject":"$.myAnnoService"}
-		
-		
-			
-			
-			["333","$.myAnnoService"]	
-	 
+```xml
+
+```
 
 
 ## web开发使用js作为服务的示例：
-
+```javascript
 	/*
 	 * 说明：
 	 * 作者：extends可以实现一种类型，此类型将可在java中通过调用服务提供器的.getServices(type)获取到。
@@ -605,7 +585,7 @@
 		//circuit.content().writeBytes(String.format("{'id':'%s'}",phyId).getBytes())	;
 	}
 
-
+```
 ## net 通讯开发工具包
 
 摘要：
@@ -620,7 +600,7 @@ public void flow(frame,circuit,plug){ //TODO }
 其中frame是请求侦，circuit代表一个正在执行的当前回路，即当前执行序。
 plug是将sink插入到pin上时产生的插头，插头具有调度能力，可以主动回馈、跳跃、分支或顺行。插头还有伺服能力，能通过plug.site()获取芯片中的服务和所在graph的相关内容。 
 - WebsiteGraph，它实现了全部的web应用协议，放弃了jsp这种拉圾,对于页面代码再也不用编译。对于页面的逻辑实现，开发者可以用java类开发，也可按jss(是js文件)来开发，也可混合使用。 因此，该组件实现了可以按nodejs语法来写页面。 在使用时，开发者可需从WebsiteGraph派生你的graph，而后声明为cj服务即可。 我们看一个websiteGraph的上下文配置，拿平台的website实现作为案例，其下是其根程序集的上下文：
-
+```json
 
 	{
 		entryPoint: {
@@ -673,12 +653,12 @@ plug是将sink插入到pin上时产生的插头，插头具有调度能力，可
 	
 		}
 	}
-
+```
 	我们看到，serviceContainer.jss一项声明了jss服务模块。
 	assemblyInfo.assemblyResource指明了web资源位置，其中的ws代表的是http5的websocket的支持
 	
 - nio net 所有nio基于NettyServer和NettyClient类 比如tcp协议，以下是为代码，在使用时根据实际的api来实现：
-
+```java
 	TcpNettyServer server=new TcpNettyServer();
 	server.start('localhost','8080');
 	server.buildNetGraph().netoutput().plug('testsink',new ISink(){
@@ -716,7 +696,7 @@ plug是将sink插入到pin上时产生的插头，插头具有调度能力，可
 	//frame.head(NetConstans.FRAME_HEADKEY_CIRCUIT_SYNC_TIMEOUT,'3600');//同步超时时间
 	//frame.head(NetConstans.FRAME_HEADKEY_CIRCUIT_ASYNC_TIMEOUT,'1200');//同步等待超时后异步通知超时时间,使用此功能需要在回路中设置回馈点来接收
 	client.buildNetGraph().netinput().flow(frame,circuit);
-
+```
 # 面向连接编程思想
 
 
