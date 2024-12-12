@@ -1,3 +1,11 @@
+
+The ECM development toolkit is a Java-based development framework with a core focus on service containers, similar to the Spring framework, but its functionality far surpasses that of Spring’s service container. Functionally, ECM can be seen as the combined capabilities of Spring, Spring Boot, Spring Cloud, OSGi, and Node.js, making it a simpler yet more powerful IoC framework.
+
+ECM supports modular development and uniquely enables Java-based JavaScript service development (referred to as JSS services), achieving seamless injection and interoperability between Java and JavaScript services. As a modular (OSGi) framework, it features hot-plug capabilities with a simple and user-friendly design.
+
+Additionally, the ECM framework includes microservice suites such as Gateway, OpenPorts, and Mic, which facilitate the construction of distributed microservice clusters. It not only supports HTTP protocols but also extends compatibility to TCP, UDP, and UDT protocols, enhancing its application in complex network scenarios.
+
+
 # ecm&net
 
 keywords：j2ee,java,nodejs,osgi,jsp,struts,spring,spring mvc,mongodb,radis,zookeeper,netty,mina,jetty,tomcat,weblogic,websphere,orm,cloud,nashron,jdk
