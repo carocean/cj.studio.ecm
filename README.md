@@ -1,27 +1,80 @@
 # ecm&net
 
-关键词 keywords：j2ee,java,nodejs,osgi,jsp,struts,spring,spring mvc,mongodb,radis,zookeeper,netty,mina,jetty,tomcat,weblogic,websphere,orm,cloud,nashron,jdk
+keywords：j2ee,java,nodejs,osgi,jsp,struts,spring,spring mvc,mongodb,radis,zookeeper,netty,mina,jetty,tomcat,weblogic,websphere,orm,cloud,nashron,jdk
 
 ![Image text](https://github.com/carocean/cj.studio.ecm/blob/master/document/img/ecm-design.png)
 
-## ecm 面向连接电子模型开发工具包
+## ECM: Development Toolkit for Connection-Oriented Electronic Models
 
-一、作为服务容器，对服务定义的支持： 1.支持注解方式 2.支持xml方式 3.支持json方式 4.支持以上混合定义方式 5.支持反向注入 6.支持属性值、方法参数值注入，即便是注入代码段也可 7.支持任意类方法注入（spring仅支持工厂方法，无聊） 8.支持面向方面编程，切面拦截，功能强大，结构简单，甚至支持使用jss服务拦截java方法。简单活用 9.支持按类型搜索服务 10.支持按外部类的类别搜索服务 11.支持适配器对象。适配器对象可转换为任意类型，从而实现了服务的弱类型机制。
+I. As a Service Container: Support for Service Definitions
 
-二、作为osgi容器，它以程序集（逻辑上叫芯片）作为支点，支持： 1.程序集的加载、启动、停止、卸载。 2.程序集之间的类型依赖及扩展 3.程序集之间的服务实例的强依赖 4.支持外部服务、外部类型，可在程序集外部获取到这些外部组件
+	1.	Supports annotation-based service definitions.
+	2.	Supports XML-based service definitions.
+	3.	Supports JSON-based service definitions.
+	4.	Allows hybrid definitions combining annotations, XML, and JSON.
+	5.	Enables reverse injection.
+	6.	Supports injection of property values, method parameter values, and even code snippets.
+	7.	Allows injection into any class methods (unlike Spring, which only supports factory methods).
+	8.	Provides robust Aspect-Oriented Programming (AOP) capabilities with simple structure, including intercepting Java methods using JSS services.
+	9.	Supports service search by type.
+	10.	Supports service search by external class categories.
+	11.	Supports adapter objects, which can convert into any type, thereby implementing a weakly typed service mechanism.
 
-三、作为nodejs容器，它拥有类似于nodejs的语法结构，在cj studio产品中均称之为jss服务，它具有： 1.exports导出外部函数（仿nodejs） 2.imports导入程序集及模块环境（能得到服务容器） 3.head对象，每个jss服务以该头对象声明服务 4.支持jss服务与java服务混用 5.支持多线程的jss服务 6.支持以jss开发web程序
+II. As an OSGi Container
 
-	面向连接编程是一个完整的工具体系,从web的mvc到持久层，从开发工具到分布式部署，从本地工具到远程服务容器，一套完整的开发和部署体系，从而可以使用户摆脱那种拼拼补补的开发现状和运维状况。
-	
-面向连接的工具体系的优势在于，在架构层面，比spring更简单易用，比osgi更省事，比nodejs在服务器端的开发更规范，而且与java共生。它支持搭建像神经网络这样的大型分布式运维环境
+Using assemblies (referred to logically as “chips”) as its core concept, the toolkit supports:
 
-	自2008年诞生，至今已被多家公司使用，为了持续发展这项技术，cj宣布正式开源，任何企业和个人均可无偿应用到其产品，仅需要在代码中注明：cj.studio
-	
-	其中的ecm开发工具包兼有spring、osgi、nodejs的功能。支持面向模块开发与部署，热插拔。 	
-	其中的net开发工具包,支持web的开发，并且可以完全使用js开发web应用，它的语法更接近于流行的nodejs，其它功能包含有基于netty的nio也包含有自行开发的nio框架rio,rio叫响应式nio框架，它即有nio的优势，又有同步等待响应的能力。
+	1.	Loading, starting, stopping, and unloading of assemblies.
+	2.	Type dependencies and extensions between assemblies.
+	3.	Strong dependencies between service instances across assemblies.
+	4.	External services and types, allowing access to these components outside the assembly.
 
-## 面向模块开发
+III. As a Node.js Container
+
+The toolkit incorporates a Node.js-like syntax structure, referred to as JSS services in CJ Studio products, with the following features:
+
+	1.	Exports: Enables exporting external functions, similar to Node.js.
+	2.	Imports: Allows importing assemblies and module environments, including access to the service container.
+	3.	Head Object: Declares services using a head object in each JSS service.
+	4.	Supports mixing JSS services with Java services.
+	5.	Enables multi-threaded JSS services.
+	6.	Supports developing web applications using JSS.
+
+A Comprehensive Connection-Oriented Programming System
+
+The connection-oriented programming system provides a complete toolkit for:
+
+	•	Web MVC frameworks.
+	•	Persistent layers.
+	•	Development tools.
+	•	Distributed deployment.
+	•	Local tools and remote service containers.
+
+This unified development and deployment framework eliminates the challenges of patchwork development and operational inefficiencies.
+
+Advantages of the Connection-Oriented Toolkit
+
+	1.	Architecturally simpler and more user-friendly than Spring.
+	2.	Less cumbersome than OSGi.
+	3.	Provides more structured and standardized server-side development compared to Node.js.
+	4.	Seamlessly coexists with Java, supporting the creation of large-scale distributed operational environments, such as neural networks.
+
+Open Source and History
+
+Since its inception in 2008, the technology has been adopted by multiple companies. To foster continued development, CJ Studio has officially open-sourced the toolkit. Any enterprise or individual can freely use it in their products, with the only requirement being attribution in the code: cj.studio.
+
+Toolkit Highlights
+
+	1.	ECM Development Toolkit: Combines functionalities of Spring, OSGi, and Node.js.
+	•	Supports modular development and deployment with hot-plugging capabilities.
+	2.	Net Development Toolkit: Designed for web development.
+	•	Fully supports JavaScript-based web applications.
+	•	Syntax aligns closely with popular Node.js frameworks.
+	•	Includes:
+	•	NIO Framework based on Netty.
+	•	RIO (Reactive I/O Framework): Combines NIO advantages with synchronous response capabilities.
+
+## Modular Development-Oriented Approach
 
 ```java
 
@@ -35,8 +88,12 @@
 	assambly.close();
 
 ```    
-- 注：程序集上下文优先加载jar中的，如果在程序集运行目录下发现properties目录中包含有Assembly.json|Assembly.yaml|Assembly.properties文件，则优先使用
-## 使用注解声明服务
+- Note:
+
+The assembly context prioritizes loading from the JAR. However, if the properties directory in the assembly’s runtime directory contains any of the following files: Assembly.json, Assembly.yaml, or Assembly.properties, these files take precedence.
+
+Declaring Services Using Annotations
+
 ```java
 	package your.crop.examples.chip2.anno;
 	
@@ -138,7 +195,7 @@
 	
 	}
 ```
-## 使用json声明服务
+## Declaring Services Using JSON
 
 	1.java文件MyJsonService.java
 
@@ -293,7 +350,7 @@
 		]
 	}
 ```
-## 使用xml声明服务
+## Declaring Services Using XML
 
 1.MyXmlService.java
 ```java
@@ -393,11 +450,11 @@
 ```
 
 
-## web开发使用js作为服务的示例：
+## Example of Using JavaScript as a Java-base Service in Web Development:
 ```javascript
 	/*
-	 * 说明：
-	 * 作者：extends可以实现一种类型，此类型将可在java中通过调用服务提供器的.getServices(type)获取到。
+	 * note：
+	 * author：The extends keyword can define a type, which can then be accessed in Java by calling the service provider’s .getServices(type).
 	 * <![jss:{
 			scope:'runtime'
 	 	}
@@ -586,26 +643,41 @@
 	}
 
 ```
-## net 通讯开发工具包
+## Net Communication Development Toolkit
 
-摘要：
-   net工具包支持非触接连接基础包，它提供了Graph基类，并提供了WebsiteGraph这种支持web应用的graph。它还提供了通讯能力，实现有：
-- 以netty为基础的nio，支持协议有：udt/tcp/http 
-- 直接以java nio为基础的rio，支持同步和异步，协议有：rio-udt/rio-tcp/rio-http 
-正文： 
-- Graph基类，它是非接触连接的基础类，实现了流式处理 涉及的类有：GraphCreate,IPin,ISink,IPlug等 Graph使用GraphCreate组装一个图，一个图有输入端子和输出端子，这两类端子在Graph外是可见的；还有一种内部端子，在Graph之外不可见。 流的方向性：
-graph.in('input')->graph.sinks->graph.out('output') 
-每个sink对流的处理接口是： 
-public void flow(frame,circuit,plug){ //TODO } 
-其中frame是请求侦，circuit代表一个正在执行的当前回路，即当前执行序。
-plug是将sink插入到pin上时产生的插头，插头具有调度能力，可以主动回馈、跳跃、分支或顺行。插头还有伺服能力，能通过plug.site()获取芯片中的服务和所在graph的相关内容。 
-- WebsiteGraph，它实现了全部的web应用协议，放弃了jsp这种拉圾,对于页面代码再也不用编译。对于页面的逻辑实现，开发者可以用java类开发，也可按jss(是js文件)来开发，也可混合使用。 因此，该组件实现了可以按nodejs语法来写页面。 在使用时，开发者可需从WebsiteGraph派生你的graph，而后声明为cj服务即可。 我们看一个websiteGraph的上下文配置，拿平台的website实现作为案例，其下是其根程序集的上下文：
+Summary:
+
+The Net Toolkit supports a non-contact connection base package. It provides a Graph base class and a WebsiteGraph that supports web applications. It also offers communication capabilities, implemented as:
+
+	•	Netty-based NIO with supported protocols: UDT/TCP/HTTP.
+	•	RIO, based on Java NIO, supporting both synchronous and asynchronous operations with protocols: RIO-UDT/RIO-TCP/RIO-HTTP.
+
+Main Body:
+
+	•	Graph Base Class: This is the foundation for non-contact connections and implements stream processing. The related classes include GraphCreate, IPin, ISink, and IPlug. The Graph is assembled using GraphCreate, and a graph has both input and output terminals, which are visible outside the graph. There is also an internal terminal that is not visible outside the graph.
+
+Stream Direction:
+graph.in('input') -> graph.sinks -> graph.out('output')
+
+Each Sink has a flow processing interface:
+
+public void flow(frame, circuit, plug) { //TODO }
+
+Where:
+
+	•	frame represents the request detection,
+	•	circuit refers to the currently executing loop or sequence,
+	•	plug is the connector produced when the sink is inserted into a pin. The plug has scheduling capabilities, allowing for feedback, jumps, branching, or sequential processing. It also has servo capabilities, enabling access to the services in the chip and related content in the graph via plug.site().
+	•	WebsiteGraph: It implements all web application protocols, abandoning the use of JSP. No more compilation is required for page code. Developers can implement page logic using Java classes, JSS (JavaScript files), or a mix of both. This component enables page development with Node.js-like syntax.
+
+When using WebsiteGraph, developers should derive their graph from WebsiteGraph and declare it as a CJ service. Here’s an example of the context configuration for a WebsiteGraph, using the platform’s website implementation as a case study. Below is the context of its root assembly:
+
 ```json
 
 	{
 		entryPoint: {
 			activators: [{
-				name: "服务操作系统启动器",
+				name: "Service Operating System Launcher",
 				class: "cj.lns.chip.sos.website.ServiceOSActivator",
 				parameters: {}
 			}]
@@ -613,9 +685,9 @@ plug是将sink插入到pin上时产生的插头，插头具有调度能力，可
 		assemblyInfo: {
 			assemblyTitle: "serviceos",
 			assemblyResource: "site=/site;http.root=$(site)/framework;http.jss=$(site)/jss/http;ws.jss=$(site)/jss/ws;resource=/resources",
-			assemblyDescription: "服务操作系统",
+			assemblyDescription: "Service Operating System",
 			assemblyConfiguration: "",
-			assemblyCompany: "开发者：cj;研发机构：lns平台部",
+			assemblyCompany: "Developer: CJ Research Institution: LNS Platform Department",
 			assemblyProduct: "cj.lns.chip.sos.website",
 			assemblyCopyright: "Copyright 2011",
 			assemblyTrademark: "",
@@ -628,7 +700,7 @@ plug是将sink插入到pin上时产生的插头，插头具有调度能力，可
 		},
 		global: {
 			default: "zh_CN",
-			desc: "如果系统环境要求各芯片采用的语言本芯片没有，则芯片可采用默认语言"
+			desc: "If the system environment requires a language that the chip does not support, the chip can use the default language."
 		},
 		serviceContainer: {
 			name: "netContainer",
@@ -654,10 +726,11 @@ plug是将sink插入到pin上时产生的插头，插头具有调度能力，可
 		}
 	}
 ```
-	我们看到，serviceContainer.jss一项声明了jss服务模块。
-	assemblyInfo.assemblyResource指明了web资源位置，其中的ws代表的是http5的websocket的支持
+	We can see that serviceContainer.jss declares the JSS service module.
+assemblyInfo.assemblyResource specifies the location of web resources, where ws represents the support for HTTP5 WebSocket.
 	
-- nio net 所有nio基于NettyServer和NettyClient类 比如tcp协议，以下是为代码，在使用时根据实际的api来实现：
+- NIO Net: All NIO is based on the NettyServer and NettyClient classes. For example, for the TCP protocol, the following is the code, which should be implemented according to the actual API in use:
+
 ```java
 	TcpNettyServer server=new TcpNettyServer();
 	server.start('localhost','8080');
@@ -674,7 +747,7 @@ plug是将sink插入到pin上时产生的插头，插头具有调度能力，可
 	})
 	//发送请求
 	client.buildNetGraph().netinput().flow(frame,circuit);
-- rio net 所有rio基于BaseClientRIO,BaseServerRIO 比如tcp协议，以下是为代码，在使用时根据实际的api来实现：
+- RIO Net: All RIO is based on the BaseClientRIO and BaseServerRIO classes. For example, for the TCP protocol, the following is the code, which should be implemented according to the actual API in use:
 
 	rio net的输入输出端子是电缆线，多通道，其客户端支持连接池，即向同一远程目标可以建立多个连接，默认是1个
 	TcpCjNetServer server=new TcpCjNetServer();
@@ -690,96 +763,141 @@ plug是将sink插入到pin上时产生的插头，插头具有调度能力，可
 		//构建sink链
 		}
 	})
-	//发送请求，默认是异步发送，如果要同步返回，可使用：
+	//To send a request, it is asynchronous by default. If you want a synchronous response, you can use:
 	//frame.head(NetConstans.FRAME_HEADKEY_CIRCUIT_SYNC,'true');
 	//frame.head(NetConstans.FRAME_HEADKEY_CIRCUIT_SYNC_TIMEOUT,'3600');//同步超时时间
 	//frame.head(NetConstans.FRAME_HEADKEY_CIRCUIT_SYNC_TIMEOUT,'3600');//同步超时时间
 	//frame.head(NetConstans.FRAME_HEADKEY_CIRCUIT_ASYNC_TIMEOUT,'1200');//同步等待超时后异步通知超时时间,使用此功能需要在回路中设置回馈点来接收
 	client.buildNetGraph().netinput().flow(frame,circuit);
 ```
-# 面向连接编程思想
+# The concept of connection-oriented programming.
 
 
- 关键词：
-	面向连接编程 面向模块编程 面向协议编程 编程思想 结构化 面向对象
-java j2ee spring dotnet osgi netty tomcat jetty nodejs jsp php aspx zookeeper docker
+ Keywords:
 
-摘要：
-	“芝麻开门，门于是就开了”，自从发现逻辑能够控制实体以来， 人类就迈进了信息控制的大时代。为了更好的组织逻辑，全球的精英为之发明了一代又一代的思想， 从断片式的汇编，到穿连成函数的结构化编程，再到穿连函数成对象的对象化编程，一波比一波先进，一浪逐一浪更高，这符合进化论。 没错，世界受观测者影响，被认为是由一个个的被隔离对象组成，他们从世界本相当中找出差异，分出共性和异性，因此，对于观测者来说，只要实体边界清楚了，逻辑也就清晰了。然而， 编程思想止乎此已有数年之久，我就有些犹虑：“难道编程思想就止步于此吗，面向对象编程就是终极理论？”
-    	我的回答是：“非也！”面向对象编程有个致命的缺陷——高耦合。现象界的实事总是纷纷扰扰，互为苟合，当思考一个比较大的系统时， 面临着与断片式编程一样的问题，引用缠着引用，麻绳混成团终始不易解。而随着软件规模越做越大的今天，正是需要新的编程思想之际，面向连接编程的推出为之提供了一个不错的选项
-    	回顾编程史，断片式编程让开发者关注在事物自身；结构化编程让开发者关注在过程之中，对象化编程，让开发者关注在事物的属性关系之内，因此， 编程思想的发展，实际上就是如何引导开发者分析事物的方法论的发展，关注的方面不断的升级，从事物－过程－概念（对象）。而面向连接编程，关注重点在事象之间的连接结构， 有静态连接结构（对象化）和动态连接结构（运行时）之用，思考的是信息在一个静态或动态逻辑网格中的如何流动，如何控制，输入什么格式、输出什么格式。因此， 开发者不再关注于静态结构的接口，而是关注在它的信息流径和格式。参考上帝的“编世”思想，自然界中到处都是网格化的，小如神经网络，大如星系云河，无一不是在一个大网格中产生效用，并且非以彼此触及而发生作用， 实事上，即便是手指按在键盘上，也并没有真实的接触，而是通过“力”作用于彼此，而力就是信息，这就是上帝解藕现象的办法。因此， 颇具有借鉴意义。由此来看，面向连接编程，也是一门力学。
+Connection-oriented programming, Modular programming, Protocol-oriented programming, Programming philosophy, Structured programming, Object-oriented programming, Java, J2EE, Spring, .NET, OSGi, Netty, Tomcat, Jetty, Node.js, JSP, PHP, ASPX, Zookeeper, Docker
 
-正文： 
-一、概念定义
-	事象的定义：对于中国山寨得来的计算机科学来讲，通常以直译而来的“对象”表述英文中的Object，以“类”来表述Class，从修辞学上来讲，这是不准确的。比如，“我捡起这本书”这一句话，假如我以三个类来表述，分别是：I，Pick Up，The Book，分别对应三个对象：i,pick,book，当我把pick up当成一类时，放到这个语子中，我会说“拾起”是个对象，对象“我”，用对象“拾起”作用于对象“书”，意思就有些别扭了，“拾起”怎么会是对象？因为，对象在汉语的修辞中一般用于指六感所能感知的实在物，对于动态的、时态中的过程它并无此语境，因此必须正本清源，不再引用这类毫无准确性可言的“翻译性术语”。
-	对于人类而言，六感所能感知的，命名为“象”，意识到的：动态的、时态的过程，皆命名为“事”，因此，事象代表了一个“存在”的结构本质和运动的生命期。而在一个事象之中，往往即有又有象又有事，当去分析其中的一个象时，发现又有小象和小事，且事、象互转，无止无息，象中有事、事中有象，类此不穷。
-	接着前面的例子，当我说：我（这个象），拾起（这个事），作用于书（这个象）时，语境就合乎逻辑了。
+Abstract:
 
-	连接的定义：连接也是一种事件，具体指联系不同事物的事物。事物之间总是通过连接发生作用。连接可分为接触性连接和非接触性连接。接触性连接往往固化在事物的先天结构之中；非接触连接就象“流体”和“力”那样与彼事物发生作用。面向连接编程，就是一门分析事物之间的连接科学。
-	ecm：电子芯片连接模型。它是面向连接编程思想的得以落地的工具，是非接触连接工具(neuron,netsite)的基础事象连接工具。
+“Open Sesame, and the door opened.” Since the discovery that logic can control entities, humanity has entered a new era of information control. To better organize logic, global elites have invented successive generations of philosophies, from fragmented assembly language to structured programming, connecting functions, to object-oriented programming, where functions are connected to form objects. Each wave of thought has been more advanced than the last, and evolution has followed this progression. Indeed, the world, as observed, is seen as a collection of isolated objects. These objects identify differences from the essence of the world and classify commonalities and differences. For observers, once the boundaries of entities are clear, logic also becomes clear. However, programming philosophy has stagnated in this state for many years, raising the question: “Has programming philosophy reached its limit? Is object-oriented programming the ultimate theory?”
+
+My answer is: “No!” Object-oriented programming has a fatal flaw—high coupling. In the real world, things are always intertwined, interconnected, and when considering a larger system, one faces the same problem as fragmented programming: references are tangled, like a ball of string that is difficult to untangle. As software scale increases, the need for new programming philosophies grows, and the introduction of connection-oriented programming provides an excellent alternative.
+
+Looking back at the history of programming, fragmented programming made developers focus on the entities themselves; structured programming made developers focus on the processes; object-oriented programming made developers focus on the relationships and attributes of entities. The development of programming philosophy is essentially the evolution of the methodology that guides developers in analyzing entities, with the focus gradually shifting from the entities themselves to the processes and, finally, to the concepts (objects). Connection-oriented programming, however, focuses on the connections between phenomena, using both static (object-oriented) and dynamic (runtime) connection structures. It contemplates how information flows within a static or dynamic logical grid, how it is controlled, and what formats are input and output. Thus, developers no longer focus on static structural interfaces but on the flow and format of information.
+
+Referring to the “Creation” philosophy of God, the natural world is full of grids—small like neural networks, large like galaxies and cloud systems. All of these function within a vast grid, without direct contact, but rather through forces acting upon each other. In fact, even when a finger presses a key, there is no direct contact; the force that influences each other is the information. This is God’s way of decoupling phenomena. Therefore, connection-oriented programming can also be seen as a field of mechanics, offering significant insight and value for reference.
+
+Main Text:
+
+1. Concept Definition
+
+Definition of Event:
+In Chinese computing terminology, which has often borrowed directly from foreign terms, “Object” is usually translated as “对象” and “Class” is translated as “类.” From a rhetorical perspective, these translations are not entirely accurate. For example, in the sentence “I pick up this book,” if I were to represent it with three classes: “I,” “Pick Up,” and “The Book,” corresponding to three objects: “i,” “pick,” and “book,” the sentence would read awkwardly if we treat “Pick Up” as an object. Saying “Pick Up” is an object and the object “I” acts on the object “book” is strange. How can “Pick Up” be considered an object? In Chinese rhetoric, the term “object” typically refers to tangible entities that can be sensed by the five senses. It does not capture dynamic processes or actions in a temporal context. Therefore, these kinds of inaccurate “translation terms” should be avoided.
+
+For humans, what is perceptible by the five senses is termed as “象” (Xiàng, or “image”), and dynamic, temporal processes are termed as “事” (Shì, or “event”). Thus, the term “事象” (Shìxiàng, or “phenomenon”) represents the essential structure of an “existence” and the life cycle of movement. In a phenomenon, both images and events coexist. When analyzing one image, one discovers that there are smaller images and events within it, and events and images transform endlessly, with events existing within images and vice versa. This process is infinite.
+
+Continuing with the previous example, when I say: “I (this image), pick up (this event), and act on the book (this image),” the context becomes logically coherent.
+
+Definition of Connection:
+Connection itself is an event, specifically referring to the relationship between different entities. Things always interact with each other through connections. Connections can be divided into contact connections and non-contact connections. Contact connections are often embedded within the inherent structure of the entities, while non-contact connections, like “fluids” and “forces,” interact with entities without physical contact. Connection-oriented programming is a science that analyzes the connections between entities.
+
+ECM:
+Electronic Chip Connection Model. It is a tool that brings the idea of connection-oriented programming to life. ECM serves as a foundational event connection tool for non-contact connection tools (neuron, netsite), enabling analysis of the connections between entities.
 	
-二、概述面向连接分析的作用
-	为了让读者对面向连接编程有个初步的概念，故而先行在此段举个例子说明。
-	比如：jack转账给tom 100元
-	在面向对象的分析方法中，抽象类:User代表jack和tom，抽象类：Transfer代表转账T1
-	按面向对象的分析规范，先做类静态结构分析，再做活动图分析。在静态结构分析时，我们发现Transfer应该依赖User，在活动分析时Transfer的实例T1要持有jack和tom的引用。面向对象分析法只是引导了开发者如何思考静态结构和活动以及它们的依赖关系。
-	而在面向连接的分析方法中，jack这个事物与tom这个事物之间生成了一个新事物：转账，这是有方向性的，表述为：jack—>T1—>tom，再接下来分析，当事物T1发生转账时，它要向jack扣除款项100元，并使tom入账100元，则进一步表述为：
-T1—>减除100—>jack
-且
-T1—>增加100—>tom
-	这里，T1是事，jack/tom是象，如果将减、增看成是T1的子事，那么Ｔ1对于jack与tom就发生了两个有向连接。在接触连接中，T1通过jack和tom的引用进行操作，在非接触中，T1通过获得jack传入的“流”来做出处理，并将结果向tom“流”出。
-	因此，面向对象编程的关注点在静态结构分析和活动方法上下功夫，而面向连接的分析方法中关注在事象间的作用与接触方式上。
-	因此，在面向连接编程分析时，需要习惯性的这样发问：“这些象是什么？象与象之间发生了什么事？如何接触？”
+2. Overview of the Role of Connection-Oriented Analysis
 
-三、事象之内
-	事象工厂
-	在生活中我们经常会这样做，在我们需要白菜时，会到冰箱拿，当需要萝卜时，也会到冰箱里拿，当我们需要醋和盐时，会到放调料的厨柜里拿。推而广之，在做一个“事”时，总会到某个地方拿出“事象”，这看起来就像个箱子，对所有的事象共享。事象工厂对于面向连接编程尤其重要，它不仅仅是解耦事象与事象之间接触连接的手段，更为重要的是它为事象提供了“原料和原动力”。
-	事象在需要其它事象时从事象工厂里取出，在取出时，根据构建的方式不同，有单例事象和多例事象之分，根据生命期的不同，有编译期这种固定结构的事象，也有动态可变性的事象之别。	
-	事象工厂负责管理这些共享事象的生命周期。
-	在一些情况下，事象工厂设有拦载事象请求链路的逻辑，而且提供在链路连接上依需插入用于拦截的事象的能力。
+To give readers an initial understanding of connection-oriented programming, let’s begin with an example:
 
-	先天结构
-	先天结构是指在设计期既确定下来的事象的结构，它与其它事象的连接被编译和固化在结构之中，它是事象的本质表达，这种结构性的连接，我们称之为“静连接”。静连接，具有高内聚形态，因此在一些引用层次之中，导致了较高的复杂度。因此在需要解藕时，自然要借助于事象工厂。
+Example:
+Jack transfers 100 yuan to Tom.
 
-	事象时态
-	将事象工厂引入系统内之后，事象就具有了时态特性。事象的时态分为：构建时态和运行时态两种；构建时态又分为单例构建、多例构建以及按需构建；在运行时态中，应该支持将任意一个在运行的事象放入事象工厂，并由事象工厂将事象用于别处。
+In an object-oriented analysis approach, abstract classes like User represent Jack and Tom, while the abstract class Transfer represents the transfer event (T1).
+According to object-oriented analysis principles, we first perform a static structure analysis and then an activity diagram analysis. During the static structure analysis, we find that Transfer should depend on User. In the activity diagram, the instance of Transfer, T1, must hold references to Jack and Tom. Object-oriented analysis primarily guides developers in how to think about static structures, activities, and their dependencies.
+
+In connection-oriented analysis, however, a new entity emerges between Jack and Tom: the transfer. This has directionality and can be expressed as:
+Jack → T1 → Tom.
+
+Next, when analyzing the transfer event (T1), we observe that when the transfer occurs, it deducts 100 yuan from Jack’s account and deposits 100 yuan into Tom’s account. This can be further described as:
+T1 → Deduct 100 → Jack
+and
+T1 → Add 100 → Tom.
+
+Here, T1 is the event (事), while Jack and Tom are the entities (象). If we consider the deduction and addition as sub-events of T1, then T1 creates two directed connections between Jack and Tom.
+
+In contact-based connections, T1 operates via the references to Jack and Tom. In non-contact connections, T1 processes the “flow” passed by Jack and outputs the result to Tom.
+
+Thus, while object-oriented programming focuses on static structure analysis and activity methods, connection-oriented analysis centers on the interactions and modes of contact between entities.
+
+Therefore, when performing connection-oriented programming analysis, it is important to habitually ask:
+
+	•	“What are these entities (象)?
+	•	What events (事) are occurring between the entities?
+	•	How do they connect?”
+
+3. Within the Event-Entity (事象)
+
+Event-Entity Factory
+
+In daily life, we often do the following: when we need cabbage, we go to the fridge to take it out; when we need radish, we also go to the fridge; when we need vinegar and salt, we go to the kitchen cabinet where spices are kept. Extending this idea, when we need to handle an “event” (事), we always retrieve the “event-entity” from somewhere. This process resembles a box shared by all event-entities. The event-entity factory is crucial in connection-oriented programming. It is not only a means of decoupling the contact connections between event-entities but also more importantly, it provides “raw materials and driving force” for event-entities.
+
+When event-entities require other event-entities, they retrieve them from the event-entity factory. Depending on the construction method, there are singleton and multi-instance event-entities. Depending on the lifecycle, there are compile-time event-entities (which have a fixed structure) and dynamically mutable event-entities. The event-entity factory manages the lifecycle of these shared event-entities.
+
+In some cases, the event-entity factory includes logic that intercepts event requests. It also provides the ability to insert event-entities into the connection chain for interception when needed.
+
+Inherent Structure
+
+Inherent structure refers to the event-entity structure that is determined during the design phase. The connections between event-entities are compiled and solidified into the structure. This is the essential expression of the event-entity, and such structural connections are called “static connections.” Static connections tend to have a high degree of cohesion, which can lead to high complexity in some levels of referencing. Therefore, when decoupling is needed, the event-entity factory is naturally used to facilitate this process.
+
+Temporal Characteristics of Event-Entities
+
+After introducing the event-entity factory into the system, event-entities gain temporal characteristics. The temporal characteristics of event-entities are divided into two phases: construction-time and runtime.
+
+	1.	Construction-Time: This phase involves connecting some properties and methods of the event-entity to certain event-entities in the factory at system startup. After the factory receives a request for an event-entity, it either constructs the event-entity or returns an existing one.
+	2.	Runtime: During runtime, the system should support placing any event-entity into the factory and having the factory use the event-entity elsewhere.
+
+There is another case where an event-entity actively connects itself to the methods or properties of another event-entity during construction. This situation is called a “reverse connection.”
+
+The connections made during construction or runtime are generally referred to as “dynamic connections.” Static connections are a feature of object-oriented programming, while dynamic connections are a feature of connection-oriented programming.
 	
-	构建时态是在系统启动时，将事象的一些属性和方法连接到工厂的某些事象中，此时，工厂得到事象的请求后，将构建事象或将现有事象返回。
-	还有一种情况，一个事象在构建时主动把自己连接到另一事相的方法或属性中，这种情况叫“反向连接”。
-	这种在构建或运行时才连接到事象的连接，我们统称为“动连接”。
-	静连接是面向对象编程的特性，动连接是面向连接编程的特性。
-	
-四、事象之间
-	本节讨论一个拥有事象工厂的事象与另一个拥有事象工厂的事象之间的连接。为了简便期间，我们假定三个事象，一个是主事象M，在主事象M内，将事象A连接到事象B，我们把A称为B的外事项，反之，B就是A的外事象。
-	接触
-	1.事象实例的接触
-	接触就是通过引用或指针连接到事象。一个拥有事象工厂的事象将其内的事象按对外的可见性分为两类，分别是内事象与外事象。故名思义，内事象在外部是访问不到的，它是事象内的逻辑单元；而外事象，用于外部的连接，它告诉外事象它应有的行为，其行为由内部的事象来处理，外部不必关心。这就类似于面向对象编程中一个类的public方法与private方法的区别。
-	外事象对内事象的连接形式，即可在构建时连接，也可在运行时按需连接。
-	2.事象结构的接触
-	除了事象的实例可以被外部事象连接之外，还有一个重要的方面就是，事象内的类型（类或接口）也可被外部的事象以派生（或实现）的方式连接，它提供了一种外部事象作为所依赖事象的扩展手段。这种连接的用途也是非常广泛，首先它就是一种适配模式，其次它支持了插件式扩展方案。
-	事象默认情况下类型是封闭的，只有被声明为开放的类型才可被外事象连接。以此保证一个事象的边界。
-	其下演示ecm事象接触的例子，在本网的开发平台中找ecm相关文章，此处略。
-	
-	非接触
-	事象之间非接触是指不直接通过获取引用或指针而达到与另一事象的连接，一般是通过“流”的形式，并通过公开流的协议而达到连接的目的，双方并不持有对方事象的实例。通常web service就是一种以net作为介质的非接触的事象，同样像web container也是一种以net作为处理http流的事象。非接触事象具有以下几种形式：
-	1.完全非接触，往往以net作为隔离， 用于服务的事象在得到请求后交由流事象处理，在这种情况下，流事象属于所在事象的内部事象，这种应用最为常见。
-	2.仅接触对方事象中的用于处理“流”的事象，这种应用也常见，但是事先能够预知获通过事象的外连接口发现其内包含的流事象。
+4. Event-Entities Between Each Other
 
-	非接触引导开发者导向了面向协议编程，使得系统扩展性更好，更为松散。非接触使得事项模块化，又引导开发者导向了面向模块编程方向的思考。开发者在设计一个事象时，自然而然的要考虑这个事象接受什么、输出什么协议，有什么外部事象，要第三方怎么使用它，等等。
+This section discusses the connection between one event-entity with an event-entity factory and another event-entity with its own event-entity factory. For simplicity, we assume there are three event-entities: one is the main event-entity (M). Within the main event-entity (M), event-entity A is connected to event-entity B. We refer to A as the external event-entity of B, and conversely, B is the external event-entity of A.
 
-	总结：事象之间连接起来就是一个大事象的功能，变化一下连接就可能变易了大事象的形为，因此，连接是非常重要的，特别是对于大型分布式系统，前面的事象可能要与其后的多个事象连接，实际上也有一定的复杂度。像面向对象编程对类的分析一样，面向连接编程对连接的分析也是最灵活、最难的而且至为关键，连接规化的不合理，很可能就导致网络的滥用或性能的瓶颈。
-	其下演示ecm事象非接触的例子，在本网的开发平台中找神经元相关文章，此处略。
+Contact
+
+	1.	Event-Entity Instance Contact
+Contact refers to connecting to an event-entity via references or pointers. An event-entity that has an event-entity factory divides its internal event-entities into two categories based on their external visibility: internal event-entities and external event-entities. As the name suggests, internal event-entities are inaccessible externally; they are the logical units within the event-entity. On the other hand, external event-entities are used for external connections, informing the external event-entity of the behaviors it should exhibit, which are processed by internal event-entities. The external event-entity does not need to be concerned with the internal details. This is similar to the distinction between public and private methods in object-oriented programming.
+The connection between external event-entities and internal event-entities can either occur during construction or be connected as needed during runtime.
+	2.	Event-Entity Structure Contact
+In addition to connecting external event-entities to the instances of event-entities, another important aspect is that the types (classes or interfaces) within an event-entity can also be connected externally by being derived from or implemented by external event-entities. This provides an extension mechanism for external event-entities as dependent event-entities. This type of connection is widely used as an adaptation pattern and also supports plugin-based extension solutions.
+By default, event-entity types are closed, and only types declared as open can be connected by external event-entities, ensuring the boundary of an event-entity is maintained.
+An example of ECM event-entity contact is demonstrated in the development platform, which can be found in ECM-related articles. (This is omitted here.)
+
+Non-Contact
+
+Non-contact between event-entities refers to connecting to another event-entity without directly obtaining references or pointers, usually achieved through the form of “streams” and the public protocols of these streams. In this case, neither side holds an instance of the other event-entity. A typical example of a non-contact event-entity is a web service, where the net serves as the medium for connection. Similarly, a web container is a non-contact event-entity that handles HTTP streams. Non-contact event-entities exist in the following forms:
+
+	1.	Complete Non-Contact: Often, the net acts as an isolator, where a service event-entity hands over the request to a flow event-entity for processing. In this case, the flow event-entity is an internal event-entity of the service event-entity, and this is the most common application.
+	2.	Contact Only for Flow Event-Entities: This scenario involves only contacting event-entities that handle “streams” in the other event-entity. This is also common, but the external connection interface of the event-entity can predict the flow event-entity it contains.
+
+Non-contact encourages developers to adopt a protocol-oriented programming approach, improving system scalability and promoting loose coupling. Non-contact modularizes event-entities and guides developers to think in terms of modular programming. When designing an event-entity, developers naturally need to consider what protocols it accepts, what it outputs, what external event-entities it interacts with, and how third parties can use it.
+
+Summary
+
+When event-entities are connected, they form a larger event-entity’s functionality. Changing the connections can alter the behavior of the larger event-entity, making connections crucial. This is particularly important for large distributed systems, where previous event-entities may need to connect to multiple subsequent event-entities. In practice, this introduces a certain level of complexity. Similar to how object-oriented programming analyzes classes, connection-oriented programming focuses on analyzing connections, which is highly flexible, challenging, and critical. Improper connection planning can lead to network misuse or performance bottlenecks.
+
+An example of ECM event-entity non-contact can be found in the development platform, along with related articles on neurons (this is omitted here).
 	
 
 	
-六、面向连接编程的应用
+IV. Application of Connection-Oriented Programming
 
-	1.插件体系的连接实现
-	图中是lns.com的平台网站的内部结构，每个圆角矩形实际上是一个程序集，程序集是是ecm的基本程序单元，中间的大距形是主程序集，它用于连接了各个插件。在图中可以看程序集被插件化，并有层级之别，在portal插件之下又扩展了几个插件。插件与插件之间以非接触的流事象将请求链路连接起来。
+	1.	Plugin System Connection Implementation
+In the diagram, we see the internal structure of the platform website of lns.com. Each rounded rectangle represents an assembly, which is the basic program unit of ECM. The large rectangle in the center is the main assembly, which connects various plugins. In the diagram, assemblies are modularized into plugins with hierarchical levels. Beneath the portal plugin, several other plugins are further extended. The plugins are interconnected through non-contact flow events, linking the request pathways between them.
 	
 ![Image text](https://github.com/carocean/cj.studio.ecm/blob/master/document/img/1.png)
 
-下图说是插件连接的结构及流向。
+The following diagram illustrates the structure and flow of plugin connections.
 
 ![Image text](https://github.com/carocean/cj.studio.ecm/blob/master/document/img/2.png)
 
@@ -788,8 +906,8 @@ T1—>增加100—>tom
 
 
 
-2.分布式体系的连接实现
+	2.	Distributed System Connection Implementation
 ![Image text](https://github.com/carocean/cj.studio.ecm/blob/master/document/img/3.png)
-图中是两个netsite之间的连接，它们通过输入与输出端子彼此以与接触的net方式相连
+The diagram shows the connection between two netsites, which are linked through their input and output terminals using a connected net method.
 ![Image text](https://github.com/carocean/cj.studio.ecm/blob/master/document/img/4.png)	
-上图是一个非接触事象StationGraph的内部连接结构分析图。
+The above diagram is an internal connection structure analysis of a non-contact event, StationGraph.
