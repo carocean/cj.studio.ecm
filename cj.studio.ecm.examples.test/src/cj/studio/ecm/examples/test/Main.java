@@ -12,24 +12,26 @@ import cj.studio.ecm.adapter.IActuator;
 import cj.studio.ecm.adapter.IAdaptable;
 
 public class Main {
+	static String examplesDir=String.format("%s/examples", System.getProperty("user.dir"));
+	static String version="2.4.0";
 	public class MyMain extends Main{
 		
 	}
 	public static void main(String... strings) {
-		test6();
+		test4();
 		// 测jss
 	}
 	//
 	private static void test6() {
 		// TODO Auto-generated method stub
-		String fn1 = "/Users/caroceanjofers/studio/cj.studio.ecm/examples/cj.studio.ecm.examples.chip1-2.3.9.jar";
+		String fn1 = String.format("/%s/cj.studio.ecm.examples.chip1/cj.studio.ecm.examples.chip1-%s.jar", examplesDir, version);
 		IAssembly chip1 = Assembly.loadAssembly(fn1);
 		chip1.start();
 		chip1.stop();
 	}
 	private static void test5() {
 		// TODO Auto-generated method stub
-		String fn1 = "/Users/caroceanjofers/studio/cj.studio.ecm/examples/cj.studio.ecm.examples.chip1-2.3.8.jar";
+		String fn1 = String.format("/%s/cj.studio.ecm.examples.chip1/cj.studio.ecm.examples.chip1-%s.jar", examplesDir, version);
 		IAssembly chip1 = Assembly.loadAssembly(fn1);
 		chip1.start();
 		Object obj=chip1.workbin().part("main");
@@ -41,7 +43,7 @@ public class Main {
 
 	// 测json/xml注解方式
 	public static void test3() {
-		String fn1 = "/Users/caroceanjofers/studio/lns.github.com/cj.studio.ecm/examples/cj.studio.ecm.examples.chip1-1.0.jar";
+		String fn1 = String.format("/%s/cj.studio.ecm.examples.chip1/cj.studio.ecm.examples.chip1-%s.jar", examplesDir, version);
 		IAssembly chip1 = Assembly.loadAssembly(fn1);
 		chip1.start();
 		Object obj=chip1.workbin().part("$.cj.studio.gateway.app");
@@ -51,10 +53,10 @@ public class Main {
 	// 测程序集类型依赖
 	// 内部调用在另一程序集中的实现
 	public static void test4() {
-		String fn1 = "/Users/caroceanjofers/studio/lns.github.com/cj.studio.ecm/examples/cj.studio.ecm.examples.chip1-1.0.jar";
+		String fn1 = String.format("/%s/cj.studio.ecm.examples.chip1/cj.studio.ecm.examples.chip1-%s.jar", examplesDir, version);
 		IAssembly chip1 = Assembly.loadAssembly(fn1);
 		chip1.start();
-		String fn2 = "/Users/caroceanjofers/studio/lns.github.com/cj.studio.ecm/examples/cj.studio.ecm.examples.chip2-1.0.jar";
+		String fn2 = String.format("/%s/cj.studio.ecm.examples.chip2/cj.studio.ecm.examples.chip2-%s.jar", examplesDir, version);
 		IAssembly chip2 = Assembly.loadAssembly(fn2);
 		chip2.dependency(chip1);
 		chip2.start();
@@ -67,16 +69,20 @@ public class Main {
 	// 测程序集类型依赖
 	// 测以包路径开放服务
 	public static void test2() {
-		String fn1 = "/Users/caroceanjofers/studio/lns.github.com/cj.studio.ecm/examples/cj.studio.ecm.examples.chip1-1.0.jar";
+		String fn1 = String.format("/%s/cj.studio.ecm.examples.chip1/cj.studio.ecm.examples.chip1-%s.jar", examplesDir, version);
 		IAssembly chip1 = Assembly.loadAssembly(fn1);
 		chip1.start();
-		String fn2 = "/Users/caroceanjofers/studio/lns.github.com/cj.studio.ecm/examples/cj.studio.ecm.examples.chip2-1.0.jar";
+		String fn2 = String.format("/%s/cj.studio.ecm.examples.chip2/cj.studio.ecm.examples.chip2-%s.jar", examplesDir, version);
 		IAssembly chip2 = Assembly.loadAssembly(fn2);
 		chip2.dependency(chip1);
 		chip2.start();
 		List<Class<?>> list = chip1.workbin().exotericalType("exoType");// 从chip1中取类型
 		for (Class<?> clazz : list) {
-			ServiceCollection<?> col = chip2.workbin().part(clazz);// 在chip2中搜索实现类
+			ServiceCollection<?> col =chip1.workbin().part(clazz);
+			for (Object obj : col) {
+				System.out.println("++++++这是搜到的chip1中的实现：" + obj);
+			}
+			col = chip2.workbin().part(clazz);// 在chip2中搜索实现类
 			for (Object obj : col) {
 				System.out.println("++++++这是搜到的chip2中的实现：" + obj);
 			}
@@ -87,8 +93,8 @@ public class Main {
 
 	// 测外部提供服务
 	public static void test1() {
-		String fn = "/Users/caroceanjofers/studio/lns.github.com/cj.studio.ecm/examples/cj.studio.ecm.examples.chip1-1.0.jar";
-		IAssembly a = Assembly.loadAssembly(fn);
+		String fn1 = String.format("/%s/cj.studio.ecm.examples.chip1/cj.studio.ecm.examples.chip1-%s.jar", examplesDir, version);
+		IAssembly a = Assembly.loadAssembly(fn1);
 		a.parent(new IServiceProvider() {
 
 			@Override

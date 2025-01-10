@@ -75,7 +75,7 @@ subprojects {
 					}
 				}
 			 
-		        repository(url: "http://47.105.165.186/nexus/content/repositories/netos"){
+		        repository(url: "http://localhost:65000/repository/netos/"){
 					authentication(userName:"deployment",password:"deployment123")
 		        }
 			}

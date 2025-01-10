@@ -31,6 +31,6 @@ dependencies {
 task release(type: Copy) {
      dependsOn "build"
      from 'build/libs/'
-     into '../examples'
+	into "../examples/${project.name}"
      include '**/*.jar'
 }
