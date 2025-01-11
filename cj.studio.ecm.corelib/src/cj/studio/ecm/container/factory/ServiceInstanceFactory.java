@@ -1,5 +1,6 @@
 package cj.studio.ecm.container.factory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -48,6 +49,7 @@ import cj.studio.ecm.container.describer.UncertainObject;
 import cj.studio.ecm.context.IModuleContext;
 import cj.studio.ecm.parser.IValueParser;
 import cj.studio.ecm.parser.IValueParserFactory;
+import cj.studio.ecm.util.AnnotationChecker;
 import cj.studio.ecm.weaving.ICanWeavingMethod;
 import cj.ultimate.collection.ICollection;
 import cj.ultimate.util.PrimitiveType;
@@ -738,7 +740,7 @@ public abstract class ServiceInstanceFactory implements IServiceInstanceFactory 
 			ServiceDescriber sd = def.getServiceDescriber();
 			try {
 				Class<?> sclass = Class.forName(sd.getClassName(), true, registry.getResource().getClassLoader());
-				if (serviceClazz.isAssignableFrom(sclass)) {
+				if (serviceClazz.isAssignableFrom(sclass)||hasAnnotation(serviceClazz,sclass)) {
 					T obj = (T) getService(sd.getServiceId());
 					if (obj == null)
 						continue;
@@ -749,6 +751,14 @@ public abstract class ServiceInstanceFactory implements IServiceInstanceFactory 
 			}
 		}
 		return new ServiceCollection<T>(list);
+	}
+
+	private <T> boolean hasAnnotation(Class<T> serviceClazz, Class<?> sclass) {
+		if(!serviceClazz.isAnnotation()){
+			return false;
+		}
+
+		return AnnotationChecker.hasAnnotation(sclass,(Class<? extends Annotation>) serviceClazz);
 	}
 
 	@Override

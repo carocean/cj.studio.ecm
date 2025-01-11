@@ -18,7 +18,7 @@ public class Main {
 		
 	}
 	public static void main(String... strings) {
-		test4();
+		test5();
 		// 测jss
 	}
 	//
