@@ -52,43 +52,51 @@ public class MyService {
         return "Hello, " + name + "!";
     }
 }
-
+```
 Accessing the Service
-
+```java
 IAssembly assembly = Assembly.load("/path/to/your/module.jar");
 assembly.start();
 MyService myService = (MyService) assembly.workbin().part("myService");
 System.out.println(myService.sayHello("ECM"));
 assembly.close();
 
+```
+
 Dynamic Modules
 
 ECM’s modular design allows for runtime adjustments to system components.
 
 Example: Loading a Module
-
+```java
 IAssembly assembly = Assembly.load("/path/to/module.jar");
 assembly.start();
 IServiceSite site = assembly.workbin();
 Object myService = site.part("yourService");
 System.out.println(myService.toString());
 assembly.close();
+```
+
 
 JSS Services
 
 Develop JavaScript-based services for seamless integration with Java.
 
 Example: A JSS Service
-
+```js
 // JSS File: helloService.js
 exports.sayHello = function(name) {
     return "Hello, " + name + "!";
 };
 
-Accessing JSS Services
+```
 
+Accessing JSS Services
+```java
 Object result = service.call("sayHello", "ECM");
 System.out.println(result);
+
+```
 
 Distributed Communication
 
@@ -97,19 +105,23 @@ ECM supports efficient communication across distributed environments using vario
 Example: TCP Server and Client
 
 Server:
-
+```java
 TcpNettyServer server = new TcpNettyServer();
 server.start("localhost", 8080);
 server.buildNetGraph().netoutput().plug("sink", (frame, circuit, plug) -> {
     System.out.println("Received: " + frame.content().toString());
 });
 
-Client:
+```
 
+Client:
+```java
 TcpNettyClient client = new TcpNettyClient();
 client.connect("localhost", 8080, null);
 Frame frame = new Frame("content=Hello ECM!");
 client.buildNetGraph().netinput().flow(frame, new Circuit("circuit"));
+
+```
 
 Advantages of ECM
 
@@ -122,3 +134,20 @@ Conclusion
 
 ECM redefines distributed system development with its independent, connection-oriented approach. It offers unparalleled flexibility, stability, and efficiency, making it a cornerstone for cloud-native architectures, IoT, and large-scale distributed environments. Whether building future-ready systems or simplifying existing architectures, ECM is the ideal choice for developers seeking innovation and reliability.
 
+# Assembly
+
+An assembly contains a chip, and the assembly uses logical chips to organize and isolate services or types.
+
+## Features
+
+- Modularization
+- OSGi
+- IOC containers
+
+## Important Note
+
+When developing your assembly project, **do not launch the main function** within this assembly.  
+Otherwise, the type boundaries that belong to the assembly will be loaded into the application startup context, 
+compromising the encapsulation of the assembly.
+
+If a main function is required, encapsulation demands that the caller must be **external** to the assembly.
