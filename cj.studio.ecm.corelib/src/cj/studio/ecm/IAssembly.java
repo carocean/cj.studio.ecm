@@ -82,7 +82,7 @@ public interface IAssembly {
      * 因此构造时x可能还是为空。如果一定要得到x，可以在IServiceAfter方法事件中，
      * 或非构造的任意方法在被执行时，或在系统运行后
      * </pre>
-     *
+     * 注：子程序集只能引用父程序集中的开放服务，即：@CjService(isExoteric=true)
      * @param assembly
      */
     void parent(IAssembly assembly);
@@ -116,6 +116,9 @@ public interface IAssembly {
      *
      * <b>注意：如果依赖的程序集未启动，则会被启动，而当前程序集的状态不变</b>
      * </pre>
+     * 设有A和B两程序集，B依赖于A，那么在A中的服务属性能否直接引用B程序集中实现的开放类型服务呢？答案是不能，因为：
+     * 在A程序集服务容器装载时，B还没有装载，此时B中还没有相应的服务实例，故而只能在使用时主动获取B中的实现，而且B中的外部类型实现也必须声明为开放服务才可。
+     * 可以在A中通过获取finder以查找在B中的外部类型实现，site.getService("$.exoteric.service.finder")
      *
      * @param assembly
      */
