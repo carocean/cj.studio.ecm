@@ -85,7 +85,7 @@ public interface IAssembly {
      *
      * @param assembly
      */
-    void parent(Assembly assembly);
+    void parent(IAssembly assembly);
 
     /**
      * 为程序集提供服务
@@ -122,7 +122,7 @@ public interface IAssembly {
     void dependency(IAssembly assembly);
 
     //由于依赖后类型会加载到本地资源中，可以用返射ClassLoader基类和JarClassLoader取出资源的集合，并从中仅移除依赖的资源，解除依赖可留待之后在此添加
-    void undependency(Assembly assembly);
+    void undependency(IAssembly assembly);
 
     void load(ClassLoader parent);
 }

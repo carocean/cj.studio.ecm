@@ -427,12 +427,12 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
     }
 
     @Override
-    public void parent(Assembly assembly) {
+    public void parent(IAssembly assembly) {
         // undependency(assembly);
-        if (assembly.state != AssemblyState.actived) {
+        if (((Assembly)assembly).state != AssemblyState.actived) {
             assembly.start();
         }
-        this.moduleContext.parent(assembly.moduleContext.getDownSite());
+        this.moduleContext.parent(((Assembly)assembly).moduleContext.getDownSite());
     }
 
     @Override
@@ -441,10 +441,10 @@ public class Assembly implements IAssembly, IAssemblyInfo, IClosable {
     }
 
     // 解除依赖
-    public void undependency(Assembly assembly) {
+    public void undependency(IAssembly assembly) {
         // 由于依赖后类型会加载到本地资源中，可以用返射ClassLoader基类和JarClassLoader取出资源的集合，并从中仅移除依赖的资源，解除依赖可留待之后在此添加
         // 可以在JarClassLoader.dispose方法中反射基类中的类型集合以撤底消毁加载器的资源
-        resource.undependency(assembly.resource);
+        resource.undependency(((Assembly)assembly).resource);
         moduleContext.refresh();
     }
 
